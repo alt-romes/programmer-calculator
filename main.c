@@ -183,14 +183,14 @@ void init_gui() {
     int ymax, xmax;
     getmaxyx(stdscr, ymax, xmax);
 
-    displaywin = newwin(ymax/2, xmax, 0, 0);
+    displaywin = newwin(ymax-3, xmax, 0, 0);
     refresh();
 
     box(displaywin, ' ', 0);
-    mvwprintw(displaywin, ymax/2-4, 2, "ADD  +    SUB  -    MUL  *    DIV  /\n  AND  &    OR   |    NOR  n    XOR  x\n  SL   <    SR   >    RL   ?    RR   ?");
+    mvwprintw(displaywin, ymax-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /\n  AND  &    OR   |    NOR  n    XOR  x\n  SL   <    SR   >    RL   ?    RR   ?");
     wrefresh(displaywin);
 
-    inputwin = newwin(3, xmax, ymax/2, 0);
+    inputwin = newwin(3, xmax, ymax-3, 0);
     refresh();
 
     box(inputwin, ' ', 0);
