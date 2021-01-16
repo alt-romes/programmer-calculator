@@ -105,8 +105,6 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 
         case '\0':
             // Pressed empty enter aka clear
-
-            // clear history
             clear_history();
         default:
             default_push_label:
@@ -189,6 +187,7 @@ void init_gui() {
     refresh();
 
     box(displaywin, ' ', 0);
+    mvwprintw(displaywin, ymax/2-4, 2, "ADD  +    SUB  -    MUL  *    DIV  /\n  AND  &    OR   |    NOR  n    XOR  x\n  SL   <    SR   >    RL   ?    RR   ?");
     wrefresh(displaywin);
 
     inputwin = newwin(3, xmax, ymax/2, 0);
@@ -196,6 +195,7 @@ void init_gui() {
 
     box(inputwin, ' ', 0);
     wrefresh(inputwin);
+
 }
 
 void printbinary(long long value) {
