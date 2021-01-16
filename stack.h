@@ -1,26 +1,29 @@
-typedef struct stack {
+
+// Numbers Stack 
+
+typedef struct numberstack {
     int max_size;
     int size;
     long long * elements;
-} stack;
+} numberstack;
 
-stack * create_stack(int max_size) {
+numberstack * create_numberstack(int max_size) {
 
-    stack* s;
-    s = malloc(sizeof (stack));
-    s->elements = malloc((sizeof(long long)));
+    numberstack* s;
+    s = malloc(sizeof (numberstack));
+    s->elements = malloc(max_size * sizeof(long long));
     s->size = 0;
     s->max_size = max_size;
     return s;
 }
 
-stack * resize_stack(stack* s) {
+numberstack * resize_numberstack(numberstack* s) {
 
     s->max_size *= 2;
-    return realloc(s, s->max_size);
+    return realloc(s->elements, s->max_size * sizeof(long long));
 }
 
-long long * pop(stack* s) {
+long long * pop_numberstack(numberstack* s) {
 
     if (s->size == 0)
         return NULL;
@@ -28,10 +31,23 @@ long long * pop(stack* s) {
     return &s->elements[--s->size];
 }
 
-void push(stack* s, long long value) {
+long long * top_numberstack(numberstack* s) {
 
-   if (s->size == s->max_size) 
-       resize_stack(s);
+    if (s->size == 0)
+        return NULL;
 
-   s->elements[s->size++] = value;
+    return &s->elements[s->size-1];
+}
+
+void push_numberstack(numberstack* s, long long value) {
+
+    if (s->size == s->max_size) 
+        resize_numberstack(s);
+
+    s->elements[s->size++] = value;
+}
+
+void clear_numberstack(numberstack* s) {
+
+    s->size = 0;
 }
