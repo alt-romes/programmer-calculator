@@ -1,3 +1,4 @@
+#include <string.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <ncurses.h>
@@ -14,15 +15,25 @@ typedef struct operation {
     long long (*execute) (long long, long long);
 } operation;
 
+struct history {
+    int size;
+    char * records[500];
+};
+
+struct history history;
+
 // ncurses
 WINDOW* displaywin, * inputwin;
 void init_gui();
 void draw(numberstack*, operation*);
+void printbinary(long long);
+void printhistory();
 
 // General
 operation* getopcode(char);
 void process_input(numberstack*, operation**, char*);
-void printbinary(long long);
+void clear_history();
+void add_to_history();
 
 // Operations
 long long add(long long, long long);
@@ -46,6 +57,7 @@ int main(int argc, char *argv[])
 
     // Start with 0
     push_numberstack(numbers, 0);
+    add_to_history("0");
     draw(numbers, current_op);
 
     for (;;) {
@@ -89,13 +101,26 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
             else
                 goto default_push_label;
 
+            break;
+
+        case '\0':
+            // Pressed empty enter aka clear
+
+            // clear history
+            clear_history();
         default:
             default_push_label:
 
-            if (*current_op == operations) // If is the invalid operation (first in array of operations)
+            if (*current_op == operations) { // If is the invalid operation (first in array of operations)
+
                 clear_numberstack(numbers);
+                clear_history();
+            }
             push_numberstack(numbers, atoll(in));
     }
+
+    // Add to history
+    add_to_history(in);
 
     // Apply operations
     if (*current_op != operations) {
@@ -137,6 +162,18 @@ operation* getopcode(char c)  {
     return r;
 }
 
+void clear_history() {
+
+    for (; history.size>0; history.size--)
+        free(history.records[history.size-1]);
+}
+
+void add_to_history(char* in) {
+
+    history.records[history.size] = malloc(MAX_IN);
+    strcpy(history.records[history.size++], *in == '\0' ? "0" : in);
+}
+
 void init_gui() {
 
     initscr();
@@ -162,11 +199,11 @@ void printbinary(long long value) {
 
     unsigned long long mask = 0x8000000000000000;
 
-    mvwprintw(displaywin, 5, 2, "Binary:    \n         64  ");
+    mvwprintw(displaywin, 8, 2, "Binary:    \n         64  ");
 
     for (int i=0; i<64; i++, mask>>=1) {
 
-        unsigned char bitval = value & mask;
+        unsigned long long bitval = value & mask;
         waddch(displaywin, bitval ? '1':'0');
 
         if (i%16 == 15 && 64 - ((i/16+1)*16))
@@ -182,6 +219,16 @@ void printbinary(long long value) {
     }
 }
 
+void printhistory() {
+
+    mvwprintw(displaywin, 14, 2, "History:   ");
+
+    for (int i=0; i<history.size; i++) {
+        
+        wprintw(displaywin, "%s ", history.records[i]);
+    }
+}
+
 void draw(numberstack* numbers, operation* current_op) {
 
     long long* np = top_numberstack(numbers);
@@ -189,11 +236,13 @@ void draw(numberstack* numbers, operation* current_op) {
     if (np == NULL) n = 0;
     else n = *np;
 
-    mvwprintw(displaywin, 2, 2, "Current:   %c\n", current_op->character ? current_op->character : ' ');
-
-    mvwprintw(displaywin, 3, 2, "Decimal:   %d\n\n", n);
-    mvwprintw(displaywin, 4, 2, "Hex:       0x%X\n\n", n);
+    werase(displaywin);
+    box(displaywin, ' ', 0);
+    mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op->character ? current_op->character : ' ');
+    mvwprintw(displaywin, 4, 2, "Decimal:   %d", n);
+    mvwprintw(displaywin, 6, 2, "Hex:       0x%X", n);
     printbinary(n);
+    printhistory();
     wrefresh(displaywin);
 
     werase(inputwin);
