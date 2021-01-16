@@ -166,6 +166,9 @@ void clear_history() {
 
     for (; history.size>0; history.size--)
         free(history.records[history.size-1]);
+
+    wmove(displaywin, 14, 11);
+    wclrtoeol(displaywin);
 }
 
 void add_to_history(char* in) {
@@ -236,8 +239,25 @@ void draw(numberstack* numbers, operation* current_op) {
     if (np == NULL) n = 0;
     else n = *np;
 
-    werase(displaywin);
-    box(displaywin, ' ', 0);
+    // Clear lines
+    wmove(displaywin, 2, 11);
+    wclrtoeol(displaywin);
+    wmove(displaywin, 4, 11);
+    wclrtoeol(displaywin);
+    wmove(displaywin, 6, 11);
+    wclrtoeol(displaywin);
+    wmove(displaywin, 8, 11);
+    wclrtoeol(displaywin);
+    wmove(displaywin, 9, 11);
+    wclrtoeol(displaywin);
+    wmove(displaywin, 10, 11);
+    wclrtoeol(displaywin);
+    wmove(displaywin, 11, 11);
+    wclrtoeol(displaywin);
+    wmove(displaywin, 12, 11);
+    wclrtoeol(displaywin);
+
+    // Write values
     mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op->character ? current_op->character : ' ');
     mvwprintw(displaywin, 4, 2, "Decimal:   %d", n);
     mvwprintw(displaywin, 6, 2, "Hex:       0x%X", n);
@@ -245,8 +265,11 @@ void draw(numberstack* numbers, operation* current_op) {
     printhistory();
     wrefresh(displaywin);
 
-    werase(inputwin);
-    box(inputwin, ' ', 0); // Is there a way so that I don't have to call box everytime?
+    // Clear input
+    wmove(inputwin, 1, 19);
+    wclrtoeol(inputwin);
+
+    // Prompt input
     mvwprintw(inputwin, 1, 2, "Number or operator: ");
     wrefresh(inputwin);
 }
