@@ -6,28 +6,34 @@
 
 #define MAX_IN 80
 
+// Operations Control
+// Example: '+' takes two operands, therefore the noperands = 2
+typedef struct operation {
+    char character;
+    unsigned char noperands;
+    long long (*execute) (long long, long long);
+} operation;
+
 // ncurses
 WINDOW* displaywin, * inputwin;
 void init_gui();
-void draw();
+void draw(numberstack*, operation*);
 
 // General
-unsigned char getopcode(char);
-void process_input(numberstack*, unsigned char*, char*);
+operation* getopcode(char);
+void process_input(numberstack*, operation**, char*);
+void printbinary(long long);
 
 // Operations
 long long add(long long, long long);
 long long subtract(long long, long long);
 long long multiply(long long, long long);
 
-// Number of operands per operation (by opcode)
-// Example: the opcode for '+' is 1, '+' takes two operands, therefore the array entry[1] = 2
-unsigned char opcodes_noperands[4] = {
-    0, 2, 2, 2
-};
-
-long long (*execute_ops[4]) (long long, long long) = {
-    NULL, &add, &subtract, &multiply
+operation operations[4] = {
+    {0, 0, NULL},
+    {'+', 2, add},
+    {'-', 2, subtract},
+    {'*', 2, multiply}
 };
 
 int main(int argc, char *argv[])
@@ -36,11 +42,11 @@ int main(int argc, char *argv[])
     init_gui(&displaywin, &inputwin);
 
     numberstack* numbers = create_numberstack(4);
-    unsigned char current_op = 0;
+    operation* current_op = &operations[0];
 
     // Start with 0
     push_numberstack(numbers, 0);
-    draw(numbers);
+    draw(numbers, current_op);
 
     for (;;) {
 
@@ -51,7 +57,7 @@ int main(int argc, char *argv[])
         process_input(numbers, &current_op, in);
 
         // Display number on top of the stack
-        draw(numbers);
+        draw(numbers, current_op);
     }
 
     endwin();
@@ -59,7 +65,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void process_input(numberstack* numbers, unsigned char * current_op, char* in) {
+void process_input(numberstack* numbers, operation** current_op, char* in) {
 
     // Process input
     switch (in[0]) {
@@ -86,15 +92,15 @@ void process_input(numberstack* numbers, unsigned char * current_op, char* in) {
         default:
             default_push_label:
 
-            if (*current_op == 0)
+            if (*current_op == operations) // If is the invalid operation (first in array of operations)
                 clear_numberstack(numbers);
-            push_numberstack(numbers, atoi(in));
+            push_numberstack(numbers, atoll(in));
     }
 
     // Apply operations
-    if (*current_op > 0) {
+    if (*current_op != operations) {
 
-        unsigned char noperands = opcodes_noperands[*current_op];
+        unsigned char noperands = (*current_op)->noperands;
 
         if (numbers->size >= noperands) {
 
@@ -103,13 +109,32 @@ void process_input(numberstack* numbers, unsigned char * current_op, char* in) {
             for (unsigned char i=0; i < noperands; i++)
                 operands[i] = *pop_numberstack(numbers);
 
-            long long result = (*execute_ops[*current_op])(operands[0], operands[1]);
+            long long result = (*current_op)->execute(operands[0], operands[1]);
 
             push_numberstack(numbers, result);
 
-            *current_op = 0;
+            *current_op = &operations[0]; // Set to invalid operation
         }
     }
+}
+
+operation* getopcode(char c)  {
+
+    operation* r;
+    switch (c) {
+
+        case '+':
+            r = &operations[1];
+            break;
+        case '-':
+            r = &operations[2];
+            break;
+        case '*':
+            r = &operations[3];
+            break;
+    } 
+
+    return r;
 }
 
 void init_gui() {
@@ -133,15 +158,42 @@ void init_gui() {
     wrefresh(inputwin);
 }
 
-void draw(numberstack* numbers) {
+void printbinary(long long value) {
+
+    unsigned long long mask = 0x8000000000000000;
+
+    mvwprintw(displaywin, 5, 2, "Binary:    \n         64  ");
+
+    for (int i=0; i<64; i++, mask>>=1) {
+
+        unsigned char bitval = value & mask;
+        waddch(displaywin, bitval ? '1':'0');
+
+        if (i%16 == 15 && 64 - ((i/16+1)*16))
+            // TODO: Explain these numbers better (and decide if to keep them)
+            wprintw(displaywin, "\n         %d  ", 64-((i/16)+1)*16);
+        else if (i%8 == 7)
+            wprintw(displaywin, "   ");
+        else if (i%4 == 3)
+            wprintw(displaywin, "  ");
+        else
+            waddch(displaywin, ' ');
+
+    }
+}
+
+void draw(numberstack* numbers, operation* current_op) {
 
     long long* np = top_numberstack(numbers);
     long long n;
     if (np == NULL) n = 0;
     else n = *np;
 
-    mvwprintw(displaywin, 1, 2, "Decimal:   %d\n", n);
-    mvwprintw(displaywin, 2, 2, "Hex:       0x%X\n", n);
+    mvwprintw(displaywin, 2, 2, "Current:   %c\n", current_op->character ? current_op->character : ' ');
+
+    mvwprintw(displaywin, 3, 2, "Decimal:   %d\n\n", n);
+    mvwprintw(displaywin, 4, 2, "Hex:       0x%X\n\n", n);
+    printbinary(n);
     wrefresh(displaywin);
 
     werase(inputwin);
@@ -150,23 +202,7 @@ void draw(numberstack* numbers) {
     wrefresh(inputwin);
 }
 
-unsigned char getopcode(char c)  {
 
-    switch (c) {
-
-        case '+':
-            c = 1;
-            break;
-        case '-':
-            c = 2;
-            break;
-        case '*':
-            c = 3;
-            break;
-    } 
-
-    return c;
-}
 
 // Operations
 
