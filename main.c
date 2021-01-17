@@ -119,6 +119,12 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 
         case '0':
 
+            if (*current_op == operations) { // If is the invalid operation (first in array of operations)
+
+                clear_numberstack(numbers);
+                clear_history();
+            }
+
             if (in[1] == 'x')
                 push_numberstack(numbers, strtoll(in+2, NULL, 16));
 
