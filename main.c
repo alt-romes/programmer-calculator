@@ -7,13 +7,8 @@
 
 #define MAX_IN 80
 
-
-
-
-
-/*---- Structures -------------------------------------------------*/
-
-
+// Operations Control
+// Example: '+' takes two operands, therefore the noperands = 2
 typedef struct operation {
     char character;
     unsigned char noperands;
@@ -27,14 +22,7 @@ struct history {
 
 struct history history;
 
-
-
-
-
-/*---- Function Prototypes ----------------------------------------*/
-
-
-// Drawing
+// ncurses
 WINDOW* displaywin, * inputwin;
 void init_gui();
 void draw(numberstack*, operation*);
@@ -52,27 +40,12 @@ long long add(long long, long long);
 long long subtract(long long, long long);
 long long multiply(long long, long long);
 
-
-
-
-
-/*---- Define Operations ------------------------------------------*/
-
 operation operations[4] = {
     {0, 0, NULL},
     {'+', 2, add},
     {'-', 2, subtract},
     {'*', 2, multiply}
 };
-
-
-
-
-
-
-
-/*---- Main Logic -------------------------------------------------*/
-
 
 int main(int argc, char *argv[])
 {
@@ -105,7 +78,9 @@ int main(int argc, char *argv[])
 }
 
 void process_input(numberstack* numbers, operation** current_op, char* in) {
-
+    // -> operand (command) operand
+    // non functioned commands (1ºhelp,clean,2ºhistory)
+    // -> (command) operand [-10 != history - 10]
     // Process input
     switch (in[0]) {
 
@@ -194,6 +169,8 @@ void clear_history() {
 
     wmove(displaywin, 14, 11);
     wclrtoeol(displaywin);
+    wmove(displaywin, 15, 0);
+    wclrtoeol(displaywin);
 }
 
 void add_to_history(char* in) {
@@ -201,15 +178,6 @@ void add_to_history(char* in) {
     history.records[history.size] = malloc(MAX_IN);
     strcpy(history.records[history.size++], *in == '\0' ? "0" : in);
 }
-
-
-
-
-
-
-
-/*---- Graphics Logic ---------------------------------------------*/
-
 
 void init_gui() {
 
@@ -298,7 +266,7 @@ void draw(numberstack* numbers, operation* current_op) {
     mvwprintw(displaywin, 4, 2, "Decimal:   %d", n);
     mvwprintw(displaywin, 6, 2, "Hex:       0x%X", n);
     printbinary(n);
-    /* printhistory(); */
+    printhistory();
     wrefresh(displaywin);
 
     // Clear input
@@ -312,12 +280,7 @@ void draw(numberstack* numbers, operation* current_op) {
 
 
 
-
-
-
-
-/*---- Operations -------------------------------------------------*/
-
+// Operations
 
 long long add(long long a, long long b) {
 
