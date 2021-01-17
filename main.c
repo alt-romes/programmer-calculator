@@ -155,6 +155,12 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 
         case '0':
 
+            if (*current_op == operations) { // If is the invalid operation (first in array of operations)
+
+                clear_numberstack(numbers);
+                clear_history();
+            }
+
             if (in[1] == 'x')
                 push_numberstack(numbers, strtoll(in+2, NULL, 16));
 
@@ -283,7 +289,7 @@ void add_to_history(char* in) {
 
 /*---- Graphics Logic ---------------------------------------------*/
 
-//TODO add new ops
+
 void init_gui() {
 
     initscr();
@@ -296,7 +302,7 @@ void init_gui() {
     refresh();
 
     box(displaywin, ' ', 0);
-    mvwprintw(displaywin, ymax-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /\n  AND  &    OR   |    NOR  n    XOR  ^\n  SL   <    SR   >    RL   (    RR   )");
+    mvwprintw(displaywin, ymax-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /\n  AND  &    OR   |    NOR  n    XOR  x\n  SL   <    SR   >    RL   ?    RR   ?");
     wrefresh(displaywin);
 
     inputwin = newwin(3, xmax, ymax-3, 0);
@@ -368,10 +374,10 @@ void draw(numberstack* numbers, operation* current_op) {
 
     // Write values
     mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op->character ? current_op->character : ' ');
-    mvwprintw(displaywin, 4, 2, "Decimal:   %lld", n);
+    mvwprintw(displaywin, 4, 2, "Decimal:   %d", n);
     mvwprintw(displaywin, 6, 2, "Hex:       0x%X", n);
     printbinary(n);
-    /* printhistory(); */
+    printhistory();
     wrefresh(displaywin);
 
     // Clear input
