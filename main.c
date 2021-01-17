@@ -304,7 +304,7 @@ void draw(numberstack* numbers, operation* current_op) {
     mvwprintw(displaywin, 4, 2, "Decimal:   %d", n);
     mvwprintw(displaywin, 6, 2, "Hex:       0x%X", n);
     printbinary(n);
-    /* printhistory(); */
+    printhistory();
     wrefresh(displaywin);
 
     // Clear input
