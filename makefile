@@ -6,3 +6,5 @@ run:
 
 clean:
 	rm calculator
+
+cr: default run

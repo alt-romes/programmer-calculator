@@ -27,7 +27,7 @@ WINDOW* displaywin, * inputwin;
 void init_gui();
 void draw(numberstack*, operation*);
 void printbinary(long long);
-void printhistory();
+void printhistory(numberstack*);
 
 // General
 operation* getopcode(char);
@@ -39,6 +39,10 @@ void add_to_history();
 long long add(long long, long long);
 long long subtract(long long, long long);
 long long multiply(long long, long long);
+
+// Variables
+int wMaxX;
+int wMaxY;
 
 operation operations[4] = {
     {0, 0, NULL},
@@ -91,7 +95,10 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         case '*':
             *current_op = getopcode(in[0]);
             break;
-
+        case 'h':
+            wmove(displaywin,16,2);
+            wprintw(displaywin,"This is our help. lul");
+            break;
         case '0':
 
             if (*current_op == operations) { // If is the invalid operation (first in array of operations)
@@ -190,17 +197,16 @@ void init_gui() {
     initscr();
     cbreak(); // exit on ctrl+c
 
-    int ymax, xmax;
-    getmaxyx(stdscr, ymax, xmax);
+    getmaxyx(stdscr, wMaxY, wMaxX);
 
-    displaywin = newwin(ymax-3, xmax, 0, 0);
+    displaywin = newwin(wMaxY-3, wMaxX, 0, 0);
     refresh();
 
     box(displaywin, ' ', 0);
-    mvwprintw(displaywin, ymax-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /\n  AND  &    OR   |    NOR  n    XOR  x\n  SL   <    SR   >    RL   ?    RR   ?");
+    mvwprintw(displaywin, wMaxY-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /\n  AND  &    OR   |    NOR  n    XOR  x\n  SL   <    SR   >    RL   ?    RR   ?");
     wrefresh(displaywin);
 
-    inputwin = newwin(3, xmax, ymax-3, 0);
+    inputwin = newwin(3, wMaxX, wMaxY-3, 0);
     refresh();
 
     box(inputwin, ' ', 0);
@@ -232,12 +238,18 @@ void printbinary(long long value) {
     }
 }
 
-void printhistory() {
-
+void printhistory(numberstack* numbers) {
+    int currY,currX;
     mvwprintw(displaywin, 14, 2, "History:   ");
-
     for (int i=0; i<history.size; i++) {
-        
+        getyx(displaywin,currY,currX);
+        if(currX >= wMaxX-3 || currY > 14) {
+            clear_history();
+            long long aux = *top_numberstack(numbers);
+            char str[21];
+            sprintf(str,"%lld",aux);
+            add_to_history(str);
+        }
         wprintw(displaywin, "%s ", history.records[i]);
     }
 }
@@ -272,7 +284,7 @@ void draw(numberstack* numbers, operation* current_op) {
     mvwprintw(displaywin, 4, 2, "Decimal:   %d", n);
     mvwprintw(displaywin, 6, 2, "Hex:       0x%X", n);
     printbinary(n);
-    printhistory();
+    printhistory(numbers);
     wrefresh(displaywin);
 
     // Clear input
