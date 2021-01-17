@@ -39,21 +39,45 @@ void add_to_history();
 long long add(long long, long long);
 long long subtract(long long, long long);
 long long multiply(long long, long long);
+long long divide(long long, long long);
+long long and(long long, long long);
+long long or(long long, long long);
+long long nor(long long, long long);
+long long xor(long long, long long);
+long long sl(long long, long long);
+long long sr(long long, long long);
+long long rl(long long, long long);
+long long rr(long long, long long);
+long long modulus(long long, long long);
+long long not(long long, long long);
+long long twos_complement(long long, long long);
 
 // Variables
 int wMaxX;
 int wMaxY;
 
-operation operations[4] = {
+operation operations[16] = {
     {0, 0, NULL},
     {'+', 2, add},
     {'-', 2, subtract},
-    {'*', 2, multiply}
+    {'*', 2, multiply},
+    {'/', 2, divide},
+    {'&', 2, and},
+    {'|', 2, or},
+    {'n', 2, nor},
+    {'^', 2, xor},
+    {'<', 2, sl},
+    {'>', 2, sr},
+    {'(', 2, rl},
+    {')', 2, rr},
+    {'%', 2, modulus},
+    {'~', 1, not},
+    {'t', 1, twos_complement}
 };
 
 int main(int argc, char *argv[])
 {
-    
+
     init_gui(&displaywin, &inputwin);
 
     numberstack* numbers = create_numberstack(4);
@@ -93,6 +117,18 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
             if (in[1] != '\0') // differ subtraction from minus sign
                 goto default_push_label;
         case '*':
+        case '/':
+        case '&':
+        case '|':
+        case 'n':
+        case '^':
+        case '<':
+        case '>':
+        case '(':
+        case ')':
+        case '%':
+        case 't':
+        case '~':
             *current_op = getopcode(in[0]);
             break;
         case 'h':
@@ -170,7 +206,44 @@ operation* getopcode(char c)  {
         case '*':
             r = &operations[3];
             break;
-    } 
+        case '/':
+            r = &operations[4];
+            break;
+        case '&':
+            r = &operations[5];
+            break;
+        case '|':
+            r = &operations[6];
+            break;
+        case 'n':
+            r = &operations[7];
+            break;
+        case '^':
+            r = &operations[8];
+            break;
+        case '<':
+            r = &operations[9];
+            break;
+        case '>':
+            r = &operations[10];
+            break;
+        case '(':
+            r = &operations[11];
+            break;
+        case ')':
+            r = &operations[12];
+            break;
+        case '%':
+            r = &operations[13];
+            break;
+        case '~':
+            r = &operations[14];
+            break;
+        case 't':
+            r = &operations[15];
+            break;
+
+    }
 
     return r;
 }
@@ -307,7 +380,7 @@ long long add(long long a, long long b) {
 
 // remember op1 = first popped ( right operand ), op2 = second popped ( left operand )
 long long subtract(long long a, long long b) {
-    
+
     return b - a;
 }
 long long multiply(long long a, long long b) {
@@ -315,3 +388,80 @@ long long multiply(long long a, long long b) {
     return a * b;
 }
 
+long long divide(long long a, long long b) {
+    //TODO not divisible by 0
+    if(!a)
+        return 0;
+    return b / a;
+}
+
+long long and(long long a, long long b) {
+
+    return a & b;
+}
+
+long long or(long long a, long long b) {
+
+    return a | b;
+}
+
+long long nor(long long a, long long b) {
+
+    return ~or(a,b);
+}
+
+long long xor(long long a, long long b) {
+
+    return a ^ b;
+}
+long long sl(long long a, long long b) {
+
+    return b << a;
+}
+
+long long sr(long long a, long long b) {
+    return b >> a;
+}
+
+long long rl(long long a, long long b) {
+    long long res = b;
+    for(int i = 0; i<a;i++){
+        long long left_most_bit = 0x8000000000000000 & res;
+        res = res<<1;
+        if(left_most_bit)
+            res = res | 0x1;
+        else
+            res = res & 0xFFFFFFFFFFFFFFFE;
+    }
+    return res;
+    // return ( b << a | ( (~(-1 >> a) & b ) >> 64 - a ));
+}
+
+long long rr(long long a, long long b) {
+    long long res = b;
+    for(int i = 0; i<a;i++){
+        long long right_most_bit = 0x1 & res;
+        res = res>>1;
+        if(right_most_bit)
+            res = res | 0x8000000000000000;
+        else
+            res = res & 0x7FFFFFFFFFFFFFFF;
+    }
+    return res;
+    // return ( b >> a | ( (~(-1 << a) & b ) << 64 - a ));
+}
+
+long long modulus(long long a, long long b) {
+
+    return b % a;
+}
+
+long long not(long long a, long long b) {
+
+    return ~a;
+}
+
+long long twos_complement(long long a, long long b) {
+
+    return ~a + 1;
+}
