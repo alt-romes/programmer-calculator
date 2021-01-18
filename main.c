@@ -7,6 +7,13 @@
 
 #define MAX_IN 80
 
+
+
+
+
+/*---- Structures -------------------------------------------------*/
+
+
 // Operations Control
 // Example: '+' takes two operands, therefore the noperands = 2
 typedef struct operation {
@@ -22,7 +29,15 @@ struct history {
 
 struct history history;
 
-// ncurses
+
+
+
+
+/*---- Function Prototypes ----------------------------------------*/
+
+
+
+// Drawing
 WINDOW* displaywin, * inputwin;
 void init_gui();
 void draw(numberstack*, operation*);
@@ -52,13 +67,19 @@ long long modulus(long long, long long);
 long long not(long long, long long);
 long long twos_complement(long long, long long);
 
+
+
+
+
+/*---- Define Operations and Global Vars --------------------------*/
+
 // Variables
 int wMaxX;
 int wMaxY;
-const char *  all_ops = "+-*/&|n^<>()%~t";
 
 int binary_enabled = 1;
 
+const char *  all_ops = "+-*/&|n^<>()%~t";
 
 operation operations[16] = {
     {0, 0, NULL},
@@ -78,6 +99,15 @@ operation operations[16] = {
     {'~', 1, not},
     {'t', 1, twos_complement}
 };
+
+
+
+
+
+
+
+/*---- Main Logic -------------------------------------------------*/
+
 
 int main(int argc, char *argv[])
 {
@@ -247,6 +277,15 @@ void add_to_history(char* in) {
     strcpy(history.records[history.size++], *in == '\0' ? "0" : in);
 }
 
+
+
+
+
+
+
+/*---- Graphics Logic ---------------------------------------------*/
+
+
 void init_gui() {
 
     initscr();
@@ -355,7 +394,12 @@ void draw(numberstack* numbers, operation* current_op) {
 
 
 
-// Operations
+
+
+
+
+/*---- Operations -------------------------------------------------*/
+
 
 long long add(long long a, long long b) {
 
