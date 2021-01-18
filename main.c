@@ -36,7 +36,6 @@ struct history history;
 /*---- Function Prototypes ----------------------------------------*/
 
 
-
 // Drawing
 WINDOW* displaywin, * inputwin;
 void init_gui();
@@ -73,6 +72,7 @@ long long twos_complement(long long, long long);
 
 
 /*---- Define Operations and Global Vars --------------------------*/
+
 
 // Variables
 int wMaxX;
@@ -373,8 +373,7 @@ void draw(numberstack* numbers, operation* current_op) {
     mvwprintw(displaywin, 6, 2, "Hex:       0x%X", n);
     if (binary_enabled)
         printbinary(n);
-    if (history_enabled)
-        printhistory(numbers);
+    printhistory(numbers);
     wrefresh(displaywin);
 
     // Clear input
