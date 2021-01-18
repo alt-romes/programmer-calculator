@@ -111,14 +111,17 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
     // non functioned commands (1ºhelp,clean,2ºhistory)
     // -> (command) operand [-10 != history - 10]
     // Process input
-    char * op = strpbrk(in, all_ops);
 
-    if(*op!=NULL) {
+    char * op = strpbrk(in, all_ops);
+    if (op != NULL) {
+        char opchar[2];
+        opchar[0] = *op;
+        opchar[1] = '\0';
         *current_op = getopcode(*op);
-        char *  token = strtok(in,op);
-        while(token != NULL){
-        	push_numberstack(numbers,attol(token));
-        	token = strtok(NULL,op);
+        char *  token = strtok(in, opchar);
+        while (token != NULL) {
+        	push_numberstack(numbers, atoll(token));
+        	token = strtok(NULL, opchar);
         }
     }
     else if (!strcmp(in, "help")) {
@@ -142,64 +145,6 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         else
             push_numberstack(numbers, atoll(in));
     }
-
-    // switch (in[0]) {
-    //
-    //     case '+':
-    //     case '-':
-    //         if (in[1] != '\0') // differ subtraction from minus sign
-    //             goto default_push_label;
-    //     case '*':
-    //     case '/':
-    //     case '&':
-    //     case '|':
-    //     case 'n':
-    //     case '^':
-    //     case '<':
-    //     case '>':
-    //     case '(':
-    //     case ')':
-    //     case '%':
-    //     case 't':
-    //     case '~':
-    //         *current_op = getopcode(in[0]);
-    //         break;
-    //     case 'h':
-    //         wmove(displaywin,16,2);
-    //         wprintw(displaywin,"This is our help. lul");
-    //         break;
-    //     case '0':
-    //
-    //         if (*current_op == operations) { // If is the invalid operation (first in array of operations)
-    //
-    //             clear_numberstack(numbers);
-    //             clear_history();
-    //         }
-    //
-    //         if (in[1] == 'x')
-    //             push_numberstack(numbers, strtoll(in+2, NULL, 16));
-    //
-    //         else if (in[1] == 'b')
-    //             push_numberstack(numbers, strtoll(in+2, NULL, 2));
-    //
-    //         else
-    //             goto default_push_label;
-    //
-    //         break;
-    //
-    //     case '\0':
-    //         // Pressed empty enter aka clear
-    //         clear_history();
-    //     default:
-    //         default_push_label:
-    //
-    //         if (*current_op == operations) { // If is the invalid operation (first in array of operations)
-    //
-    //             clear_numberstack(numbers);
-    //             clear_history();
-    //         }
-    //         push_numberstack(numbers, atoll(in));
-    // }
 
     // Add to history
     add_to_history(in);
