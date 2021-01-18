@@ -49,6 +49,7 @@ operation* getopcode(char);
 void process_input(numberstack*, operation**, char*);
 void clear_history();
 void add_to_history();
+void pushnumber(char *, numberstack*);
 
 // Operations
 long long add(long long, long long);
@@ -153,7 +154,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         *current_op = getopcode(*op);
         char *  token = strtok(in, opchar);
         while (token != NULL) {
-        	push_numberstack(numbers, atoll(token));
+        	pushnumber(token, numbers);
         	token = strtok(NULL, opchar);
         }
     }
@@ -167,17 +168,10 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
             clear_numberstack(numbers);
             clear_history();
         }
-        if (in[0] == '0') {
-            if (in[1] == 'x')
-                push_numberstack(numbers, strtoll(in+2, NULL, 16));
-
-            else if (in[1] == 'b')
-                push_numberstack(numbers, strtoll(in+2, NULL, 2));
-        }
-        else if (in[0] == '\0')
+        if (in[0] == '\0')
             clear_history();
         else
-            push_numberstack(numbers, atoll(in));
+            pushnumber(in, numbers);
     }
 
     // Add to history
@@ -392,7 +386,17 @@ void draw(numberstack* numbers, operation* current_op) {
     wrefresh(inputwin);
 }
 
+void pushnumber(char * in, numberstack* numbers) {
+    if (in[0] == '0') {
+        if (in[1] == 'x')
+            push_numberstack(numbers, strtoll(in+2, NULL, 16));
 
+        else if (in[1] == 'b')
+            push_numberstack(numbers, strtoll(in+2, NULL, 2));
+    }
+    else
+        push_numberstack(numbers, atoll(in));
+}
 
 
 
