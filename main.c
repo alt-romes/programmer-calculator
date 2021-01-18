@@ -81,7 +81,9 @@ int wMaxY;
 int binary_enabled = 1;
 
 const char *  all_ops = "+-*/&|n^<>()%~t";
-
+const unsigned long long defaultmask = -1;
+unsigned long long globalmask = defaultmask;
+int globalmasksize = 64;
 operation operations[16] = {
     {0, 0, NULL},
     {'+', 2, add},
@@ -153,6 +155,10 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         opchar[1] = '\0';
         *current_op = getopcode(*op);
         char *  token = strtok(in, opchar);
+        // if(token != NULL){
+        //     clear_numberstack(numbers);
+        //     clear_history();
+    //}
         while (token != NULL) {
         	pushnumber(token, numbers);
         	token = strtok(NULL, opchar);
@@ -161,6 +167,18 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
     else if (!strcmp(in, "binary")) {
         binary_enabled = !binary_enabled;
         //help();
+    }
+    else if (strrchr(in, 'b')!= NULL) {
+        int newmasksize = atoi(in);
+        char res[40];
+        sprintf(res,"%d",64-newmasksize);
+        //globalmask cant be 0x16f's
+        mvwprintw(displaywin, 17, 2, res);
+        //TODO make it so mask over 64 are impossible
+    	globalmask = defaultmask >> (64-newmasksize);
+
+        sprintf(res,"%lld",globalmask);
+        mvwprintw(displaywin, 16, 2, res);
     }
     else {
         if (*current_op == operations) { // If is the invalid operation (first in array of operations)
@@ -406,52 +424,52 @@ void pushnumber(char * in, numberstack* numbers) {
 
 long long add(long long a, long long b) {
 
-    return a + b;
+    return (a + b) & globalmask;
 }
 
 // remember op1 = first popped ( right operand ), op2 = second popped ( left operand )
 long long subtract(long long a, long long b) {
 
-    return b - a;
+    return (b - a) & globalmask;
 }
 long long multiply(long long a, long long b) {
 
-    return a * b;
+    return (a * b) & globalmask;
 }
 
 long long divide(long long a, long long b) {
     //TODO not divisible by 0
     if(!a)
         return 0;
-    return b / a;
+    return (b / a) & globalmask;
 }
 
 long long and(long long a, long long b) {
 
-    return a & b;
+    return (a & b) & globalmask;
 }
 
 long long or(long long a, long long b) {
 
-    return a | b;
+    return (a | b) & globalmask;
 }
 
 long long nor(long long a, long long b) {
 
-    return ~or(a,b);
+    return (~or(a,b)) & globalmask;
 }
 
 long long xor(long long a, long long b) {
 
-    return a ^ b;
+    return (a ^ b) & globalmask;
 }
 long long sl(long long a, long long b) {
 
-    return b << a;
+    return (b << a) & globalmask;
 }
 
 long long sr(long long a, long long b) {
-    return b >> a;
+    return (b >> a) & globalmask;
 }
 
 long long rl(long long a, long long b) {
@@ -484,15 +502,15 @@ long long rr(long long a, long long b) {
 
 long long modulus(long long a, long long b) {
 
-    return b % a;
+    return (b % a) & globalmask;
 }
 
 long long not(long long a, long long b) {
 
-    return ~a;
+    return ~a & globalmask;
 }
 
 long long twos_complement(long long a, long long b) {
 
-    return ~a + 1;
+    return (~a + 1) & globalmask;
 }
