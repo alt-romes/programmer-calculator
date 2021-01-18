@@ -13,7 +13,6 @@ features:
     - change number of bits used
 
 fix:
-    long long + long long is being done with integers ( c integer arithmetic ), so 0xffffffff + 1 with 64 bits should be a higher number, and shouldn't become 0 as it is doing now. > fix decimal and hexadecimal number representation
 
     - history is broken when 2*2 is inserted 
 
@@ -29,4 +28,5 @@ fix:
 
     - cleanup how lines are printed (should start )
 
-
+test:
+    - make sure different number of bits still work with %lld and %llx
