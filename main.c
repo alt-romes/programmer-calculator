@@ -387,8 +387,8 @@ void draw(numberstack* numbers, operation* current_op) {
 
     // Write values
     mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op->character ? current_op->character : ' ');
-    mvwprintw(displaywin, 4, 2, "Decimal:   %d", n);
-    mvwprintw(displaywin, 6, 2, "Hex:       0x%X", n);
+    mvwprintw(displaywin, 4, 2, "Decimal:   %lld", n);
+    mvwprintw(displaywin, 6, 2, "Hex:       0x%llX", n);
     if (binary_enabled)
         printbinary(n);
     printhistory(numbers);
@@ -404,13 +404,12 @@ void draw(numberstack* numbers, operation* current_op) {
 }
 
 void pushnumber(char * in, numberstack* numbers) {
-    if (in[0] == '0') {
-        if (in[1] == 'x')
-            push_numberstack(numbers, strtoll(in+2, NULL, 16));
 
-        else if (in[1] == 'b')
-            push_numberstack(numbers, strtoll(in+2, NULL, 2));
-    }
+    char* hbstr;
+    if ((hbstr = strstr(in, "0x")) != NULL)
+        push_numberstack(numbers, strtoll(hbstr+2, NULL, 16));
+    else if ((hbstr = strstr(in, "0b")) != NULL)
+        push_numberstack(numbers, strtoll(hbstr+2, NULL, 2));
     else
         push_numberstack(numbers, atoll(in));
 }
