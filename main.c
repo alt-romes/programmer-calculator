@@ -57,6 +57,9 @@ int wMaxX;
 int wMaxY;
 const char *  all_ops = "+-*/&|n^<>()%~t";
 
+int binary_enabled = 1;
+
+
 operation operations[16] = {
     {0, 0, NULL},
     {'+', 2, add},
@@ -124,7 +127,8 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         	token = strtok(NULL, opchar);
         }
     }
-    else if (!strcmp(in, "help")) {
+    else if (!strcmp(in, "binary")) {
+        binary_enabled = !binary_enabled;
         //help();
     }
     else {
@@ -334,8 +338,10 @@ void draw(numberstack* numbers, operation* current_op) {
     mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op->character ? current_op->character : ' ');
     mvwprintw(displaywin, 4, 2, "Decimal:   %d", n);
     mvwprintw(displaywin, 6, 2, "Hex:       0x%X", n);
-    printbinary(n);
-    printhistory(numbers);
+    if (binary_enabled)
+        printbinary(n);
+    if (history_enabled)
+        printhistory(numbers);
     wrefresh(displaywin);
 
     // Clear input
