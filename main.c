@@ -78,10 +78,12 @@ long long twos_complement(long long, long long);
 int wMaxX;
 int wMaxY;
 
-int binary_enabled = 1;
+int operation_enabled = 1;
 int decimal_enabled = 1;
 int hex_enabled = 1;
 int symbols_enabled = 1;
+int binary_enabled = 1;
+int history_enabled = 1;
 
 const char *  all_ops = "+-*/&|$^<>()%~'";
 const unsigned long long DEFAULT_MASK = -1;
@@ -119,7 +121,8 @@ operation operations[16] = {
 
 int main(int argc, char *argv[])
 {
-    if (argc > 2 && argv[1][0] == '-') {
+    if (argc >= 2 && argv[1][0] == '-') {
+
         for (int i=1; argv[1][i] != '\0'; i++) {
             
             switch (argv[1][i]) {
@@ -209,6 +212,10 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         hex_enabled = !hex_enabled;
     } else if (!strcmp(in, "decimal")) {
         decimal_enabled = !decimal_enabled;
+    } else if (!strcmp(in, "history")) {
+        history_enabled = !history_enabled;
+    } else if (!strcmp(in, "operation")) {
+        operation_enabled = !operation_enabled;
     }
     //TODO: isto não pode estar aqui, pq se não não dá para se escrever 0b011
     else if (strstr(in, "0b") == NULL && strrchr(in, 'b') != NULL) {
@@ -428,10 +435,11 @@ void draw(numberstack* numbers, operation* current_op) {
         wclrtoeol(displaywin);
     }
 
-    mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op->character ? current_op->character : ' ');
+    if(!operation_enabled) prio += 2;
+    else mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op->character ? current_op->character : ' ');
     
     if(!decimal_enabled) prio += 2;
-    else mvwprintw(displaywin, 4, 2, "Decimal:   %lld", n);
+    else mvwprintw(displaywin, 4-prio, 2, "Decimal:   %lld", n);
 
     if(!hex_enabled) prio += 2; 
     else mvwprintw(displaywin, 6-prio, 2, "Hex:       0x%llX", n);
@@ -439,7 +447,8 @@ void draw(numberstack* numbers, operation* current_op) {
     if(!binary_enabled) prio +=6;
     else printbinary(n,prio);
     
-    printhistory(numbers,prio);
+    if(!history_enabled) prio += 2;
+    else printhistory(numbers,prio);
     
     wrefresh(displaywin);
 
