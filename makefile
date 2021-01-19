@@ -1,5 +1,5 @@
 default:
-	gcc main.c -o calculator -lncurses
+	gcc main.c -Wall -o calculator -lncurses
 
 run:
 	./calculator
