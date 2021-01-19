@@ -81,9 +81,11 @@ int wMaxY;
 int binary_enabled = 1;
 
 const char *  all_ops = "+-*/&|n^<>()%~t";
-const unsigned long long defaultmask = -1;
-unsigned long long globalmask = defaultmask;
-int globalmasksize = 64;
+const unsigned long long DEFAULT_MASK = -1;
+const int DEFAULT_MASK_SIZE = 64;
+unsigned long long globalmask = DEFAULT_MASK;
+int globalmasksize = DEFAULT_MASK_SIZE;
+
 operation operations[16] = {
     {0, 0, NULL},
     {'+', 2, add},
@@ -158,7 +160,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         // if(token != NULL){
         //     clear_numberstack(numbers);
         //     clear_history();
-    //}
+        // }
         while (token != NULL) {
         	pushnumber(token, numbers);
         	token = strtok(NULL, opchar);
@@ -166,30 +168,23 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
     }
     else if (!strcmp(in, "binary")) {
         binary_enabled = !binary_enabled;
-        //help();
     }
-    else if (strrchr(in, 'b')!= NULL) {
-        int newmasksize = atoi(in);
-        char res[40];
-        sprintf(res,"%d",64-newmasksize);
-        //globalmask cant be 0x16f's
-        mvwprintw(displaywin, 17, 2, res);
-        //TODO make it so mask over 64 are impossible
-    	globalmask = defaultmask >> (64-newmasksize);
+    //TODO: isto não pode estar aqui, pq se não não dá para se escrever 0b011
+    else if (strrchr(in, 'b') != NULL) {
+        int requestedmasksize = atoi(in);
+        globalmasksize = requestedmasksize > DEFAULT_MASK_SIZE || requestedmasksize <= 0 ? DEFAULT_MASK_SIZE : requestedmasksize;
 
-        sprintf(res,"%lld",globalmask);
-        mvwprintw(displaywin, 16, 2, res);
+        //globalmask cant be 0x16f's
+    	globalmask = DEFAULT_MASK >> (DEFAULT_MASK_SIZE-globalmasksize);
     }
     else {
-        if (*current_op == operations) { // If is the invalid operation (first in array of operations)
+        if (*current_op == operations || in[0] == '\0') { // If is the invalid operation (first in array of operations)
 
             clear_numberstack(numbers);
             clear_history();
         }
-        if (in[0] == '\0')
-            clear_history();
-        else
-            pushnumber(in, numbers);
+
+        pushnumber(in, numbers);
     }
 
     // Add to history
@@ -407,11 +402,11 @@ void pushnumber(char * in, numberstack* numbers) {
 
     char* hbstr;
     if ((hbstr = strstr(in, "0x")) != NULL)
-        push_numberstack(numbers, strtoll(hbstr+2, NULL, 16));
+        push_numberstack(numbers, strtoll(hbstr+2, NULL, 16) & globalmask);
     else if ((hbstr = strstr(in, "0b")) != NULL)
-        push_numberstack(numbers, strtoll(hbstr+2, NULL, 2));
+        push_numberstack(numbers, strtoll(hbstr+2, NULL, 2) & globalmask);
     else
-        push_numberstack(numbers, atoll(in));
+        push_numberstack(numbers, atoll(in) & globalmask);
 }
 
 
@@ -468,35 +463,19 @@ long long sl(long long a, long long b) {
 }
 
 long long sr(long long a, long long b) {
-    return (b >> a) & globalmask;
+    return ( (b >> a) & ~((long long) -1 << (64-a)) ) & globalmask;
 }
 
 long long rl(long long a, long long b) {
-    long long res = b;
-    for(int i = 0; i<a;i++){
-        long long left_most_bit = 0x8000000000000000 & res;
-        res = res<<1;
-        if(left_most_bit)
-            res = res | 0x1;
-        else
-            res = res & 0xFFFFFFFFFFFFFFFE;
-    }
-    return res;
-    // return ( b << a | ( (~(-1 >> a) & b ) >> 64 - a ));
+
+    // TODO: Add mask size instead of 64
+    return ( b << a | sr(globalmasksize-a, b) );
 }
 
 long long rr(long long a, long long b) {
-    long long res = b;
-    for(int i = 0; i<a;i++){
-        long long right_most_bit = 0x1 & res;
-        res = res>>1;
-        if(right_most_bit)
-            res = res | 0x8000000000000000;
-        else
-            res = res & 0x7FFFFFFFFFFFFFFF;
-    }
-    return res;
-    // return ( b >> a | ( (~(-1 << a) & b ) << 64 - a ));
+
+    // TODO: Add mask size
+    return ( sr(a, b) | ( b << (globalmasksize- a) ) );
 }
 
 long long modulus(long long a, long long b) {

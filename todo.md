@@ -14,6 +14,8 @@ features:
 
 fix:
 
+    - when writing 2*2 or 2*, clear the 0 from the stack first.
+
     - history is broken when 2*2 is inserted
 
     - if there's an operation in course, two enters should reset the calculator
@@ -23,8 +25,6 @@ fix:
     - atualizar lista de operações
 
     - history only displays what was accepted, prettify. (i.e. askdfj = 10, help = help, + = +, 20*20 = 20 * 20, 20 *20 = 20 * 20, *20 = * 20 )
-
-    no priority: 2+ when stack isn't empty should restart history & stack
 
     - cleanup how lines are printed (should start )
 
