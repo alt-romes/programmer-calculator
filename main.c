@@ -80,7 +80,7 @@ int wMaxY;
 
 int binary_enabled = 1;
 
-const char *  all_ops = "+-*/&|n^<>()%~t";
+const char *  all_ops = "+-*/&|$^<>()%~'";
 const unsigned long long DEFAULT_MASK = -1;
 const int DEFAULT_MASK_SIZE = 64;
 unsigned long long globalmask = DEFAULT_MASK;
@@ -94,7 +94,7 @@ operation operations[16] = {
     {'/', 2, divide},
     {'&', 2, and},
     {'|', 2, or},
-    {'n', 2, nor},
+    {'$', 2, nor},
     {'^', 2, xor},
     {'<', 2, sl},
     {'>', 2, sr},
@@ -102,7 +102,7 @@ operation operations[16] = {
     {')', 2, rr},
     {'%', 2, modulus},
     {'~', 1, not},
-    {'t', 1, twos_complement}
+    {'\'', 1, twos_complement}
 };
 
 
@@ -156,11 +156,11 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         opchar[0] = *op;
         opchar[1] = '\0';
         *current_op = getopcode(*op);
-        char *  token = strtok(in, opchar);
-        // if(token != NULL){
-        //     clear_numberstack(numbers);
-        //     clear_history();
-        // }
+        char * token = strtok(in, opchar);
+        if(token != NULL && token < op) {
+            clear_numberstack(numbers);
+            clear_history();
+        }
         while (token != NULL) {
         	pushnumber(token, numbers);
         	token = strtok(NULL, opchar);
@@ -170,15 +170,26 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         binary_enabled = !binary_enabled;
     }
     //TODO: isto não pode estar aqui, pq se não não dá para se escrever 0b011
-    else if (strrchr(in, 'b') != NULL) {
+    else if (strstr(in, "0b") == NULL && strrchr(in, 'b') != NULL) {
+
         int requestedmasksize = atoi(in);
         globalmasksize = requestedmasksize > DEFAULT_MASK_SIZE || requestedmasksize <= 0 ? DEFAULT_MASK_SIZE : requestedmasksize;
 
         //globalmask cant be 0x16f's
     	globalmask = DEFAULT_MASK >> (DEFAULT_MASK_SIZE-globalmasksize);
+
+        // apply mask to all numbers in stack
+        numberstack* aux = create_numberstack(numbers->size);
+        for (int i=0; i<numbers->size; i++)
+            push_numberstack(aux, *pop_numberstack(numbers) & globalmask);
+
+        for (int i=0; i<aux->size; i++)
+            push_numberstack(numbers, *pop_numberstack(aux) & globalmask);
+
     }
     else {
-        if (*current_op == operations || in[0] == '\0') { // If is the invalid operation (first in array of operations)
+        // If is the invalid operation (first in array of operations)
+        if (*current_op == operations || (in[0] == '\0' && (*current_op = operations)) ) {
 
             clear_numberstack(numbers);
             clear_history();
@@ -234,7 +245,7 @@ operation* getopcode(char c)  {
         case '|':
             r = &operations[6];
             break;
-        case 'n':
+        case '$':
             r = &operations[7];
             break;
         case '^':
@@ -258,7 +269,7 @@ operation* getopcode(char c)  {
         case '~':
             r = &operations[14];
             break;
-        case 't':
+        case '\'':
             r = &operations[15];
             break;
 
@@ -304,7 +315,7 @@ void init_gui() {
     refresh();
 
     box(displaywin, ' ', 0);
-    mvwprintw(displaywin, wMaxY-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /\n  AND  &    OR   |    NOR  n    XOR  x\n  SL   <    SR   >    RL   ?    RR   ?");
+    mvwprintw(displaywin, wMaxY-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n  SL   <    SR   >    RL   (    RR   )    2's  '");
     wrefresh(displaywin);
 
     inputwin = newwin(3, wMaxX, wMaxY-3, 0);
@@ -317,11 +328,13 @@ void init_gui() {
 
 void printbinary(long long value) {
 
-    unsigned long long mask = 0x8000000000000000;
+    unsigned long long mask = ((long long) 1) << (globalmasksize - 1); // Mask starts at the last bit to display, and is >> until the end
 
-    mvwprintw(displaywin, 8, 2, "Binary:    \n         64  ");
+    int i=DEFAULT_MASK_SIZE-globalmasksize;
 
-    for (int i=0; i<64; i++, mask>>=1) {
+    mvwprintw(displaywin, 8, 2, "Binary:    \n         %d  ", globalmasksize); // %s must be a 2 digit number
+
+    for (; i<64; i++, mask>>=1) {
 
         unsigned long long bitval = value & mask;
         waddch(displaywin, bitval ? '1':'0');
@@ -347,7 +360,7 @@ void printhistory(numberstack* numbers) {
         if(currX >= wMaxX-3 || currY > 14) {
             clear_history();
             long long aux = *top_numberstack(numbers);
-            char str[21];
+            char str[22];
             sprintf(str,"%lld",aux);
             add_to_history(str);
         }
@@ -369,15 +382,15 @@ void draw(numberstack* numbers, operation* current_op) {
     wclrtoeol(displaywin);
     wmove(displaywin, 6, 11);
     wclrtoeol(displaywin);
-    wmove(displaywin, 8, 11);
+    wmove(displaywin, 8, 0);
     wclrtoeol(displaywin);
-    wmove(displaywin, 9, 11);
+    wmove(displaywin, 9, 0);
     wclrtoeol(displaywin);
-    wmove(displaywin, 10, 11);
+    wmove(displaywin, 10, 0);
     wclrtoeol(displaywin);
-    wmove(displaywin, 11, 11);
+    wmove(displaywin, 11, 0);
     wclrtoeol(displaywin);
-    wmove(displaywin, 12, 11);
+    wmove(displaywin, 12, 0);
     wclrtoeol(displaywin);
 
     // Write values

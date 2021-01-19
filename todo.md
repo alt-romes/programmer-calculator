@@ -1,5 +1,7 @@
 todos:
 
+- when doing math with numbers with specific number of bits, only unsigned numbers work
+
 important:
     - write features in webpage and display product
     - keep track of all features
@@ -14,8 +16,6 @@ features:
 
 fix:
 
-    - when writing 2*2 or 2*, clear the 0 from the stack first.
-
     - history is broken when 2*2 is inserted
 
     - if there's an operation in course, two enters should reset the calculator
@@ -28,6 +28,9 @@ fix:
 
     - cleanup how lines are printed (should start )
 
-    - spamming number + number in 1 line multiple times eventually leads to seg fault.
+    - now, when adding 2+ after having add 2 +, it is reset, instead of adding up ( and this is hard to fix )
+
+    - i can't do 10b because it detects "0b" so it expects to read binary instead of the number of bits
+
 test:
     - make sure different number of bits still work with %lld and %llx
