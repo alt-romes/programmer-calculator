@@ -81,6 +81,7 @@ int wMaxY;
 int binary_enabled = 1;
 int decimal_enabled = 1;
 int hex_enabled = 1;
+int symbols_enabled = 1;
 
 const char *  all_ops = "+-*/&|$^<>()%~'";
 const unsigned long long DEFAULT_MASK = -1;
@@ -118,6 +119,39 @@ operation operations[16] = {
 
 int main(int argc, char *argv[])
 {
+    if (argc > 2 && argv[1][0] == '-') {
+        for (int i=1; argv[1][i] != '\0'; i++) {
+            
+            switch (argv[1][i]) {
+
+                case 'h':
+                    history_enabled = 0;
+                    break;
+                
+                case 'b':
+                    binary_enabled = 0;
+                    break;
+
+                case 'x':
+                    hex_enabled = 0;
+                    break;
+
+                case 'd':
+                    decimal_enabled = 0;
+                    break;
+
+                case 'o':
+                    operation_enabled = 0;
+                    break;
+
+                case 's':
+                    symbols_enabled = 0;
+                    break;
+
+            }
+
+        }    
+    }
 
     init_gui(&displaywin, &inputwin);
 
@@ -322,7 +356,8 @@ void init_gui() {
     refresh();
 
     box(displaywin, ' ', 0);
-    mvwprintw(displaywin, wMaxY-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n  SL   <    SR   >    RL   (    RR   )    2's  '");
+    if (symbols_enabled)
+        mvwprintw(displaywin, wMaxY-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n  SL   <    SR   >    RL   (    RR   )    2's  '");
     wrefresh(displaywin);
 
     inputwin = newwin(3, wMaxX, wMaxY-3, 0);

@@ -28,7 +28,7 @@ fix:
 
     - cleanup how lines are printed (should start )
 
-    - now, when adding 2+ after having add 2 +, it is reset, instead of adding up ( and this is hard to fix )
+    - now, when adding 2+ after having add 2 +, it is reset, instead of adding up ( and this is hard to fix ) - probably just say it's a feature
 
     - i can't do 10b because it detects "0b" so it expects to read binary instead of the number of bits
 
