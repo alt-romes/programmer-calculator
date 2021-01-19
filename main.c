@@ -432,6 +432,7 @@ long long multiply(long long a, long long b) {
 }
 
 long long divide(long long a, long long b) {
+
     //TODO not divisible by 0
     if(!a)
         return 0;
@@ -468,14 +469,12 @@ long long sr(long long a, long long b) {
 
 long long rl(long long a, long long b) {
 
-    // TODO: Add mask size instead of 64
-    return ( b << a | sr(globalmasksize-a, b) );
+    return ( b << a | sr(globalmasksize-a, b) ) & globalmask;
 }
 
 long long rr(long long a, long long b) {
 
-    // TODO: Add mask size
-    return ( sr(a, b) | ( b << (globalmasksize- a) ) );
+    return ( sr(a, b) | ( b << (globalmasksize- a) ) ) & globalmask;
 }
 
 long long modulus(long long a, long long b) {
