@@ -40,9 +40,9 @@ struct history history;
 WINDOW* displaywin, * inputwin;
 void init_gui();
 void draw(numberstack*, operation*);
-void printbinary(long long);
-void printhistory(numberstack*);
-
+void printbinary(long long,int);
+void printhistory(numberstack*,int);
+void sweepline(int,int);
 // General
 operation* getopcode(char);
 void process_input(numberstack*, operation**, char*);
@@ -79,8 +79,9 @@ int wMaxX;
 int wMaxY;
 
 int binary_enabled = 1;
-
-const char *  all_ops = "+-*/&|n^<>()%~t";
+int decimal_enabled = 1;
+int hex_enabled = 1;
+const char *  all_ops = "+-*/&|^<>()%~t";
 
 operation operations[16] = {
     {0, 0, NULL},
@@ -161,6 +162,10 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
     else if (!strcmp(in, "binary")) {
         binary_enabled = !binary_enabled;
         //help();
+    } else if (!strcmp(in, "hex")) {
+        hex_enabled = !hex_enabled;
+    } else if (!strcmp(in, "decimal")) {
+        decimal_enabled = !decimal_enabled;
     }
     else {
         if (*current_op == operations) { // If is the invalid operation (first in array of operations)
@@ -302,11 +307,11 @@ void init_gui() {
 
 }
 
-void printbinary(long long value) {
+void printbinary(long long value, int priority) {
 
     unsigned long long mask = 0x8000000000000000;
 
-    mvwprintw(displaywin, 8, 2, "Binary:    \n         64  ");
+    mvwprintw(displaywin, 8-priority, 2, "Binary:    \n         64  ");
 
     for (int i=0; i<64; i++, mask>>=1) {
 
@@ -315,7 +320,7 @@ void printbinary(long long value) {
 
         if (i%16 == 15 && 64 - ((i/16+1)*16))
             // TODO: Explain these numbers better (and decide if to keep them)
-            wprintw(displaywin, "\n         %d  ", 64-((i/16)+1)*16);
+            wprintw(displaywin, "\n         %d  ", 64-((i/16)+1)*16)-priority;
         else if (i%8 == 7)
             wprintw(displaywin, "   ");
         else if (i%4 == 3)
@@ -326,9 +331,9 @@ void printbinary(long long value) {
     }
 }
 
-void printhistory(numberstack* numbers) {
+void printhistory(numberstack* numbers, int priority) {
     int currY,currX;
-    mvwprintw(displaywin, 14, 2, "History:   ");
+    mvwprintw(displaywin, 14-priority, 2, "History:   ");
     for (int i=0; i<history.size; i++) {
         getyx(displaywin,currY,currX);
         if(currX >= wMaxX-3 || currY > 14) {
@@ -340,40 +345,39 @@ void printhistory(numberstack* numbers) {
         }
         wprintw(displaywin, "%s ", history.records[i]);
     }
+    if(priority) {
+    wmove(displaywin, 14, 2);
+    wclrtoeol(displaywin);
+    }
 }
 
 void draw(numberstack* numbers, operation* current_op) {
 
     long long* np = top_numberstack(numbers);
     long long n;
+    int prio = 0;
     if (np == NULL) n = 0;
     else n = *np;
 
     // Clear lines
-    wmove(displaywin, 2, 11);
-    wclrtoeol(displaywin);
-    wmove(displaywin, 4, 11);
-    wclrtoeol(displaywin);
-    wmove(displaywin, 6, 11);
-    wclrtoeol(displaywin);
-    wmove(displaywin, 8, 11);
-    wclrtoeol(displaywin);
-    wmove(displaywin, 9, 11);
-    wclrtoeol(displaywin);
-    wmove(displaywin, 10, 11);
-    wclrtoeol(displaywin);
-    wmove(displaywin, 11, 11);
-    wclrtoeol(displaywin);
-    wmove(displaywin, 12, 11);
-    wclrtoeol(displaywin);
+    for(int i = 2 ; i < 16 ; i++) {
+        wmove(displaywin,i,0);
+        wclrtoeol(displaywin);
+    }
 
-    // Write values
     mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op->character ? current_op->character : ' ');
-    mvwprintw(displaywin, 4, 2, "Decimal:   %d", n);
-    mvwprintw(displaywin, 6, 2, "Hex:       0x%X", n);
-    if (binary_enabled)
-        printbinary(n);
-    printhistory(numbers);
+    
+    if(!decimal_enabled) prio += 2;}
+    else mvwprintw(displaywin, 4, 2, "Decimal:   %lld", n);
+
+    if(!hex_enabled) prio += 2; 
+    else mvwprintw(displaywin, 6-prio, 2, "Hex:       0x%llX", n);
+
+    if(!binary_enabled) prio +=6;
+    else printbinary(n,prio);
+    
+    printhistory(numbers,prio);
+    
     wrefresh(displaywin);
 
     // Clear input
@@ -383,6 +387,11 @@ void draw(numberstack* numbers, operation* current_op) {
     // Prompt input
     mvwprintw(inputwin, 1, 2, "Number or operator: ");
     wrefresh(inputwin);
+}
+
+void sweepline(int priority,int prompt) {
+    wmove(displaywin,priority,prompt);
+    wclrtoeol(displaywin);
 }
 
 void pushnumber(char * in, numberstack* numbers) {
