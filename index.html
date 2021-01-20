@@ -24,6 +24,32 @@
             color: #e81c4f; /*Primary color*/
         }
 
+        img {
+            width: 75%;
+            border-radius: 15px;
+            box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+        }
+
+        .imgc {
+            padding: 3em;
+        }
+
+        pre {
+            padding: 1em;
+            border-radius: 6px;
+            background-color: rgb(246, 248, 250);
+            color: #333;
+        }
+
+        .comment {
+            color: #777;
+        }
+
+        .inline-code {
+            color: #333;
+            background-color: rgb(246, 248, 250);
+        }
+
     </style>
 
     <head>
@@ -31,14 +57,89 @@
     </head>
 
     <body>
-        <h2>Programming calculator</h2>
-        The tool you have been missing on !
+        <h2>Programmer calculator</h2>
 
-        The programmer calculator is a simple on-console tool that allows you to make bit-wise operations with an helpful visual representation - 64/32/16 bits for enhanced readability.
+        <p> The programmer calculator is a simple terminal tool designed to give maximum efficiency and flexibility to the programmer working with: </p>
 
-        <p>
-        The idea started while creating a small and simple Nintendo Gameboy™ Emulator. Romes - the pitcher - found that the tools given online were clunky and did not allow for "nice multitasking". Fully infatuated with the idea , our pitcher , using made , the immortalized , Fernando Pessoa quote come alive : "God wills, man thinks: the work is born."
-        </p>
+        <ul>
+            <li>binary, hexadecimal and decimal representations at the same time</li>
+            <li>bitwise operations</li>
+            <li>various operand sizes <small class="comment">(16bits, 32bits, 8bits, etc)</small></li>
+        </ul>
+
+        <p> and who likes: </p>
+
+        <ul>
+            <li>a clear, simple and customizable interface</li>
+            <li>open source software</li>
+            <li>terminal/cli tools</li>
+        </ul>
+        
+        <div class="imgc">
+            <img src="final.png" alt="calculator">
+        </div>
+
+        <h2>Making of</h2>
+
+        <p> The idea was born while developing a Nintendo Gameboy Emulator. Romes - the pitcher - found that the tools given online were clunky and did not allow for "nice multitasking" </p>
+        
+        <p> With the constant need to visualize and manipulate bits, it became evident that a better solution had come to life </p>
+        <p> Fully infatuated with the idea, our pitcher, using made, the immortalized, Fernando Pessoa quote come alive : "God wills, man thinks: the work is born" </p>
+
+        <h2>Installation</h2>
+
+        <pre><code>$ brew install programmer-calculator <span class="comment">// We need a better name & check package managers</span></code></pre>
+
+        <h2>Features</h2>
+
+        <h4>Usage</h4>
+        <p>There are various ways to insert values/operators, see the example <span class="inline-code">2 + 2</span> below:</p>
+
+        <ul>
+            <li><span class="inline-code">2</span>, followed by <span class="inline-code">+</span>, followed by <span class="inline-code">2</span></li>
+            <li><span class="inline-code">2</span>, followed by <span class="inline-code">+2</span></li>
+            <li><span class="inline-code">2+</span>, followed by <span class="inline-code">2</span></li>
+            <li><span class="inline-code">2+2</span> <small class="comment">(or <span class="inline-code">2 + 2</span>, <span class="inline-code">2 +2</span>, <span class="inline-code">2+ 2</span>, ...)</small> <small class="comment">(inline math only supports 2 operands at the moment)</small></li>
+        </ul>
+
+        <br>
+
+        <h4>Hex + Binary + Decimal</h4>
+        <p>All three number representations are available at the same time, you can insert <span class="inline-code">0xff + 0b101101 - 5</span> directly onto the calculator</p>
+
+        <br>
+
+        <h4>Operand Size</h4>
+        <p>By default, 64 bits are used for arithmetic, however, when working with bits, quite often we want to work with less. With this calculator you can change the amount of bits used. <small class="comment">the number displayed will be unsigned</small></p>
+        <p>To use 16 bits instead, type <span class="inline-code">16cb</span> <small class="comment">(cb for "change bits")</small></p>
+        <p>To use 8 bits, type <span class="inline-code">8cb</span></p>
+        <p>To use 0 < <em>n </em><= 64 bits, type <span class="inline-code"><em>n</em>cb</span></p>
+
+        <br>
+
+        <h4>Customizing Interface</h4>
+        <p>While running the calculator, you can type <em>what you see</em> for it to appear/disappear:</p>
+        <ul>
+            <li><span class="inline-code">history</span> to toggle the history</li>
+            <li><span class="inline-code">decimal</span> to toggle the decimal representation</li>
+            <li><span class="inline-code">binary</span> to toggle the binary representation</li>
+            <li>and so on...</li>
+        </ul>
+        <p>To set a default interface, define an alias for the program with the desired options</p>
+        <pre>$ alias bitcalc='bitcalc -hbxdos'</pre>
+        <small class="comment">h: history, b: binary, x: hex, d: decimal, o: operation, s: symbols</small><br>
+
+        <br>
+
+        <h4>Operations</h4>
+        <pre>ADD  +    SUB  -    MUL  *    DIV  /    MOD  %
+AND  &    OR   |    NOR  $    XOR  ^    NOT  ~
+SL   <    SR   >    RL   (    RR   )    2's  '</pre>
+
+        <ul>
+            <li>ADD: 2+2 <small class="comment">commentary about this</small></li>
+        </ul>
+
     </body>
 
 </html>
