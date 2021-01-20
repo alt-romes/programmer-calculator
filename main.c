@@ -24,7 +24,7 @@ typedef struct operation {
 
 struct history {
     int size;
-    char * records[500];
+    char * records[100];
 };
 
 struct history history;
@@ -49,6 +49,7 @@ void process_input(numberstack*, operation**, char*);
 void clear_history();
 void add_to_history();
 long long pushnumber(char *, numberstack*);
+void add_number_to_history(long long, int); // 0 = decimal, 1 = hex, 2 = binary
 
 // Operations
 long long add(long long, long long);
@@ -209,10 +210,16 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
             operationInStack = 1;
         }
         while (token != NULL) {
+
             long long aux = pushnumber(token, numbers);
-            char str[22];
-            sprintf(str,"%lld",aux);
-            add_to_history(str);
+            
+            if(strstr(token, "0b") != NULL)
+                add_number_to_history(aux, 2);
+            else if (strstr(token, "0x") != NULL)
+                add_number_to_history(aux, 1);
+            else
+                add_number_to_history(aux, 0);
+
             if(!operationInStack && strcmp(opchar, history.records[history.size-1])) {
                 add_to_history(opchar);
                 operationInStack = 1;
@@ -259,10 +266,13 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         }
 
         long long aux = pushnumber(in, numbers);
-        char str[22];
-        sprintf(str,"%lld",aux);
-        add_to_history(str);
 
+        if(strstr(in, "0b") != NULL)
+            add_number_to_history(aux, 2);
+        else if (strstr(in, "0x") != NULL)
+            add_number_to_history(aux, 1);
+        else
+            add_number_to_history(aux, 0);
     }
 
     // Add to history
@@ -428,9 +438,7 @@ void printhistory(numberstack* numbers, int priority) {
         if(currX >= wMaxX-3 || currY > 14) {
             clear_history();
             long long aux = *top_numberstack(numbers);
-            char str[22];
-            sprintf(str,"%lld",aux);
-            add_to_history(str);
+            add_number_to_history(aux, 0);
         }
         wprintw(displaywin, "%s ", history.records[i]);
     }
@@ -483,8 +491,9 @@ void sweepline(int priority,int prompt) {
 
 long long pushnumber(char * in, numberstack* numbers) {
 
-    char* hbstr;
     long long n;
+
+    char* hbstr;
     if ((hbstr = strstr(in, "0x")) != NULL)
         n = strtoll(hbstr+2, NULL, 16) & globalmask;
     else if ((hbstr = strstr(in, "0b")) != NULL)
@@ -493,6 +502,37 @@ long long pushnumber(char * in, numberstack* numbers) {
         n = atoll(in) & globalmask;
     push_numberstack(numbers, n);
     return n;
+}
+
+void add_number_to_history(long long n, int type) {
+
+    char str[67];
+
+    if (type == 0)
+        sprintf(str,"%lld", n);
+    else if (type == 1)
+        sprintf(str,"0x%llX", n);
+    else if (type == 2) {
+
+        unsigned long long mask = rr(1, 1);
+
+        int i = 0;
+        for (; i<64; i++, mask>>=1)
+            if (mask & n)
+                break;
+
+        int nbits = globalmasksize - i;
+
+        sprintf(str, "0b");
+        if (nbits == 0)
+            sprintf(str+2, "0");
+        else
+            for (i=0; i<nbits; i++, mask>>=1)
+                sprintf(str+i+2, "%c", mask & n ? '1' : '0');
+
+    }
+
+    add_to_history(str);
 }
 
 
@@ -550,6 +590,7 @@ long long sl(long long a, long long b) {
 }
 
 long long sr(long long a, long long b) {
+
     return ( (b >> a) & ~((long long) -1 << (64-a)) ) & globalmask;
 }
 
