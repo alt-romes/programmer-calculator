@@ -48,7 +48,7 @@ operation* getopcode(char);
 void process_input(numberstack*, operation**, char*);
 void clear_history();
 void add_to_history();
-void pushnumber(char *, numberstack*);
+long long pushnumber(char *, numberstack*);
 
 // Operations
 long long add(long long, long long);
@@ -188,7 +188,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
     // non functioned commands (1ºhelp,clean,2ºhistory)
     // -> (command) operand [-10 != history - 10]
     // Process input
-
+    
     char * op = strpbrk(in, all_ops);
     if (op != NULL) {
         char opchar[2];
@@ -196,12 +196,27 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         opchar[1] = '\0';
         *current_op = getopcode(*op);
         char * token = strtok(in, opchar);
-        if(token != NULL && token < op) {
+        int operationInStack = 0;
+        if(token == NULL) {
+            if(strcmp(opchar, history.records[history.size-1]))
+                add_to_history(opchar);
+        } else if (token != NULL && token < op) {
             clear_numberstack(numbers);
             clear_history();
+        } else if (token != NULL && op < token) {   
+            if(strcmp(opchar, history.records[history.size-1]))
+                add_to_history(opchar);
+            operationInStack = 1;
         }
         while (token != NULL) {
-        	pushnumber(token, numbers);
+            long long aux = pushnumber(token, numbers);
+            char str[22];
+            sprintf(str,"%lld",aux);
+            add_to_history(str);
+            if(!operationInStack && strcmp(opchar, history.records[history.size-1])) {
+                add_to_history(opchar);
+                operationInStack = 1;
+            }
         	token = strtok(NULL, opchar);
         }
     }
@@ -243,11 +258,15 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
             clear_history();
         }
 
-        pushnumber(in, numbers);
+        long long aux = pushnumber(in, numbers);
+        char str[22];
+        sprintf(str,"%lld",aux);
+        add_to_history(str);
+
     }
 
     // Add to history
-    add_to_history(in);
+    //add_to_history(in);
 
     // Apply operations
     if (*current_op != operations) {
@@ -462,15 +481,18 @@ void sweepline(int priority,int prompt) {
     wclrtoeol(displaywin);
 }
 
-void pushnumber(char * in, numberstack* numbers) {
+long long pushnumber(char * in, numberstack* numbers) {
 
     char* hbstr;
+    long long n;
     if ((hbstr = strstr(in, "0x")) != NULL)
-        push_numberstack(numbers, strtoll(hbstr+2, NULL, 16) & globalmask);
+        n = strtoll(hbstr+2, NULL, 16) & globalmask;
     else if ((hbstr = strstr(in, "0b")) != NULL)
-        push_numberstack(numbers, strtoll(hbstr+2, NULL, 2) & globalmask);
+        n = strtoll(hbstr+2, NULL, 2) & globalmask;
     else
-        push_numberstack(numbers, atoll(in) & globalmask);
+        n = atoll(in) & globalmask;
+    push_numberstack(numbers, n);
+    return n;
 }
 
 
