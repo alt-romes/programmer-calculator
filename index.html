@@ -21,7 +21,7 @@
         }
 
         a {
-            color: #e81c4f; /*Primary color*/
+            color: #38A700; /*Primary color*/
         }
 
         img {
@@ -32,6 +32,7 @@
 
         .imgc {
             padding: 3em;
+            text-align: center;
         }
 
         pre {
@@ -71,7 +72,7 @@
 
         <ul>
             <li>a clear, simple and customizable interface</li>
-            <li>open source software</li>
+            <li><a href="https://github.com/alt-romes/programmer-calculator">open source</a> software</li>
             <li>terminal/cli tools</li>
         </ul>
         
@@ -84,7 +85,7 @@
         <p> The idea was born while developing a Nintendo Gameboy Emulator. Romes - the pitcher - found that the tools given online were clunky and did not allow for "nice multitasking" </p>
         
         <p> With the constant need to visualize and manipulate bits, it became evident that a better solution had come to life </p>
-        <p> "God wills, man thinks: the work is born" - Fernando Pessoa, "A Mensagem" </p>
+        <p> <em>"God wills, man thinks, the work is born."</em> - Fernando Pessoa, "A Mensagem"</p>
 
         <h2>Installation</h2>
 
@@ -123,9 +124,10 @@
             <li><span class="inline-code">history</span> to toggle the history</li>
             <li><span class="inline-code">decimal</span> to toggle the decimal representation</li>
             <li><span class="inline-code">binary</span> to toggle the binary representation</li>
-            <li>and so on...</li>
+            <li><span class="inline-code">hex</span> to toggle the hexadecimal representation</li>
+            <li><span class="inline-code">operation</span> to toggle the operation display</li>
         </ul>
-        <p>To set a default interface, define an alias for the program with the desired options</p>
+        <p>To set a default interface, define an alias for the program with the desired hidden options</p>
         <pre>$ alias bitcalc='bitcalc -hbxdos'</pre>
         <small class="comment">h: history, b: binary, x: hex, d: decimal, o: operation, s: symbols</small><br>
 
@@ -137,49 +139,49 @@ AND  &    OR   |    NOR  $    XOR  ^    NOT  ~
 SL   <    SR   >    RL   (    RR   )    2's  '</pre>
 
         <ul>
-            <li>ADD: 2+2 <small class="comment">Simple mathematical addition</small></li>
+            <li>ADD: a + b <small class="comment">arithmetic addition</small></li>
         </ul>
         <ul>
-            <li>SUB: 2-2 <small class="comment">Simple mathematical subtraction</small></li>
+            <li>SUB: a - b <small class="comment">arithmetic subtraction</small></li>
         </ul>
         <ul>
-            <li>MUL: 2*2 <small class="comment">Simple mathematical multiplication</small></li>
+            <li>MUL: a * b <small class="comment">arithmetic multiplication</small></li>
         </ul>
         <ul>
-            <li>DIV: 2/2 <small class="comment">Simple mathematical division</small></li>
+            <li>DIV: a / b <small class="comment">arithmetic integer division</small></li>
         </ul>
         <ul>
-            <li>MOD: 2%2 <small class="comment">Modulus from the division</small></li>
+            <li>MOD: a % b <small class="comment">modulus from the division</small></li>
         </ul>
         <ul>
-            <li>AND: 2&2 <small class="comment">Bit-wise AND ('&') operation </small></li>
+            <li>AND: a & b <small class="comment">bit-wise AND (&) operation </small></li>
         </ul>
         <ul>
-            <li>OR: 2|2 <small class="comment">Bit-wise OR ('|') operation </small></li>
+            <li>OR&nbsp;: a | b <small class="comment">bit-wise OR (|) operation </small></li>
         </ul>
         <ul>
-            <li>NOR: 2$2 <small class="comment">Bit-wise NOR ('$') operation : Opposite of OR </small></li>
+            <li>NOR: a $ b <small class="comment">bit-wise NOR ($) operation : opposite of OR</small></li>
         </ul>
         <ul>
-            <li>XOR: 2^2 <small class="comment">Bit-wise XOR ('^') operation : Exclusive OR </small></li>
+            <li>XOR: a ^ b <small class="comment">bit-wise XOR (^) operation : exclusive OR</small></li>
         </ul>
         <ul>
-            <li>NOT: 2~2 <small class="comment">Bit-wise NOT ('~') operation : Changes all bits , 0's into 1' and 1's into 0's </small></li>
+            <li>NOT: a~ &nbsp;&nbsp; <small class="comment">bit-wise NOT (~) operation : change all bits of <em>a</em>, 0's into 1's and 1's into 0's</small></li>
         </ul>
         <ul>
-            <li>SL: 2 < 2 <small class="comment">Bit-wise SHIFT-LEFT ('<') operation : Same as multiplying by 2 </small></li>
+            <li>SL&nbsp;:  a < b <small class="comment">bit-wise SHIFT-LEFT (<) operation : shift <em>a</em> left <em>b</em> number of times</small></li>
         </ul>
         <ul>
-            <li>SR: 2 > 2 <small class="comment">Bit-wise SHIFT-RIGHT ('>') operation : Same as dividing by 2 </small></li>
+            <li>SR&nbsp;:  a > b <small class="comment">bit-wise SHIFT-RIGHT (>) operation : shift <em>a</em> right <em>b</em> number of times</small></li>
         </ul>
         <ul>
-            <li>RL: 2 ( 2 <small class="comment">Bit-wise ROTATE-LEFT ('(') operation</small></li>
+            <li>RL&nbsp;: a ( b <small class="comment">bit-wise ROTATE-LEFT (() operation : rotate <em>a</em> left <em>b</em> number of times</small></li>
         </ul>
         <ul>
-            <li>RR: 2 ) 2 <small class="comment">Bit-wise ROTATE-LEFT (')') operation</small></li>
+            <li>RR&nbsp;: a ) b <small class="comment">bit-wise ROTATE-LEFT ()) operation : rotate <em>a</em> right <em>b</em> number of times</small></li>
         </ul>
         <ul>
-            <li>2's: '( 2 <small class="comment">2's Complement (" ' ") operation</small></li>
+            <li>2's: a' &nbsp;&nbsp; <small class="comment">2's complement (') operation : 2's complement of <em>a</em></small></li>
         </ul>
     </body>
 
