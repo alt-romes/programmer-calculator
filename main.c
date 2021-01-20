@@ -379,10 +379,6 @@ void printhistory(numberstack* numbers, int priority) {
         }
         wprintw(displaywin, "%s ", history.records[i]);
     }
-    if(priority) {
-    wmove(displaywin, 14, 2);
-    wclrtoeol(displaywin);
-    }
 }
 
 void draw(numberstack* numbers, operation* current_op) {
