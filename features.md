@@ -1,8 +1,0 @@
-- cli terminal interface
-- sum hexadecimal with binary and decimal
-- multiple number representations at the same time
-- binary operations
-- change the number of bits used for calculating 
-- customize interface with commands (show/hide history, representations) (write bash alias to hide when running (calculator --history --hex))
-- inline math (should we support more than 2 operands?)
-- use up arrow to scroll inserted commands/numbers/operations
