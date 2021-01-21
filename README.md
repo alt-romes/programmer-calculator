@@ -12,7 +12,7 @@ and who likes:
 * open source software
 * terminal/cli tools
 
-![Demo](https://alt-romes.github.com/programmer-calculator/assets/final.png)
+![Demo](https://raw.githubusercontent.com/alt-romes/programmer-calculator/master/assets/final.png)
 
 ## Making of
 
@@ -22,7 +22,7 @@ With the constant need to visualize and manipulate bits, it became evident that 
 
 ## Installation
 
-`$ brew install url/to/tap`
+`$ brew install https://github.com/alt-romes/programmer-calculator/tree/v1.0`
 
 
 ## Features
