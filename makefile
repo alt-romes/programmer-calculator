@@ -9,4 +9,5 @@ clean:
 
 cr: default run
 
-install: default
+install:
+	gcc main.c -o pcalc -lncurses

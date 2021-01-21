@@ -89,7 +89,32 @@
 
         <h2>Installation</h2>
 
+        <h4>Building from Source</h4>
+        <p>To build from source you need <span class="inline-code">gcc</span>, <span class="inline-code">ncurses</span>, and the source files. <br><small style="color: #FF570A">If you don't have ncurses, please install it (i.e. with your system's package manager) first.</small></p>
+
+        <p>First, clone the repository</p>
+
+        <pre><code>$ git clone https://github.com/alt-romes/programmer-calculator</code></pre>
+
+        <p>Then, compile the code into an executable file</p>
+
+        <pre><code>$ make</code></pre>
+
+        <small>Alternatively, if you don't have make installed, compile with</small>
+        <pre><code>$ gcc main.c -o pcalc -lncurses</code></pre>
+        
+        <p>Finally, move the executable to a directory reachable by $PATH</p>
+        <pre><code>$ mv -i pcalc /usr/local/bin</code></pre>
+
+
+        <h4>Homebrew</h4>
+        <small class="comment">With the homebrew package manager you just need to run brew install:</small>
         <pre><code>$ brew install https://github.com/alt-romes/programmer-calculator/tree/v1.0</code></pre>
+
+        <h4>Running</h4>
+
+        <p>Just run the programmer calculator program</p>
+        <pre><code>$ pcalc</code></pre>
 
         <h2>Features</h2>
 
