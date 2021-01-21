@@ -8,3 +8,5 @@ clean:
 	rm calculator
 
 cr: default run
+
+install: default
