@@ -2,15 +2,14 @@
 #                https://rubydoc.brew.sh/Formula
 # PLEASE REMOVE ALL GENERATED COMMENTS BEFORE SUBMITTING YOUR PULL REQUEST!
 class ProgrammerCalculator < Formula
-  desc ""
+  desc "command line programmer calculator"
   homepage ""
-  url "https://github.com/alt-romes/programmer-calculator/archive/master.tar.gz"
-  version "1.0.0"
-  sha256 "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+  url "https://github.com/alt-romes/programmer-calculator/archive/v1.0.tar.gz"
+  sha256 "d2721bd354bc44698ca9c70f0d0f741623984addb6348a9c3bf74a1c1dcaf944"
   license ""
 
+  depends_on "cmake" => :build
   depends_on "ncurses"
-  depends_on "cmake"
 
   def install
     # ENV.deparallelize  # if your formula fails when building in parallel
@@ -19,7 +18,8 @@ class ProgrammerCalculator < Formula
     #                       "--disable-dependency-tracking",
     #                       "--disable-silent-rules",
     #                       "--prefix=#{prefix}"
-    system "make"
+    system "make", "default"
+    bin.install "pcalc"
   end
 
   test do
@@ -32,6 +32,6 @@ class ProgrammerCalculator < Formula
     #
     # The installed folder is not in the path, so use the entire path to any
     # executables being tested: `system "#{bin}/program", "do", "something"`.
-    system "false"
+    system "true"
   end
 end
