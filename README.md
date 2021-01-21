@@ -18,7 +18,7 @@ and who likes:
 
 The idea was born while developing a Nintendo Gameboy Emulator. Romes - the pitcher - found that the tools given online were clunky and did not allow for "nice multitasking"
 
-With the constant need to visualize and manipulate bits, it became evident that a better solution had come to life
+With the constant need to visualize and manipulate bits, it became evident that a better solution had to come to life
 
 ## Installation
 
