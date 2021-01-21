@@ -12,7 +12,7 @@ and who likes:
 * open source software
 * terminal/cli tools
 
-![Demo](https://raw.githubusercontent.com/alt-romes/programmer-calculator/master/assets/final.png)
+![Screen](https://raw.githubusercontent.com/alt-romes/programmer-calculator/master/assets/final.png)
 
 ## Making of
 
@@ -22,7 +22,19 @@ With the constant need to visualize and manipulate bits, it became evident that 
 
 ## Installation
 
-#### Building from Source
+#### Homebrew
+
+First, create a new tap
+```
+$ brew tap alt-romes/pcalc
+```
+
+Then, install the program
+```
+$ brew install pcalc
+```
+
+#### Building from Source (alternative)
 
 To build from source you need gcc, ncurses, and the source files. 
 **If you don't have ncurses, please install it (i.e. with your system's package manager) first.**
@@ -45,13 +57,6 @@ $ gcc main.c -o pcalc -lncurses
 Finally, move the executable to a directory reachable by $PATH
 ```
 $ mv -i pcalc /usr/local/bin
-```
-
-#### Homebrew
-
-With the homebrew package manager you just need to run brew install:
-```
-$ brew install https://github.com/alt-romes/programmer-calculator/tree/v1.0
 ```
 
 #### Running
@@ -132,3 +137,9 @@ SL   <    SR   >    RL   (    RR   )    2's  '
 
 * Compare two numbers?
 * Up arrow scrolls history (like a terminal)
+
+---
+
+#### example usage in iterm panel
+
+![Panels](https://raw.githubusercontent.com/alt-romes/programmer-calculator/master/assets/panels.png)

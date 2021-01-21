@@ -2,7 +2,7 @@
 <html>
     <style type="text/css">
 
-        body {
+        section {
             margin: 0 auto;
             max-width: 50em;
             line-height: 1.5;
@@ -25,7 +25,8 @@
         }
 
         img {
-            width: 75%;
+            max-width: 100%;
+            height: auto;
             border-radius: 15px;
             box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
         }
@@ -58,6 +59,7 @@
     </head>
 
     <body>
+    <section>
         <h2>Programmer calculator</h2>
 
         <p> The programmer calculator is a simple terminal tool designed to give maximum efficiency and flexibility to the programmer working with: </p>
@@ -77,7 +79,7 @@
         </ul>
         
         <div class="imgc">
-            <img src="assets/final.png" alt="calculator">
+            <img style="width: 75%;" src="assets/final.png" alt="calculator">
         </div>
 
         <h2>Making of</h2>
@@ -89,7 +91,14 @@
 
         <h2>Installation</h2>
 
-        <h4>Building from Source</h4>
+        <h4>Homebrew</h4>
+        <p>First, create a new tap</p>
+        <pre><code>$ brew tap alt-romes/pcalc</code></pre>
+        <p>Then, install the program</p>
+        <pre><code>$ brew install pcalc</code></pre>
+
+
+        <h4>Building from Source <small>(alternative)</small></h4>
         <p>To build from source you need <span class="inline-code">gcc</span>, <span class="inline-code">ncurses</span>, and the source files. <br><small style="color: #FF570A">If you don't have ncurses, please install it (i.e. with your system's package manager) first.</small></p>
 
         <p>First, clone the repository</p>
@@ -97,7 +106,6 @@
         <pre><code>$ git clone https://github.com/alt-romes/programmer-calculator</code></pre>
 
         <p>Then, compile the code into an executable file</p>
-
         <pre><code>$ make</code></pre>
 
         <small>Alternatively, if you don't have make installed, compile with</small>
@@ -106,10 +114,6 @@
         <p>Finally, move the executable to a directory reachable by $PATH</p>
         <pre><code>$ mv -i pcalc /usr/local/bin</code></pre>
 
-
-        <h4>Homebrew</h4>
-        <small class="comment">With the homebrew package manager you just need to run brew install:</small>
-        <pre><code>$ brew install https://github.com/alt-romes/programmer-calculator/tree/v1.0</code></pre>
 
         <h4>Running</h4>
 
@@ -208,6 +212,14 @@ SL   <    SR   >    RL   (    RR   )    2's  '</pre>
         <ul>
             <li>2's: a' &nbsp;&nbsp; <small class="comment">2's complement (') operation : 2's complement of <em>a</em></small></li>
         </ul>
+
+        <p style="text-align: center">---</p>
+        <h4 style="text-align: center; margin-top: 5em; margin-bottom: 0">example usage in iterm panel</h4>
+    </section>
+        <div class="imgc">
+            <img src="assets/panels.png" alt="calculator in panel">
+        </div>
     </body>
 
 </html>
+
