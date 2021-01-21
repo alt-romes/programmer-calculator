@@ -1,10 +1,12 @@
 default:
-	gcc main.c -Wall -o calculator -lncurses
+	gcc main.c -Wall -o pcalc -lncurses
 
 run:
-	./calculator
+	./pcalc
 
 clean:
-	rm calculator
+	rm pcalc
 
 cr: default run
+
+install: default
