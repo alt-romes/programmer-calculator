@@ -12,7 +12,7 @@ and who likes:
 * open source software
 * terminal/cli tools
 
-![Demo](https://alt-romes.github.com/programmer-calculator/assets/final.png)
+![Demo](https://raw.githubusercontent.com/alt-romes/programmer-calculator/master/assets/final.png)
 
 ## Making of
 
