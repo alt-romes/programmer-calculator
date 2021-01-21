@@ -132,6 +132,10 @@ SL   <    SR   >    RL   (    RR   )    2's  '
 * RR : a ) b bit-wise ROTATE-LEFT ()) operation : rotate a right b number of times
 * 2's: a'    2's complement (') operation : 2's complement of a
 
+## Known Bugs (to-fix)
+
+* while inserting an hexadecimal number, lowercase `b` doesn't work. As a temporary work around, use uppercase `B`
+
 
 ## Todo
 
