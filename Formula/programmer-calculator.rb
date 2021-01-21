@@ -1,6 +1,6 @@
 # Documentation: https://docs.brew.sh/Formula-Cookbook
 #                https://rubydoc.brew.sh/Formula
-class ProgrammerCalculator < Formula
+class Pcalc < Formula
   desc "CLI Programming Calculator"
   homepage ""
   url "https://github.com/alt-romes/programmer-calculator/archive/v1.0.tar.gz"
