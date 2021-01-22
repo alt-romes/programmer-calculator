@@ -78,7 +78,7 @@ $ pcalc
 
 ## Features
 
-#### Usage
+### Usage
 
 There are various ways to insert values/operators, see the example `2 + 2` below:
 
@@ -87,12 +87,12 @@ There are various ways to insert values/operators, see the example `2 + 2` below
 * 2+, followed by 2
 * 2+2 (or 2 + 2, 2 +2, 2+ 2, ...) (inline math only supports 2 operands at the moment)
 
-#### Hex + Binary + Decimal
+### Hex + Binary + Decimal
 
 All three number representations are available at the same time, you can insert `0xff + 0b101101 - 5` directly onto the calculator
 
 
-#### Operand Size
+### Operand Size
 
 By default, 64 bits are used for arithmetic, however, when working with bits, quite often we want to work with less. With this calculator you can change the amount of bits used. the number displayed will be unsigned
 
@@ -103,7 +103,7 @@ To use 8 bits, type `8cb`
 To use 0 < n <= 64 bits, type `ncb`
 
 
-#### Customizing Interface
+### Customizing Interface
 
 While running the calculator, you can type *what you see* for it to appear/disappear:
 
@@ -119,7 +119,7 @@ $ alias pcalc='pcalc -hbxdos'
 ```
 h: history, b: binary, x: hex, d: decimal, o: operation, s: symbols
 
-#### Operations
+### Operations
 ```
 ADD  +    SUB  -    MUL  *    DIV  /    MOD  %
 AND  &    OR   |    NOR  $    XOR  ^    NOT  ~
@@ -143,7 +143,7 @@ SL   <    SR   >    RL   (    RR   )    2's  '
 * 2's: a'    2's complement (') operation : 2's complement of a
 
 
-## Todo
+#### Todo
 
 * Compare two numbers?
 * Up arrow scrolls history (like a terminal)
