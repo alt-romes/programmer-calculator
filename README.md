@@ -103,7 +103,7 @@ To use 8 bits, type `8cb`
 To use 0 < n <= 64 bits, type `ncb`
 
 
-## Customizing Interface
+#### Customizing Interface
 
 While running the calculator, you can type *what you see* for it to appear/disappear:
 
@@ -119,7 +119,7 @@ $ alias pcalc='pcalc -hbxdos'
 ```
 h: history, b: binary, x: hex, d: decimal, o: operation, s: symbols
 
-## Operations
+#### Operations
 ```
 ADD  +    SUB  -    MUL  *    DIV  /    MOD  %
 AND  &    OR   |    NOR  $    XOR  ^    NOT  ~
