@@ -3,8 +3,8 @@
 class Pcalc < Formula
   desc "CLI Programming Calculator"
   homepage ""
-  url "https://github.com/alt-romes/programmer-calculator/archive/v1.0.tar.gz"
-  sha256 "399524be160bf23251a170c949262204d650561b1e58c47af239284b3e3ae1da"
+  url "https://github.com/alt-romes/programmer-calculator/archive/v1.1.tar.gz"
+  sha256 "78b40da3abb4dc6619cbf0e09e03ab7ecda89cad6184945c143968830c145f3c"
   license "GNU General Public License v3.0"
 
   depends_on "cmake" => :build
