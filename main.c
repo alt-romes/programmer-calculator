@@ -239,8 +239,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
     } else if (!strcmp(in, "operation")) {
         operation_enabled = !operation_enabled;
     }
-    //TODO: isto não pode estar aqui, pq se não não dá para se escrever 0b011
-    else if (strstr(in, "0b") == NULL && strrchr(in, 'b') != NULL) {
+    else if (strstr(in, "cb") != NULL) {
 
         int requestedmasksize = atoi(in);
         globalmasksize = requestedmasksize > DEFAULT_MASK_SIZE || requestedmasksize <= 0 ? DEFAULT_MASK_SIZE : requestedmasksize;
