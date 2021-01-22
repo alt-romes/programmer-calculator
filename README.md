@@ -59,6 +59,16 @@ Finally, move the executable to a directory reachable by $PATH
 $ mv -i pcalc /usr/local/bin
 ```
 
+#### Updating
+Either re-build from source, or, using brew do
+```
+$ brew update
+```
+followed by
+```
+$ brew upgrade pcalc
+```
+
 #### Running
 
 Just run the programmer calculator program
@@ -131,10 +141,6 @@ SL   <    SR   >    RL   (    RR   )    2's  '
 * RL : a ( b bit-wise ROTATE-LEFT (() operation : rotate a left b number of times
 * RR : a ) b bit-wise ROTATE-LEFT ()) operation : rotate a right b number of times
 * 2's: a'    2's complement (') operation : 2's complement of a
-
-## Known Bugs (to-fix)
-
-* while inserting an hexadecimal number, lowercase `b` doesn't work. As a temporary work around, use uppercase `B`
 
 
 ## Todo
