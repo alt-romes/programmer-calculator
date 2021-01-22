@@ -87,6 +87,7 @@ int binary_enabled = 1;
 int history_enabled = 1;
 
 const char *  all_ops = "+-*/&|$^<>()%~'";
+const char * VALID_NUMBER_INPUT = "0123456789abcdefx";
 const unsigned long long DEFAULT_MASK = -1;
 const int DEFAULT_MASK_SIZE = 64;
 unsigned long long globalmask = DEFAULT_MASK;
@@ -257,25 +258,28 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 
     }
     else {
-        // If is the invalid operation (first in array of operations)
-        if (*current_op == operations || (in[0] == '\0' && (*current_op = operations)) ) {
 
-            clear_numberstack(numbers);
-            clear_history();
+        if (strpbrk(in, VALID_NUMBER_INPUT)) {
+
+            // If is the invalid operation (first in array of operations)
+            if (*current_op == operations || (in[0] == '\0' && (*current_op = operations)) ) {
+
+                clear_numberstack(numbers);
+                clear_history();
+            }
+
+            long long aux = pushnumber(in, numbers);
+
+            if(strstr(in, "0b") != NULL)
+                add_number_to_history(aux, 2);
+            else if (strstr(in, "0x") != NULL)
+                add_number_to_history(aux, 1);
+            else
+                add_number_to_history(aux, 0);
+        
         }
 
-        long long aux = pushnumber(in, numbers);
-
-        if(strstr(in, "0b") != NULL)
-            add_number_to_history(aux, 2);
-        else if (strstr(in, "0x") != NULL)
-            add_number_to_history(aux, 1);
-        else
-            add_number_to_history(aux, 0);
     }
-
-    // Add to history
-    //add_to_history(in);
 
     // Apply operations
     if (*current_op != operations) {
