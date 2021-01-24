@@ -50,6 +50,7 @@ void clear_history();
 void add_to_history();
 long long pushnumber(char *, numberstack*);
 void add_number_to_history(long long, int); // 0 = decimal, 1 = hex, 2 = binary
+void get_input(char *);
 
 // Operations
 long long add(long long, long long);
@@ -172,59 +173,8 @@ int main(int argc, char *argv[])
 
         // Get input
         char in[MAX_IN+1];
-        char inp;
 
-        // Collect input until enter is pressed
-        for (int i = 0; (inp = getchar()) != 13; ++i)
-        {
-
-            // Handles all arrow keys
-            if (inp == 27) {
-                getchar();
-                inp = getchar();
-                if (inp == 'A')
-                {
-                    // Up arrow
-                }
-                else if (inp == 'B')
-                {
-                    // Down arrow
-                }
-
-                // Continue without affecting i
-                --i;
-                continue;
-            }
-
-            if (inp == 127)
-            {
-                // Backspace
-                i == 0 ? i = 0 : --i;
-                inp = '\0';
-            }
-
-            // Prevent user to input more than MAX_IN
-            if (i <= MAX_IN){
-                // Append char to in array
-                in[i] = inp;
-
-                if (inp == '\0')
-                {
-                    // Clear screen from previous input
-                    mvwprintw(inputwin, 1, 22 + i-- ," ");
-
-                } else {
-                    in[i + 1] = '\0';
-                }
-            } else {
-                --i;
-            }
-
-            // Finaly print input
-            mvwprintw(inputwin, 1, 22, in);
-            wrefresh(inputwin);
-
-        }
+        get_input(in);
 
         process_input(numbers, &current_op, in);
 
@@ -428,7 +378,62 @@ void add_to_history(char* in) {
 }
 
 
+void get_input(char *in) {
 
+        char inp;
+
+        // Collect input until enter is pressed
+        for (int i = 0; (inp = getchar()) != 13; ++i)
+        {
+
+            // Handles all arrow keys
+            if (inp == 27) {
+                getchar();
+                inp = getchar();
+                if (inp == 'A')
+                {
+                    // Up arrow
+                }
+                else if (inp == 'B')
+                {
+                    // Down arrow
+                }
+
+                // Continue without affecting i
+                --i;
+                continue;
+            }
+
+            if (inp == 127)
+            {
+                // Backspace
+                i == 0 ? i = 0 : --i;
+                inp = '\0';
+            }
+
+            // Prevent user to input more than MAX_IN
+            if (i <= MAX_IN){
+                // Append char to in array
+                in[i] = inp;
+
+                if (inp == '\0')
+                {
+                    // Clear screen from previous input
+                    mvwprintw(inputwin, 1, 22 + i-- ," ");
+
+                } else {
+                    in[i + 1] = '\0';
+                }
+            } else {
+                --i;
+            }
+
+            // Finaly print input
+            mvwprintw(inputwin, 1, 22, in);
+            wrefresh(inputwin);
+
+        }
+}
 
 
 
