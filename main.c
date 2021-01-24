@@ -173,6 +173,8 @@ int main(int argc, char *argv[])
 
         // Get input
         char in[MAX_IN+1];
+        // Make sure that if enter is pressed, a len==0 null terminated string is in "in"
+        in[0] = '\0';
 
         get_input(in);
 
@@ -260,6 +262,9 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 
     }
     else {
+
+        if (in[0] == '\0')
+            mvwprintw(displaywin, 17, 22, "HIHI HI HI HI");
 
         if (strpbrk(in, VALID_NUMBER_INPUT) || in[0] == '\0') {
 
@@ -431,8 +436,8 @@ void get_input(char *in) {
             // Finaly print input
             mvwprintw(inputwin, 1, 22, in);
             wrefresh(inputwin);
-
         }
+
 }
 
 
