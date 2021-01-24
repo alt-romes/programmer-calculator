@@ -259,7 +259,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
     }
     else {
 
-        if (strpbrk(in, VALID_NUMBER_INPUT)) {
+        if (strpbrk(in, VALID_NUMBER_INPUT) || in[0] == '\0') {
 
             // If is the invalid operation (first in array of operations)
             if (*current_op == operations || (in[0] == '\0' && (*current_op = operations)) ) {
