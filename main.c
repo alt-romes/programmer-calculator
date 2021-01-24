@@ -172,7 +172,48 @@ int main(int argc, char *argv[])
 
         // Get input
         char in[MAX_IN+1];
-        wgetnstr(inputwin, in, MAX_IN);
+        memset(in, '\0', MAX_IN + 1);
+        char inp;
+
+        for (int i = 0; (inp = getchar()) != 13; ++i)
+        {
+
+            if (inp == 27) {
+                getchar();
+                inp = getchar();
+                if (inp == 'A')
+                {
+                    // Up arrow
+                }
+                else if (inp == 'B')
+                {
+                    // Down arrow
+                }
+
+                --i;
+                continue;
+            }
+
+            if (inp == 127)
+            {
+                // Backspace
+                i == 0 ? i = 0 : --i;
+                inp = '\0';
+            }
+
+            in[i] = inp;
+            in[i + 1] = '\0';
+
+            if (inp == '\0')
+            {
+                --i;
+                mvwprintw(inputwin, 1, 22 + strlen(in) ," ");
+
+            }
+            mvwprintw(inputwin, 1, 22, in);
+            wrefresh(inputwin);
+
+        }
 
         process_input(numbers, &current_op, in);
 
