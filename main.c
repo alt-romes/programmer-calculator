@@ -203,17 +203,24 @@ int main(int argc, char *argv[])
                 inp = '\0';
             }
 
-            // Append char to in array
-            in[i] = inp;
-            in[i + 1] = '\0';
+            // Prevent user to input more than MAX_IN
+            if (i <= MAX_IN){
+                // Append char to in array
+                in[i] = inp;
 
-            if (inp == '\0')
-            {
+                if (inp == '\0')
+                {
+                    --i;
+                    // Clear screen from previous input
+                    mvwprintw(inputwin, 1, 22 + strlen(in) ," ");
+
+                } else {
+                    in[i + 1] = '\0';
+                }
+            } else {
                 --i;
-                // Clear screen from previous input
-                mvwprintw(inputwin, 1, 22 + strlen(in) ," ");
-
             }
+
             // Finaly print input
             mvwprintw(inputwin, 1, 22, in);
             wrefresh(inputwin);
