@@ -172,7 +172,6 @@ int main(int argc, char *argv[])
 
         // Get input
         char in[MAX_IN+1];
-        memset(in, '\0', MAX_IN + 1);
         char inp;
 
         for (int i = 0; (inp = getchar()) != 13; ++i)
