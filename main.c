@@ -174,9 +174,11 @@ int main(int argc, char *argv[])
         char in[MAX_IN+1];
         char inp;
 
+        // Collect input until enter is pressed
         for (int i = 0; (inp = getchar()) != 13; ++i)
         {
 
+            // Handles all arrow keys
             if (inp == 27) {
                 getchar();
                 inp = getchar();
@@ -189,6 +191,7 @@ int main(int argc, char *argv[])
                     // Down arrow
                 }
 
+                // Continue without affecting i
                 --i;
                 continue;
             }
@@ -200,15 +203,18 @@ int main(int argc, char *argv[])
                 inp = '\0';
             }
 
+            // Append char to in array
             in[i] = inp;
             in[i + 1] = '\0';
 
             if (inp == '\0')
             {
                 --i;
+                // Clear screen from previous input
                 mvwprintw(inputwin, 1, 22 + strlen(in) ," ");
 
             }
+            // Finaly print input
             mvwprintw(inputwin, 1, 22, in);
             wrefresh(inputwin);
 
