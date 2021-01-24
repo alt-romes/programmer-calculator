@@ -263,9 +263,6 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
     }
     else {
 
-        if (in[0] == '\0')
-            mvwprintw(displaywin, 17, 22, "HIHI HI HI HI");
-
         if (strpbrk(in, VALID_NUMBER_INPUT) || in[0] == '\0') {
 
             // If is the invalid operation (first in array of operations)
