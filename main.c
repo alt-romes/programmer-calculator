@@ -210,9 +210,8 @@ int main(int argc, char *argv[])
 
                 if (inp == '\0')
                 {
-                    --i;
                     // Clear screen from previous input
-                    mvwprintw(inputwin, 1, 22 + strlen(in) ," ");
+                    mvwprintw(inputwin, 1, 22 + i-- ," ");
 
                 } else {
                     in[i + 1] = '\0';
