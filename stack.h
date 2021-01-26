@@ -7,6 +7,7 @@ typedef struct numberstack {
     long long * elements;
 } numberstack;
 
+// Allocate and set up numberstack
 numberstack * create_numberstack(int max_size) {
 
     numberstack* s;
@@ -17,12 +18,13 @@ numberstack * create_numberstack(int max_size) {
     return s;
 }
 
-numberstack * resize_numberstack(numberstack* s) {
+static numberstack * resize_numberstack(numberstack* s) {
 
     s->max_size *= 2;
     return realloc(s->elements, s->max_size * sizeof(long long));
 }
 
+// Pop element from the top of the stack (return and remove element)
 long long * pop_numberstack(numberstack* s) {
 
     if (s->size == 0)
@@ -31,6 +33,7 @@ long long * pop_numberstack(numberstack* s) {
     return &s->elements[--s->size];
 }
 
+// Return the element at the top of the stack without removing it
 long long * top_numberstack(numberstack* s) {
 
     if (s->size == 0)
@@ -39,6 +42,7 @@ long long * top_numberstack(numberstack* s) {
     return &s->elements[s->size-1];
 }
 
+// Push number to the top of the stack
 void push_numberstack(numberstack* s, long long value) {
 
     if (s->size == s->max_size) 
@@ -47,6 +51,7 @@ void push_numberstack(numberstack* s, long long value) {
     s->elements[s->size++] = value;
 }
 
+// Clear the stack
 void clear_numberstack(numberstack* s) {
 
     s->size = 0;
