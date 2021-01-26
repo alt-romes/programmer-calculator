@@ -163,6 +163,22 @@ int main(int argc, char *argv[])
 
     init_gui(&displaywin, &inputwin);
 
+    /* 
+     * The numberstack is used to store numbers used in calculations
+     * It's a normal stack data structure (LIFO) that holds long long integers
+     * Check the stack.h file for its operations
+     *
+     * The operation structure holds information regarding the ASCII character the operation uses,
+     * The number of operands the operation takes, and the function to execute when applied
+     *
+     * Numbers get pushed to the numberstack "numbers", and operations are set as the "current_op"
+     *
+     * After receiving user input, if there's a current operation, the program compares the 
+     * current stack size to the number of operands needed for that operation
+     *
+     * Should the operation be executed, the needed operands are popped from the stack,
+     * the operation is executed, and the result of the calculation is pushed to the stack
+     */
     numberstack* numbers = create_numberstack(4);
     operation* current_op = &operations[0];
 
