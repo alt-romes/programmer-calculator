@@ -247,11 +247,11 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         int operationInStack = 0;
 
         // If no number is found (case 1)
-        if(token == NULL)
+        if(token == NULL) {
             // Make sure the operation isn't already in history to avoid duplicate symbols
             if(strcmp(opchar, history.records[history.size-1]))
                 add_to_history(opchar);
-
+        }
         // When the first number comes before the operation symbol (case 2 and 4)
         else if (token != NULL && token < op) {
             // History and numbers will be overridden by the input number and operation
