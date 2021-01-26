@@ -27,6 +27,12 @@ struct history {
     char * records[100];
 };
 
+struct searchHistory {
+    int size,counter;
+    char * inputs[100];
+};
+
+struct searchHistory searchHistory;
 struct history history;
 
 
@@ -42,6 +48,7 @@ void init_gui();
 void draw(numberstack*, operation*);
 void printbinary(long long,int);
 void printhistory(numberstack*,int);
+void browsehistory(char*,int);
 void sweepline(int,int);
 // General
 operation* getopcode(char);
@@ -168,14 +175,16 @@ int main(int argc, char *argv[])
     push_numberstack(numbers, 0);
     add_to_history("0");
     draw(numbers, current_op);
-
+    add_to_searchhistory("");
+    
     for (;;) {
 
         // Get input
         char in[MAX_IN+1];
-
+        
+        searchHistory.counter = 0;
         get_input(in);
-
+        
         process_input(numbers, &current_op, in);
 
         // Display number on top of the stack
@@ -372,67 +381,66 @@ void clear_history() {
 }
 
 void add_to_history(char* in) {
-
     history.records[history.size] = malloc(MAX_IN);
     strcpy(history.records[history.size++], *in == '\0' ? "0" : in);
 }
 
+void add_to_searchhistory(char* in) {
+    searchHistory.inputs[searchHistory.size] = malloc(MAX_IN);
+    strcpy(searchHistory.inputs[searchHistory.size++], in);
+}
 
 void get_input(char *in) {
-
         char inp;
-
         // Collect input until enter is pressed
-        for (int i = 0; (inp = getchar()) != 13; ++i)
+        for (int i = 0; (inp = getchar()) != 13;)
         {
-
+            int searched = 0;
             // Handles all arrow keys
             if (inp == 27) {
                 getchar();
                 inp = getchar();
                 if (inp == 'A')
-                {
-                    // Up arrow
+                {   
+                    browsehistory(in,1);
+                    i = strlen(in);
+                    searched = 1;
                 }
                 else if (inp == 'B')
-                {
-                    // Down arrow
+                {   
+                    browsehistory(in,-1);
+                    i = strlen(in);
+                    searched = 1;
                 }
-
-                // Continue without affecting i
-                --i;
-                continue;
             }
 
             if (inp == 127)
             {
-                // Backspace
+                //Backspace
                 i == 0 ? i = 0 : --i;
                 inp = '\0';
             }
 
-            // Prevent user to input more than MAX_IN
-            if (i <= MAX_IN){
-                // Append char to in array
-                in[i] = inp;
-
-                if (inp == '\0')
-                {
-                    // Clear screen from previous input
-                    mvwprintw(inputwin, 1, 22 + i-- ," ");
-
-                } else {
-                    in[i + 1] = '\0';
+            if(!searched) {
+                // Prevent user to input more than MAX_IN
+                if (i <= MAX_IN) {
+                    // Append char to in array
+                    in[i++] = inp;
+                    in[i] = '\0';
+                    if (inp == '\0')
+                    {
+                        // Clear screen from previous input
+                        mvwprintw(inputwin, 1, 22 + --i ," ");
+                    }
                 }
-            } else {
-                --i;
             }
-
             // Finaly print input
+            wmove(inputwin, 1, 22);
+            wclrtoeol(inputwin);
             mvwprintw(inputwin, 1, 22, in);
             wrefresh(inputwin);
-
         }
+    add_to_searchhistory(in);
 }
 
 
@@ -501,6 +509,13 @@ void printhistory(numberstack* numbers, int priority) {
             add_number_to_history(aux, 0);
         }
         wprintw(displaywin, "%s ", history.records[i]);
+    }
+}
+
+void browsehistory(char* in , int mode) {
+    if(searchHistory.counter < searchHistory.size-1 || searchHistory.counter > 0) {
+        searchHistory.counter+=mode;
+        strcpy(in,searchHistory.inputs[searchHistory.counter]);
     }
 }
 
