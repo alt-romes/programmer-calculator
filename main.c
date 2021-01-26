@@ -201,6 +201,9 @@ int main(int argc, char *argv[])
         // Get input
         char in[MAX_IN+1];
         
+        // Make sure that if enter is pressed, a len == 0 null terminated string is in "in"
+        in[0] = '\0';
+        
         searchHistory.counter = 0;
         get_input(in);
         
