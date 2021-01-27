@@ -49,14 +49,9 @@ Then, compile the code into an executable file
 $ make
 ```
 
-Alternatively, if you don't have make installed, compile with
-```
-$ gcc main.c -o pcalc -lncurses
-```
-
 Finally, move the executable to a directory reachable by $PATH
 ```
-$ mv -i pcalc /usr/local/bin
+$ mv -i output/pcalc /usr/local/bin
 ```
 
 #### Updating
@@ -73,7 +68,7 @@ $ brew upgrade pcalc
 
 Just run the programmer calculator program
 ```
-$ pcalc
+$ output/pcalc
 ```
 
 ## Features
