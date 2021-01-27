@@ -3,7 +3,7 @@
 #include <limits.h>
 #include <ncurses.h>
 
-#include "stack.h"
+#include "numberstack.h"
 
 #define MAX_IN 80
 

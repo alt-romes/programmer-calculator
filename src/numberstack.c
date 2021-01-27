@@ -1,11 +1,8 @@
 
-// Numbers Stack 
+#include <stdlib.h>
 
-typedef struct numberstack {
-    int max_size;
-    int size;
-    long long * elements;
-} numberstack;
+// Numbers Stack
+#include "numberstack.h"
 
 // Allocate and set up numberstack
 numberstack * create_numberstack(int max_size) {
@@ -18,7 +15,7 @@ numberstack * create_numberstack(int max_size) {
     return s;
 }
 
-static numberstack * resize_numberstack(numberstack* s) {
+numberstack * resize_numberstack(numberstack* s) {
 
     s->max_size *= 2;
     return realloc(s->elements, s->max_size * sizeof(long long));
