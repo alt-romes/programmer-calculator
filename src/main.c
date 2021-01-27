@@ -3,10 +3,12 @@
 #include <limits.h>
 #include <ncurses.h>
 
+#include "draw.h"
+#include "global.h"
+#include "history.h"
 #include "numberstack.h"
 #include "operators.h"
 
-#define MAX_IN 80
 
 
 
@@ -15,21 +17,9 @@
 /*---- Structures -------------------------------------------------*/
 
 
-// Operations Control
-// Example: '+' takes two operands, therefore the noperands = 2
-typedef struct operation {
-    char character;
-    unsigned char noperands;
-    long long (*execute) (long long, long long);
-} operation;
 
-struct history {
-    int size;
-    char * records[100];
-};
-
-struct history searchHistory;
-struct history history;
+extern struct history history;
+extern struct history searchHistory;
 
 
 
@@ -39,15 +29,8 @@ struct history history;
 
 
 // Drawing
-WINDOW* displaywin, * inputwin;
-void init_gui();
-void draw(numberstack*, operation*);
-void printbinary(long long, int);
-void printhistory(numberstack*, int);
-void browsehistory(char*, int, int*);
-void sweepline(WINDOW*, int, int);
+extern WINDOW* displaywin, * inputwin;
 // General
-operation* getopcode(char);
 void process_input(numberstack*, operation**, char*);
 void clear_history();
 void add_to_history(struct history*, char*);
@@ -61,41 +44,23 @@ void get_input(char *);
 
 
 // Variables
-int wMaxX;
-int wMaxY;
+extern int wMaxX;
+extern int wMaxY;
 
-int operation_enabled = 1;
-int decimal_enabled = 1;
-int hex_enabled = 1;
-int symbols_enabled = 1;
-int binary_enabled = 1;
-int history_enabled = 1;
+extern int operation_enabled;
+extern int decimal_enabled;
+extern int hex_enabled;
+extern int symbols_enabled;
+extern int binary_enabled;
+extern int history_enabled;
 
-const char *  all_ops = "+-*/&|$^<>()%~'";
-const char * VALID_NUMBER_INPUT = "0123456789abcdefx";
+#define ALL_OPS "+-*/&|$^<>()%~'"
+#define VALID_NUMBER_INPUT "0123456789abcdefx"
 
 extern unsigned long long globalmask;
 extern int globalmasksize;
 
-operation operations[16] = {
-    {0, 0, NULL},
-    {'+', 2, add},
-    {'-', 2, subtract},
-    {'*', 2, multiply},
-    {'/', 2, divide},
-    {'&', 2, and},
-    {'|', 2, or},
-    {'$', 2, nor},
-    {'^', 2, xor},
-    {'<', 2, sl},
-    {'>', 2, sr},
-    {'(', 2, rl},
-    {')', 2, rr},
-    {'%', 2, modulus},
-    {'~', 1, not},
-    {'\'', 1, twos_complement}
-};
-
+extern operation *operations;
 
 
 
@@ -198,7 +163,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
     // Process input
 
     // There's an operation if one of the operation symbols is found in the input string
-    char * op = strpbrk(in, all_ops);
+    char * op = strpbrk(in, ALL_OPS);
 
     if (op != NULL) {
 
@@ -369,75 +334,6 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
     }
 }
 
-operation* getopcode(char c)  {
-
-    operation* r;
-    switch (c) {
-
-        case '+':
-            r = &operations[1];
-            break;
-        case '-':
-            r = &operations[2];
-            break;
-        case '*':
-            r = &operations[3];
-            break;
-        case '/':
-            r = &operations[4];
-            break;
-        case '&':
-            r = &operations[5];
-            break;
-        case '|':
-            r = &operations[6];
-            break;
-        case '$':
-            r = &operations[7];
-            break;
-        case '^':
-            r = &operations[8];
-            break;
-        case '<':
-            r = &operations[9];
-            break;
-        case '>':
-            r = &operations[10];
-            break;
-        case '(':
-            r = &operations[11];
-            break;
-        case ')':
-            r = &operations[12];
-            break;
-        case '%':
-            r = &operations[13];
-            break;
-        case '~':
-            r = &operations[14];
-            break;
-        case '\'':
-            r = &operations[15];
-            break;
-
-    }
-
-    return r;
-}
-
-void clear_history() {
-
-    for (; history.size>0; history.size--)
-        free(history.records[history.size-1]);
-
-    sweepline(displaywin, 14, 11);
-    sweepline(displaywin, 15, 0);
-}
-
-void add_to_history(struct history* h,char* in) {
-    h->records[h->size] = malloc(MAX_IN);
-    strcpy(h->records[h->size++], *in == '\0' && h == &history ? "0" : in);
-}
 
 void get_input(char *in) {
 
@@ -497,168 +393,3 @@ void get_input(char *in) {
         add_to_history(&searchHistory, in);
 }
 
-
-
-/*---- Graphics Logic ---------------------------------------------*/
-
-
-void init_gui() {
-
-    initscr();
-    cbreak(); // exit on ctrl+c
-
-    getmaxyx(stdscr, wMaxY, wMaxX);
-
-    displaywin = newwin(wMaxY-3, wMaxX, 0, 0);
-    refresh();
-
-    box(displaywin, ' ', 0);
-    if (symbols_enabled)
-        mvwprintw(displaywin, wMaxY-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n  SL   <    SR   >    RL   (    RR   )    2's  '");
-    wrefresh(displaywin);
-
-    inputwin = newwin(3, wMaxX, wMaxY-3, 0);
-    refresh();
-
-    box(inputwin, ' ', 0);
-    wrefresh(inputwin);
-
-}
-
-void printbinary(long long value, int priority) {
-
-    unsigned long long mask = ((long long) 1) << (globalmasksize - 1); // Mask starts at the last bit to display, and is >> until the end
-
-    int i=DEFAULT_MASK_SIZE-globalmasksize;
-
-    mvwprintw(displaywin, 8-priority, 2, "Binary:    \n         %02d  ", globalmasksize); // %s must be a 2 digit number
-
-    for (; i<64; i++, mask>>=1) {
-
-        unsigned long long bitval = value & mask;
-        waddch(displaywin, bitval ? '1':'0');
-
-        if (i%16 == 15 && 64 - ((i/16+1)*16))
-            // TODO: Explain these numbers better (and decide if to keep them)
-            wprintw(displaywin, "\n         %d  ", 64-((i/16)+1)*16);
-        else if (i%8 == 7)
-            wprintw(displaywin, "   ");
-        else if (i%4 == 3)
-            wprintw(displaywin, "  ");
-        else
-            waddch(displaywin, ' ');
-
-    }
-}
-
-void printhistory(numberstack* numbers, int priority) {
-    int currY,currX;
-    mvwprintw(displaywin, 14-priority, 2, "History:   ");
-    for (int i=0; i<history.size; i++) {
-        getyx(displaywin,currY,currX);
-        if(currX >= wMaxX-3 || currY > 14) {
-            clear_history();
-            long long aux = *top_numberstack(numbers);
-            add_number_to_history(aux, 0);
-        }
-        wprintw(displaywin, "%s ", history.records[i]);
-    }
-}
-//-------------------------------------------------------------------------------------------------------------------------
-void browsehistory(char* in , int mode, int* counter) {
-    if( (mode == 1 && *counter < searchHistory.size -1) || (mode == -1 && *counter > 0)) {
-        *counter += mode;
-        strcpy(in,searchHistory.records[*counter]);
-    }
-}
-
-
-void draw(numberstack* numbers, operation* current_op) {
-
-    long long* np = top_numberstack(numbers);
-    long long n;
-    int prio = 0;
-    if (np == NULL) n = 0;
-    else n = *np;
-
-    // Clear lines
-    for(int i = 2 ; i < 16 ; i++) {
-        sweepline(displaywin, i, 0);
-    }
-
-    if(!operation_enabled) prio += 2;
-    else mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op->character ? current_op->character : ' ');
-    
-    if(!decimal_enabled) prio += 2;
-    else mvwprintw(displaywin, 4-prio, 2, "Decimal:   %lld", n);
-
-    if(!hex_enabled) prio += 2; 
-    else mvwprintw(displaywin, 6-prio, 2, "Hex:       0x%llX", n);
-
-    if(!binary_enabled) prio +=6;
-    else printbinary(n,prio);
-    
-    if(!history_enabled) prio += 2;
-    else printhistory(numbers,prio);
-    
-    wrefresh(displaywin);
-
-    // Clear input
-    sweepline(inputwin,1,19);
-
-    // Prompt input
-    mvwprintw(inputwin, 1, 2, "Number or operator: ");
-    wrefresh(inputwin);
-}
-
-void sweepline(WINDOW* w, int priority,int prompt) {
-    wmove(w,priority,prompt);
-    wclrtoeol(w);
-}
-
-long long pushnumber(char * in, numberstack* numbers) {
-
-    long long n;
-
-    char* hbstr;
-    if ((hbstr = strstr(in, "0x")) != NULL)
-        n = strtoll(hbstr+2, NULL, 16) & globalmask;
-    else if ((hbstr = strstr(in, "0b")) != NULL)
-        n = strtoll(hbstr+2, NULL, 2) & globalmask;
-    else
-        n = atoll(in) & globalmask;
-    push_numberstack(numbers, n);
-    return n;
-}
-
-void add_number_to_history(long long n, int type) {
-
-    char str[67];
-
-    if (type == 0)
-        sprintf(str,"%lld", n);
-    else if (type == 1)
-        sprintf(str,"0x%llX", n);
-    else if (type == 2) {
-
-        unsigned long long mask = rr(1, 1);
-
-        int i = 0;
-        for (; i<64; i++, mask>>=1)
-            if (mask & n)
-                break;
-
-        int nbits = globalmasksize - i;
-
-        sprintf(str, "0b");
-        if (nbits == 0)
-            sprintf(str+2, "0");
-        else
-            for (i=0; i<nbits; i++, mask>>=1)
-                sprintf(str+i+2, "%c", mask & n ? '1' : '0');
-
-    }
-
-    add_to_history(&history, str);
-    wrefresh(displaywin);
-}

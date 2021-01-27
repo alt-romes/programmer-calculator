@@ -4,6 +4,15 @@
 #define DEFAULT_MASK -1
 #define DEFAULT_MASK_SIZE 64
 
+// Operations Control
+// Example: '+' takes two operands, therefore the noperands = 2
+typedef struct operation {
+    char character;
+    unsigned char noperands;
+    long long (*execute) (long long, long long);
+} operation;
+
+operation* getopcode(char c);
 
 long long add(long long, long long);
 long long subtract(long long, long long);

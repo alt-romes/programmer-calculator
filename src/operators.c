@@ -1,7 +1,85 @@
+#include <stddef.h>
+
 #include "operators.h"
 
 unsigned long long globalmask = DEFAULT_MASK;
 int globalmasksize = DEFAULT_MASK_SIZE;
+
+operation operations[16] = {
+    {0, 0, NULL},
+    {'+', 2, add},
+    {'-', 2, subtract},
+    {'*', 2, multiply},
+    {'/', 2, divide},
+    {'&', 2, and},
+    {'|', 2, or},
+    {'$', 2, nor},
+    {'^', 2, xor},
+    {'<', 2, sl},
+    {'>', 2, sr},
+    {'(', 2, rl},
+    {')', 2, rr},
+    {'%', 2, modulus},
+    {'~', 1, not},
+    {'\'', 1, twos_complement}
+};
+
+operation* getopcode(char c)  {
+
+    operation* r;
+    switch (c) {
+
+        case '+':
+            r = &operations[1];
+            break;
+        case '-':
+            r = &operations[2];
+            break;
+        case '*':
+            r = &operations[3];
+            break;
+        case '/':
+            r = &operations[4];
+            break;
+        case '&':
+            r = &operations[5];
+            break;
+        case '|':
+            r = &operations[6];
+            break;
+        case '$':
+            r = &operations[7];
+            break;
+        case '^':
+            r = &operations[8];
+            break;
+        case '<':
+            r = &operations[9];
+            break;
+        case '>':
+            r = &operations[10];
+            break;
+        case '(':
+            r = &operations[11];
+            break;
+        case ')':
+            r = &operations[12];
+            break;
+        case '%':
+            r = &operations[13];
+            break;
+        case '~':
+            r = &operations[14];
+            break;
+        case '\'':
+            r = &operations[15];
+            break;
+
+    }
+
+    return r;
+}
+
 
 long long add(long long a, long long b) {
 
