@@ -27,12 +27,7 @@ struct history {
     char * records[100];
 };
 
-struct searchHistory {
-    int size,counter;
-    char * inputs[100];
-};
-
-struct searchHistory searchHistory;
+struct history searchHistory;
 struct history history;
 
 
@@ -46,15 +41,15 @@ struct history history;
 WINDOW* displaywin, * inputwin;
 void init_gui();
 void draw(numberstack*, operation*);
-void printbinary(long long,int);
-void printhistory(numberstack*,int);
-void browsehistory(char*,int);
-void sweepline(int,int);
+void printbinary(long long, int);
+void printhistory(numberstack*, int);
+void browsehistory(char*, int, int*);
+void sweepline(WINDOW*, int, int);
 // General
 operation* getopcode(char);
 void process_input(numberstack*, operation**, char*);
 void clear_history();
-void add_to_history();
+void add_to_history(struct history*, char*);
 long long pushnumber(char *, numberstack*);
 void add_number_to_history(long long, int); // 0 = decimal, 1 = hex, 2 = binary
 void get_input(char *);
@@ -191,10 +186,10 @@ int main(int argc, char *argv[])
 
     // Start numberstack and history with 0
     push_numberstack(numbers, 0);
-    add_to_history("0");
+    add_to_history(&history, "0");
     // Display number on top of the stack (0)
     draw(numbers, current_op);
-    add_to_searchhistory("");
+    add_to_history(&searchHistory, "");
     //Main Loop
     for (;;) {
 
@@ -204,7 +199,6 @@ int main(int argc, char *argv[])
         // Make sure that if enter is pressed, a len == 0 null terminated string is in "in"
         in[0] = '\0';
         
-        searchHistory.counter = 0;
         get_input(in);
         
         process_input(numbers, &current_op, in);
@@ -259,7 +253,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         if(token == NULL) {
             // Make sure the operation isn't already in history to avoid duplicate symbols
             if(strcmp(opchar, history.records[history.size-1]))
-                add_to_history(opchar);
+                add_to_history(&history, opchar);
         }
         // When the first number comes before the operation symbol (case 2 and 4)
         else if (token != NULL && token < op) {
@@ -274,7 +268,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 
             // Make sure the operation isn't already in history to avoid duplicate symbols
             if(strcmp(opchar, history.records[history.size-1]))
-                add_to_history(opchar);
+                add_to_history(&history, opchar);
 
             // There's definitely an operation already in the stack
             // This will be important when we add two different symbols in a row (i.e. +*)
@@ -301,7 +295,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
             // After inserting the number in the history, if an operation isn't
             // detected in the history stack yet, add the operation to the history
             if(!operationInStack && strcmp(opchar, history.records[history.size-1])) {
-                add_to_history(opchar);
+                add_to_history(&history, opchar);
                 operationInStack = 1;
             }
             
@@ -455,75 +449,72 @@ void clear_history() {
     for (; history.size>0; history.size--)
         free(history.records[history.size-1]);
 
-    wmove(displaywin, 14, 11);
-    wclrtoeol(displaywin);
-    wmove(displaywin, 15, 0);
-    wclrtoeol(displaywin);
+    sweepline(displaywin, 14, 11);
+    sweepline(displaywin, 15, 0);
 }
 
-void add_to_history(char* in) {
-    history.records[history.size] = malloc(MAX_IN);
-    strcpy(history.records[history.size++], *in == '\0' ? "0" : in);
-}
-
-void add_to_searchhistory(char* in) {
-    searchHistory.inputs[searchHistory.size] = malloc(MAX_IN);
-    strcpy(searchHistory.inputs[searchHistory.size++], in);
+void add_to_history(struct history* h,char* in) {
+    h->records[h->size] = malloc(MAX_IN);
+    strcpy(h->records[h->size++], *in == '\0' && h == &history ? "0" : in);
 }
 
 void get_input(char *in) {
-        char inp;
-        // Collect input until enter is pressed
-        for (int i = 0; (inp = getchar()) != 13;)
-        {
-            int searched = 0;
-            // Handles all arrow keys
-            if (inp == 27) {
-                getchar();
-                inp = getchar();
-                if (inp == 'A')
-                {   
-                    browsehistory(in,1);
-                    i = strlen(in);
-                    searched = 1;
-                }
-                else if (inp == 'B')
-                {   
-                    browsehistory(in,-1);
-                    i = strlen(in);
-                    searched = 1;
-                }
-            }
 
-            if (inp == 127)
-            {
-                //Backspace
-                i == 0 ? i = 0 : --i;
-                inp = '\0';
-            }
+    char inp;
+    int history_counter = 0;
 
-            if(!searched) {
-                // Prevent user to input more than MAX_IN
-                if (i <= MAX_IN) {
-                    // Append char to in array
-                    in[i++] = inp;
-                    in[i] = '\0';
-                    if (inp == '\0')
-                    {
-                        // Clear screen from previous input
-                        mvwprintw(inputwin, 1, 22 + --i ," ");
-                    }
-                }
+    // Collect input until enter is pressed
+    for (int i = 0; (inp = getchar()) != 13;)
+    {
+        int searched = 0;
+        // Handles all arrow keys
+        if (inp == 27) {
+            getchar();
+            inp = getchar();
+            if (inp == 'A')
+            {   
+                browsehistory(in, 1, &history_counter);
+                i = strlen(in);
+                searched = 1;
             }
-            // Finaly print input
-            wmove(inputwin, 1, 22);
-            wclrtoeol(inputwin);
-            mvwprintw(inputwin, 1, 22, in);
-            wrefresh(inputwin);
+            else if (inp == 'B')
+            {   
+                browsehistory(in, -1, &history_counter);
+                i = strlen(in);
+                searched = 1;
+            }
         }
-    add_to_searchhistory(in);
-}
 
+        if (inp == 127)
+        {
+            //Backspace
+            i == 0 ? i = 0 : --i;
+            inp = '\0';
+        }
+
+        if(!searched) {
+            // Prevent user to input more than MAX_IN
+            if (i <= MAX_IN) {
+                // Append char to in array
+                in[i++] = inp;
+                in[i] = '\0';
+                if (inp == '\0')
+                {
+                    // Clear screen from previous input
+                    mvwprintw(inputwin, 1, 22 + --i ," ");
+                }
+            }
+        }
+        // Finaly print input
+        sweepline(inputwin, 1, 22);
+            
+        mvwprintw(inputwin, 1, 22, in);
+        wrefresh(inputwin);
+    }
+    
+    if (in[0] != '\0')
+        add_to_history(&searchHistory, in);
+}
 
 
 
@@ -592,13 +583,14 @@ void printhistory(numberstack* numbers, int priority) {
         wprintw(displaywin, "%s ", history.records[i]);
     }
 }
-
-void browsehistory(char* in , int mode) {
-    if(searchHistory.counter < searchHistory.size-1 || searchHistory.counter > 0) {
-        searchHistory.counter+=mode;
-        strcpy(in,searchHistory.inputs[searchHistory.counter]);
+//-------------------------------------------------------------------------------------------------------------------------
+void browsehistory(char* in , int mode, int* counter) {
+    if( (mode == 1 && *counter < searchHistory.size -1) || (mode == -1 && *counter > 0)) {
+        *counter += mode;
+        strcpy(in,searchHistory.records[*counter]);
     }
 }
+
 
 void draw(numberstack* numbers, operation* current_op) {
 
@@ -610,8 +602,7 @@ void draw(numberstack* numbers, operation* current_op) {
 
     // Clear lines
     for(int i = 2 ; i < 16 ; i++) {
-        wmove(displaywin,i,0);
-        wclrtoeol(displaywin);
+        sweepline(displaywin, i, 0);
     }
 
     if(!operation_enabled) prio += 2;
@@ -632,17 +623,16 @@ void draw(numberstack* numbers, operation* current_op) {
     wrefresh(displaywin);
 
     // Clear input
-    wmove(inputwin, 1, 19);
-    wclrtoeol(inputwin);
+    sweepline(inputwin,1,19);
 
     // Prompt input
     mvwprintw(inputwin, 1, 2, "Number or operator: ");
     wrefresh(inputwin);
 }
 
-void sweepline(int priority,int prompt) {
-    wmove(displaywin,priority,prompt);
-    wclrtoeol(displaywin);
+void sweepline(WINDOW* w, int priority,int prompt) {
+    wmove(w,priority,prompt);
+    wclrtoeol(w);
 }
 
 long long pushnumber(char * in, numberstack* numbers) {
@@ -688,7 +678,8 @@ void add_number_to_history(long long n, int type) {
 
     }
 
-    add_to_history(str);
+    add_to_history(&history, str);
+    wrefresh(displaywin);
 }
 
 
