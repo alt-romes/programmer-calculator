@@ -4,6 +4,7 @@
 #include <ncurses.h>
 
 #include "numberstack.h"
+#include "operators.h"
 
 #define MAX_IN 80
 
@@ -54,25 +55,6 @@ long long pushnumber(char *, numberstack*);
 void add_number_to_history(long long, int); // 0 = decimal, 1 = hex, 2 = binary
 void get_input(char *);
 
-// Operations
-long long add(long long, long long);
-long long subtract(long long, long long);
-long long multiply(long long, long long);
-long long divide(long long, long long);
-long long and(long long, long long);
-long long or(long long, long long);
-long long nor(long long, long long);
-long long xor(long long, long long);
-long long sl(long long, long long);
-long long sr(long long, long long);
-long long rl(long long, long long);
-long long rr(long long, long long);
-long long modulus(long long, long long);
-long long not(long long, long long);
-long long twos_complement(long long, long long);
-
-
-
 
 
 /*---- Define Operations and Global Vars --------------------------*/
@@ -91,10 +73,9 @@ int history_enabled = 1;
 
 const char *  all_ops = "+-*/&|$^<>()%~'";
 const char * VALID_NUMBER_INPUT = "0123456789abcdefx";
-const unsigned long long DEFAULT_MASK = -1;
-const int DEFAULT_MASK_SIZE = 64;
-unsigned long long globalmask = DEFAULT_MASK;
-int globalmasksize = DEFAULT_MASK_SIZE;
+
+extern unsigned long long globalmask;
+extern int globalmasksize;
 
 operation operations[16] = {
     {0, 0, NULL},
@@ -680,88 +661,4 @@ void add_number_to_history(long long n, int type) {
 
     add_to_history(&history, str);
     wrefresh(displaywin);
-}
-
-
-
-
-
-/*---- Operations -------------------------------------------------*/
-
-
-long long add(long long a, long long b) {
-
-    return (a + b) & globalmask;
-}
-
-// remember op1 = first popped ( right operand ), op2 = second popped ( left operand )
-long long subtract(long long a, long long b) {
-
-    return (b - a) & globalmask;
-}
-long long multiply(long long a, long long b) {
-
-    return (a * b) & globalmask;
-}
-
-long long divide(long long a, long long b) {
-
-    //TODO not divisible by 0
-    if(!a)
-        return 0;
-    return (b / a) & globalmask;
-}
-
-long long and(long long a, long long b) {
-
-    return (a & b) & globalmask;
-}
-
-long long or(long long a, long long b) {
-
-    return (a | b) & globalmask;
-}
-
-long long nor(long long a, long long b) {
-
-    return (~or(a,b)) & globalmask;
-}
-
-long long xor(long long a, long long b) {
-
-    return (a ^ b) & globalmask;
-}
-long long sl(long long a, long long b) {
-
-    return (b << a) & globalmask;
-}
-
-long long sr(long long a, long long b) {
-
-    return ( (b >> a) & ~((long long) -1 << (64-a)) ) & globalmask;
-}
-
-long long rl(long long a, long long b) {
-
-    return ( b << a | sr(globalmasksize-a, b) ) & globalmask;
-}
-
-long long rr(long long a, long long b) {
-
-    return ( sr(a, b) | ( b << (globalmasksize- a) ) ) & globalmask;
-}
-
-long long modulus(long long a, long long b) {
-
-    return (b % a) & globalmask;
-}
-
-long long not(long long a, long long b) {
-
-    return ~a & globalmask;
-}
-
-long long twos_complement(long long a, long long b) {
-
-    return (~a + 1) & globalmask;
 }
