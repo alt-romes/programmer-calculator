@@ -2,7 +2,7 @@
 
 CC = gcc
 CFLAGS := -Wall -Wextra -g
-LFLAGS = -lm -lncurses
+LFLAGS = -lncurses
 OUTPUT := output
 SRC := src
 INCLUDE := include
