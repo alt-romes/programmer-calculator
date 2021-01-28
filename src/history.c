@@ -83,3 +83,10 @@ void add_number_to_history(long long n, int type) {
     add_to_history(&history, str);
     wrefresh(displaywin);
 }
+
+void browsehistory(char* in , int mode, int* counter) {
+    if( (mode == 1 && *counter < searchHistory.size -1) || (mode == -1 && *counter > 0)) {
+        *counter += mode;
+        strcpy(in,searchHistory.records[*counter]);
+    }
+}

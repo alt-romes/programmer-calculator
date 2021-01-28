@@ -334,7 +334,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 void get_input(char *in) {
 
     char inp;
-    int history_counter = 0;
+    int history_counter = history.size;
 
     // Collect input until enter is pressed
     for (int i = 0; (inp = getchar()) != 13;)
@@ -346,13 +346,13 @@ void get_input(char *in) {
             inp = getchar();
             if (inp == 'A')
             {   
-                browsehistory(in, 1, &history_counter);
+                browsehistory(in, -1, &history_counter);
                 i = strlen(in);
                 searched = 1;
             }
             else if (inp == 'B')
             {   
-                browsehistory(in, -1, &history_counter);
+                browsehistory(in, 1, &history_counter);
                 i = strlen(in);
                 searched = 1;
             }
