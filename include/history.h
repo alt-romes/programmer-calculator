@@ -3,7 +3,7 @@
 
 struct history {
     int size;
-    char * records[100];
+    char **records;
 };
 
 void clear_history();
