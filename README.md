@@ -68,7 +68,7 @@ $ brew upgrade pcalc
 
 Just run the programmer calculator program
 ```
-$ output/pcalc
+$ pcalc
 ```
 
 ## Features
