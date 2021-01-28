@@ -60,7 +60,7 @@ extern int history_enabled;
 extern unsigned long long globalmask;
 extern int globalmasksize;
 
-extern operation operations[16];
+extern operation operations[];
 
 
 
