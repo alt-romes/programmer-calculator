@@ -345,13 +345,15 @@ void get_input(char *in) {
             getchar();
             inp = getchar();
             if (inp == 'A')
-            {   
+            {
+                // Up arrow
                 browsehistory(in, -1, &history_counter);
                 i = strlen(in);
                 searched = 1;
             }
             else if (inp == 'B')
-            {   
+            {
+                // Down arrow
                 browsehistory(in, 1, &history_counter);
                 i = strlen(in);
                 searched = 1;
@@ -385,7 +387,7 @@ void get_input(char *in) {
         wrefresh(inputwin);
     }
     
-    if (in[0] != '\0')
+    if (in[0] != '\0' && strcmp(in, searchHistory.records[searchHistory.size - 1]))
         add_to_history(&searchHistory, in);
 }
 
