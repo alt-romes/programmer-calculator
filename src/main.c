@@ -17,12 +17,8 @@
 /*---- Structures -------------------------------------------------*/
 
 
-
 extern struct history history;
 extern struct history searchHistory;
-
-
-
 
 
 /*---- Function Prototypes ----------------------------------------*/
@@ -32,10 +28,6 @@ extern struct history searchHistory;
 extern WINDOW* displaywin, * inputwin;
 // General
 void process_input(numberstack*, operation**, char*);
-void clear_history();
-void add_to_history(struct history*, char*);
-long long pushnumber(char *, numberstack*);
-void add_number_to_history(long long, int); // 0 = decimal, 1 = hex, 2 = binary
 void get_input(char *);
 
 
@@ -129,6 +121,10 @@ int main(int argc, char *argv[])
      */
     numberstack* numbers = create_numberstack(4);
     operation* current_op = &operations[0];
+
+    // Initalize history pointers with NULL (realloc will bahave like malloc)
+    history.records = NULL;
+    searchHistory.records = NULL;
 
     // Start numberstack and history with 0
     push_numberstack(numbers, 0);
@@ -338,7 +334,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 void get_input(char *in) {
 
     char inp;
-    int history_counter = 0;
+    int history_counter = searchHistory.size - 1;
 
     // Collect input until enter is pressed
     for (int i = 0; (inp = getchar()) != 13;)
@@ -349,14 +345,16 @@ void get_input(char *in) {
             getchar();
             inp = getchar();
             if (inp == 'A')
-            {   
-                browsehistory(in, 1, &history_counter);
+            {
+                // Up arrow
+                browsehistory(in, -1, &history_counter);
                 i = strlen(in);
                 searched = 1;
             }
             else if (inp == 'B')
-            {   
-                browsehistory(in, -1, &history_counter);
+            {
+                // Down arrow
+                browsehistory(in, 1, &history_counter);
                 i = strlen(in);
                 searched = 1;
             }
@@ -389,7 +387,7 @@ void get_input(char *in) {
         wrefresh(inputwin);
     }
     
-    if (in[0] != '\0')
+    if (in[0] != '\0' && strcmp(in, searchHistory.records[searchHistory.size - 1]))
         add_to_history(&searchHistory, in);
 }
 
