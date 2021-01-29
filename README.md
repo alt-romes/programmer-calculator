@@ -34,7 +34,7 @@ Then, install the program
 $ brew install pcalc
 ```
 
-### Arch Based Distros
+#### Arch Based Distros
 
 Install from AUR
 ```
