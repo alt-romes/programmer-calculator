@@ -38,7 +38,7 @@ $ brew install pcalc
 
 Install from AUR
 ```
-yay -S programmer-calculator
+$ yay -S programmer-calculator
 ```
 
 #### Building from Source (alternative)
