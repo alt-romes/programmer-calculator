@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <limits.h>
 #include <ncurses.h>
 
@@ -95,6 +96,9 @@ int main(int argc, char *argv[])
                 case 's':
                     symbols_enabled = 0;
                     break;
+		default:
+		    fprintf(stderr, "Unrecognized option: %s\n", argv[1]);
+		    exit(EXIT_FAILURE);
 
             }
 
