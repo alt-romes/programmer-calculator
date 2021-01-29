@@ -88,12 +88,6 @@ void printhistory(numberstack* numbers, int priority) {
     }
 }
 //-------------------------------------------------------------------------------------------------------------------------
-void browsehistory(char* in , int mode, int* counter) {
-    if( (mode == 1 && *counter < searchHistory.size -1) || (mode == -1 && *counter > 0)) {
-        *counter += mode;
-        strcpy(in,searchHistory.records[*counter]);
-    }
-}
 
 
 void draw(numberstack* numbers, operation* current_op) {

@@ -19,13 +19,37 @@ void clear_history() {
     for (; history.size>0; history.size--)
         free(history.records[history.size-1]);
 
+    // To make sure realloc behaves like malloc later
+    history.records = NULL;
+
     sweepline(displaywin, 14, 11);
     sweepline(displaywin, 15, 0);
 }
 
-void add_to_history(struct history* h,char* in) {
-    h->records[h->size] = malloc(MAX_IN);
-    strcpy(h->records[h->size++], *in == '\0' && h == &history ? "0" : in);
+void add_to_history(struct history* h, char* in) {
+
+    // Void pointer for temporarily storing h->record's realloc
+    void *hrealloc;
+
+    if ((hrealloc = realloc(h->records, (h->size + 1) * sizeof(char *)))) {
+        // Contine if realloc succeded
+        h->records = hrealloc;
+    }
+    else {
+        // Exit
+        endwin();
+        fprintf(stderr, "OUT OF MEMORY");
+        exit(-1);
+    }
+
+    if ((h->records[h->size++] = strdup(*in == '\0' && h == &history ? "0" : in)) == NULL) {
+        // strdup failed with allocating memory
+        endwin();
+        fprintf(stderr, "OUT OF MEMORY");
+        exit(-1);
+
+    }
+
 }
 
 void add_number_to_history(long long n, int type) {
@@ -58,4 +82,29 @@ void add_number_to_history(long long n, int type) {
 
     add_to_history(&history, str);
     wrefresh(displaywin);
+}
+
+void browsehistory(char* in , int mode, int* counter) {
+
+    if( (mode == 1 && *counter < searchHistory.size-1) || (mode == -1 && *counter > 0)) {
+
+        *counter += mode;
+        strcpy(in, searchHistory.records[*counter]);
+    }
+    else if (mode == 1 && *counter == searchHistory.size - 1) {
+
+        // When the user is scrolling down and the limit is reached, the input becomes empty again, and the counter is set to the end
+
+        *counter += 1; /* Set the counter == searchHistory.size.
+                        * this is a non existent position, indicating that the counter
+                        * is currently not being used.
+                        *
+                        * You can also think about it in this way:
+                        * Next time the user presses key up, the counter == searchHistory.size
+                        * will be decremented, and the last position of history will be accessed
+                        * history[searchHistory.size - 1]
+                        */
+        strcpy(in, "");
+    }
+        
 }
