@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
                     symbols_enabled = 0;
                     break;
 		default:
-		    fprintf(stderr, "Unrecognized option: %s\n", argv[1]);
+		    fprintf(stderr, "Unrecognized option: -%c\n", argv[1][i]);
 		    exit(EXIT_FAILURE);
 
             }
