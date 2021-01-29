@@ -85,8 +85,26 @@ void add_number_to_history(long long n, int type) {
 }
 
 void browsehistory(char* in , int mode, int* counter) {
-    if( (mode == 1 && *counter < searchHistory.size -1) || (mode == -1 && *counter > 0)) {
+
+    if( (mode == 1 && *counter < searchHistory.size-1) || (mode == -1 && *counter > 0)) {
+
         *counter += mode;
-        strcpy(in,searchHistory.records[*counter]);
+        strcpy(in, searchHistory.records[*counter]);
     }
+    else if (mode == 1 && *counter == searchHistory.size - 1) {
+
+        // When the user is scrolling down and the limit is reached, the input becomes empty again, and the counter is set to the end
+
+        *counter += 1; /* Set the counter == searchHistory.size.
+                        * this is a non existent position, indicating that the counter
+                        * is currently not being used.
+                        *
+                        * You can also think about it in this way:
+                        * Next time the user presses key up, the counter == searchHistory.size
+                        * will be decremented, and the last position of history will be accessed
+                        * history[searchHistory.size - 1]
+                        */
+        strcpy(in, "");
+    }
+        
 }
