@@ -42,7 +42,7 @@ long long * top_numberstack(numberstack* s) {
 // Push number to the top of the stack
 void push_numberstack(numberstack* s, long long value) {
 
-    if (s->size == s->max_size) 
+    if (s->size == s->max_size)
         resize_numberstack(s);
 
     s->elements[s->size++] = value;

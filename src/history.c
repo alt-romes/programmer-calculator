@@ -108,5 +108,5 @@ void browsehistory(char* in , int mode, int* counter) {
                         */
         strcpy(in, "");
     }
-        
+
 }
