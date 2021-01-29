@@ -1,6 +1,9 @@
 #ifndef _HISTORY_H
 #define _HISTORY_H
 
+
+#define HISTORY_RECORDS_BEFORE_REALLOC 20
+
 struct history {
     int size;
     char **records;
