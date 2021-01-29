@@ -28,18 +28,20 @@ void clear_history() {
 
 void add_to_history(struct history* h, char* in) {
 
-    // Void pointer for temporarily storing h->record's realloc
-    void *hrealloc;
+    if (h->size % HISTORY_RECORDS_BEFORE_REALLOC == 0) {
+        // Void pointer for temporarily storing h->record's realloc
+        void *hrealloc;
 
-    if ((hrealloc = realloc(h->records, (h->size + 1) * sizeof(char *)))) {
-        // Contine if realloc succeded
-        h->records = hrealloc;
-    }
-    else {
-        // Exit
-        endwin();
-        fprintf(stderr, "OUT OF MEMORY");
-        exit(-1);
+        if ((hrealloc = realloc(h->records, (h->size + 1) * sizeof(char *) * HISTORY_RECORDS_BEFORE_REALLOC))) {
+            // Contine if realloc succeded
+            h->records = hrealloc;
+        }
+        else {
+            // Exit
+            endwin();
+            fprintf(stderr, "OUT OF MEMORY");
+            exit(-1);
+        }
     }
 
     if ((h->records[h->size++] = strdup(*in == '\0' && h == &history ? "0" : in)) == NULL) {
