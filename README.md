@@ -34,6 +34,13 @@ Then, install the program
 $ brew install pcalc
 ```
 
+### Arch Based Distros
+
+Install from AUR
+```
+yay -S programmer-calculator
+```
+
 #### Building from Source (alternative)
 
 To build from source you need gcc, ncurses, and the source files. 
