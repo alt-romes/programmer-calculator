@@ -70,13 +70,13 @@ int main(int argc, char *argv[])
     if (argc >= 2 && argv[1][0] == '-') {
 
         for (int i=1; argv[1][i] != '\0'; i++) {
-            
+
             switch (argv[1][i]) {
 
                 case 'h':
                     history_enabled = 0;
                     break;
-                
+
                 case 'b':
                     binary_enabled = 0;
                     break;
@@ -102,12 +102,12 @@ int main(int argc, char *argv[])
 
             }
 
-        }    
+        }
     }
 
     init_gui(&displaywin, &inputwin);
 
-    /* 
+    /*
      * The numberstack is used to store numbers used in calculations
      * It's a normal stack data structure (LIFO) that holds long long integers
      * Check the stack.h file for its operations
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
      *
      * Numbers get pushed to the numberstack "numbers", and operations are set as the "current_op"
      *
-     * After receiving user input, if there's a current operation, the program compares the 
+     * After receiving user input, if there's a current operation, the program compares the
      * current stack size to the number of operands needed for that operation
      *
      * Should the operation be executed, the needed operands are popped from the stack,
@@ -144,12 +144,12 @@ int main(int argc, char *argv[])
 
         // Get input
         char in[MAX_IN+1];
-        
+
         // Make sure that if enter is pressed, a len == 0 null terminated string is in "in"
         in[0] = '\0';
-        
+
         get_input(in);
-        
+
         process_input(numbers, &current_op, in);
 
         // Display number on top of the stack
@@ -171,7 +171,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
     if (op != NULL) {
 
         // An operation symbol was found
-        
+
         // A new string holds the operation symbol
         char opchar[2];
         opchar[0] = *op;
@@ -230,7 +230,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 
             // We have a number, so we'll push it to the number stack
             long long aux = pushnumber(token, numbers);
-            
+
             // History will display the number in the format inserted
             // So we must separate 0b from 0x from a normal decimal
             // add_number_to_history takes a second parameter to display accordingly
@@ -247,9 +247,9 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
                 add_to_history(&history, opchar);
                 operationInStack = 1;
             }
-            
+
             // Get the next token (next number)
-        	token = strtok(NULL, opchar);
+		token = strtok(NULL, opchar);
         }
 
 
@@ -279,7 +279,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         globalmasksize = requestedmasksize > DEFAULT_MASK_SIZE || requestedmasksize <= 0 ? DEFAULT_MASK_SIZE : requestedmasksize;
 
         //globalmask cant be 0x16f's
-    	globalmask = DEFAULT_MASK >> (DEFAULT_MASK_SIZE-globalmasksize);
+	globalmask = DEFAULT_MASK >> (DEFAULT_MASK_SIZE-globalmasksize);
 
         // apply mask to all numbers in stack
         numberstack* aux = create_numberstack(numbers->size);
@@ -311,7 +311,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
                 add_number_to_history(aux, 1);
             else
                 add_number_to_history(aux, 0);
-        
+
         }
 
     }
@@ -389,11 +389,11 @@ void get_input(char *in) {
         }
         // Finaly print input
         sweepline(inputwin, 1, 22);
-            
+
         mvwprintw(inputwin, 1, 22, in);
         wrefresh(inputwin);
     }
-    
+
     if (in[0] != '\0' && (searchHistory.size == 0 || strcmp(in, searchHistory.records[searchHistory.size - 1])))
         add_to_history(&searchHistory, in);
 
