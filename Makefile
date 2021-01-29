@@ -52,3 +52,5 @@ clean:
 run: all
 	./$(MAIN)
 	@echo Executing "run: all" complete!
+	
+install: all
