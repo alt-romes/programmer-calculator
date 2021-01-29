@@ -11,7 +11,7 @@ class Pcalc < Formula
   depends_on "ncurses"
 
   def install
-    system "make", "install"
+    system "make"
     bin.install "pcalc"
   end
 
