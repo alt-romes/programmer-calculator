@@ -1,8 +1,13 @@
-
+#include <stdio.h>
 #include <stdlib.h>
+#include <ncurses.h>
 
-// Numbers Stack
+#include "global.h"
 #include "numberstack.h"
+
+
+numberstack* numbers;
+
 
 // Allocate and set up numberstack
 numberstack * create_numberstack(int max_size) {
@@ -18,7 +23,18 @@ numberstack * create_numberstack(int max_size) {
 numberstack * resize_numberstack(numberstack* s) {
 
     s->max_size *= 2;
-    return realloc(s->elements, s->max_size * sizeof(long long));
+    void *srealloc;
+    if ((srealloc = realloc(s->elements, s->max_size * sizeof(long long)))) {
+        s->elements = srealloc;
+
+    } else {
+        endwin();
+        fprintf(stderr, "OUT OF MEMORY");
+        exit_pcalc(-1);
+
+    }
+    return s;
+
 }
 
 // Pop element from the top of the stack (return and remove element)

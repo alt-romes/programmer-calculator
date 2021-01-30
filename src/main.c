@@ -24,7 +24,8 @@ extern struct history history;
 extern struct history searchHistory;
 
 // Main number stack for calculations
-static numberstack* numbers;
+extern numberstack* numbers;
+
 
 
 
@@ -36,7 +37,6 @@ extern WINDOW* displaywin, * inputwin;
 // General
 void process_input(operation**, char*);
 void get_input(char *);
-void exit_pcalc();
 
 
 /*---- Define Operations and Global Vars --------------------------*/
@@ -259,7 +259,7 @@ void process_input(operation** current_op, char* in) {
     }
 
     else if (!strcmp(in, "quit") || !strcmp(in, "q") || !strcmp(in, "exit"))
-        exit_pcalc();
+        exit_pcalc(0);
 
     // Handle other commands when an operation wasn't in the input string
     else if (!strcmp(in, "binary"))
@@ -411,7 +411,7 @@ void get_input(char *in) {
 }
 
 
-void exit_pcalc() {
+void exit_pcalc(int code) {
 
     free_history(&history);
     free_history(&searchHistory);
@@ -419,5 +419,5 @@ void exit_pcalc() {
 
     endwin();
 
-    exit(0);
+    exit(code);
 }

@@ -11,6 +11,8 @@ extern int globalmasksize;
 
 extern WINDOW *displaywin;
 
+extern numberstack* numbers;
+
 struct history searchHistory;
 struct history history;
 
@@ -41,7 +43,7 @@ void add_to_history(struct history* h, char* in) {
             // Exit
             endwin();
             fprintf(stderr, "OUT OF MEMORY");
-            exit(-1);
+            exit_pcalc(-1);
         }
     }
 
@@ -49,7 +51,7 @@ void add_to_history(struct history* h, char* in) {
         // strdup failed with allocating memory
         endwin();
         fprintf(stderr, "OUT OF MEMORY");
-        exit(-1);
+        exit_pcalc(-1);
 
     }
 
