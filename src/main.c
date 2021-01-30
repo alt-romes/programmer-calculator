@@ -4,6 +4,7 @@
 #include <limits.h>
 #include <ncurses.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include "draw.h"
 #include "global.h"
@@ -16,11 +17,15 @@
 
 
 
-/*---- Structures -------------------------------------------------*/
+/*---- Global Structures ------------------------------------------*/
 
 
 extern struct history history;
 extern struct history searchHistory;
+
+// Main number stack for calculations
+static numberstack* numbers;
+
 
 
 /*---- Function Prototypes ----------------------------------------*/
@@ -29,9 +34,9 @@ extern struct history searchHistory;
 // Drawing
 extern WINDOW* displaywin, * inputwin;
 // General
-void process_input(numberstack*, operation**, char*);
+void process_input(operation**, char*);
 void get_input(char *);
-void exit_pcalc(numberstack *, int);
+void exit_pcalc();
 
 
 /*---- Define Operations and Global Vars --------------------------*/
@@ -102,6 +107,9 @@ int main(int argc, char *argv[])
 
     init_gui(&displaywin, &inputwin);
 
+    // Set handler for CTRL+C to clean exit
+    signal(SIGINT, exit_pcalc);
+
     /*
      * The numberstack is used to store numbers used in calculations
      * It's a normal stack data structure (LIFO) that holds long long integers
@@ -118,7 +126,7 @@ int main(int argc, char *argv[])
      * Should the operation be executed, the needed operands are popped from the stack,
      * the operation is executed, and the result of the calculation is pushed to the stack
      */
-    numberstack* numbers = create_numberstack(4);
+    numbers = create_numberstack(4);
     operation* current_op = &operations[0];
 
     // Initalize history pointers with NULL (realloc will bahave like malloc)
@@ -145,7 +153,7 @@ int main(int argc, char *argv[])
 
         get_input(in);
 
-        process_input(numbers, &current_op, in);
+        process_input(&current_op, in);
 
         // Display number on top of the stack
         draw(numbers, current_op);
@@ -156,7 +164,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void process_input(numberstack* numbers, operation** current_op, char* in) {
+void process_input(operation** current_op, char* in) {
 
     // Process input
 
@@ -250,8 +258,8 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 
     }
 
-    else if (!strcmp(in, "quit"))
-        exit_pcalc(numbers, 0);
+    else if (!strcmp(in, "quit") || !strcmp(in, "q") || !strcmp(in, "exit"))
+        exit_pcalc();
 
     // Handle other commands when an operation wasn't in the input string
     else if (!strcmp(in, "binary"))
@@ -277,7 +285,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         globalmasksize = requestedmasksize > DEFAULT_MASK_SIZE || requestedmasksize <= 0 ? DEFAULT_MASK_SIZE : requestedmasksize;
 
         //globalmask cant be 0x16f's
-	globalmask = DEFAULT_MASK >> (DEFAULT_MASK_SIZE-globalmasksize);
+        globalmask = DEFAULT_MASK >> (DEFAULT_MASK_SIZE-globalmasksize);
 
         // apply mask to all numbers in stack
         numberstack* aux = create_numberstack(numbers->size);
@@ -403,13 +411,13 @@ void get_input(char *in) {
 }
 
 
-void exit_pcalc(numberstack *n, int code) {
+void exit_pcalc() {
 
     free_history(&history);
     free_history(&searchHistory);
-    free_numberstack(n);
+    free_numberstack(numbers);
 
     endwin();
-    exit(code);
 
+    exit(0);
 }
