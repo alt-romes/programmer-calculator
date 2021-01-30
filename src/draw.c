@@ -28,7 +28,7 @@ extern int globalmasksize;
 void init_gui() {
 
     initscr();
-    cbreak(); // exit on ctrl+c
+    cbreak(); 
 
     getmaxyx(stdscr, wMaxY, wMaxX);
 
