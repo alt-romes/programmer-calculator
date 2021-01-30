@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <limits.h>
 #include <ncurses.h>
+#include <unistd.h>
 #include <signal.h>
 
 #include "draw.h"
@@ -70,45 +71,39 @@ extern operation operations[];
 
 int main(int argc, char *argv[])
 {
-
     // Get command line options to hide parts of the display
-    if (argc >= 2 && argv[1][0] == '-') {
+    int opt;
+    while ((opt = getopt(argc, argv, "hbxdos")) != -1) {
+        switch (opt) {
+        case 'h':
+            history_enabled = 0;
+            break;
 
-        for (int i=1; argv[1][i] != '\0'; i++) {
+        case 'b':
+            binary_enabled = 0;
+            break;
 
-            switch (argv[1][i]) {
+        case 'x':
+            hex_enabled = 0;
+            break;
 
-                case 'h':
-                    history_enabled = 0;
-                    break;
+        case 'd':
+            decimal_enabled = 0;
+            break;
 
-                case 'b':
-                    binary_enabled = 0;
-                    break;
+        case 'o':
+            operation_enabled = 0;
+            break;
 
-                case 'x':
-                    hex_enabled = 0;
-                    break;
+        case 's':
+            symbols_enabled = 0;
+            break;
 
-                case 'd':
-                    decimal_enabled = 0;
-                    break;
-
-                case 'o':
-                    operation_enabled = 0;
-                    break;
-
-                case 's':
-                    symbols_enabled = 0;
-                    break;
-		default:
-		    fprintf(stderr, "Unrecognized option: -%c\n", argv[1][i]);
-		    exit(EXIT_FAILURE);
-
-            }
-
+        default:
+            exit(EXIT_FAILURE);
         }
     }
+
 
     init_gui(&displaywin, &inputwin);
 
@@ -390,6 +385,11 @@ void get_input(char *in) {
             if (i <= MAX_IN) {
                 // Append char to in array
                 in[i++] = inp;
+
+                /* Avoid having to enter % twice */
+                if (inp == '%')
+                    in[i++] = inp;
+
                 in[i] = '\0';
                 if (inp == '\0')
                 {
