@@ -3,4 +3,6 @@
 
 #define MAX_IN 80
 
+void exit_pcalc(int);
+
 #endif
