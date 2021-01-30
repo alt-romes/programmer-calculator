@@ -4,6 +4,13 @@
 #define DEFAULT_MASK -1
 #define DEFAULT_MASK_SIZE 64
 
+/* Supress unused parameter warnings */
+#ifdef __GNUC__
+#   define UNUSED(x) UNUSED_##x __attribute__((__unused__))
+#else
+#   define UNUSED(x) UNUSED_##x
+#endif
+
 // Operations Control
 // Example: '+' takes two operands, therefore the noperands = 2
 typedef struct operation {
