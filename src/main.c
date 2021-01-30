@@ -377,6 +377,11 @@ void get_input(char *in) {
             if (i <= MAX_IN) {
                 // Append char to in array
                 in[i++] = inp;
+
+                /* Avoid having to enter % twice */
+                if (inp == '%')
+                    in[i++] = inp;
+
                 in[i] = '\0';
                 if (inp == '\0')
                 {
