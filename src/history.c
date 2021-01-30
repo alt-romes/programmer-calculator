@@ -19,6 +19,7 @@ void clear_history() {
     for (; history.size>0; history.size--)
         free(history.records[history.size-1]);
 
+    free(history.records);
     // To make sure realloc behaves like malloc later
     history.records = NULL;
 
@@ -108,5 +109,14 @@ void browsehistory(char* in , int mode, int* counter) {
                         */
         strcpy(in, "");
     }
+
+}
+
+void free_history(struct history *h) {
+
+    for (int i = 0; i < h->size; ++i)
+        free(h->records[i]);
+
+    free(h->records);
 
 }

@@ -53,3 +53,10 @@ void clear_numberstack(numberstack* s) {
 
     s->size = 0;
 }
+
+void free_numberstack(numberstack *s) {
+
+    free(s->elements);
+    free(s);
+
+}

@@ -30,7 +30,7 @@ extern WINDOW* displaywin, * inputwin;
 // General
 void process_input(numberstack*, operation**, char*);
 void get_input(char *);
-
+void exit_pcalc(numberstack *);
 
 
 /*---- Define Operations and Global Vars --------------------------*/
@@ -255,6 +255,9 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 
     }
 
+    else if (!strcmp(in, "quit"))
+        exit_pcalc(numbers);
+
     // Handle other commands when an operation wasn't in the input string
     else if (!strcmp(in, "binary"))
         binary_enabled = !binary_enabled;
@@ -399,3 +402,14 @@ void get_input(char *in) {
 
 }
 
+
+void exit_pcalc(numberstack *n) {
+
+    free_history(&history);
+    free_history(&searchHistory);
+    free_numberstack(n);
+
+    endwin();
+    exit(0);
+
+}
