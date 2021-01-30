@@ -2,7 +2,7 @@
 #define _HISTORY_H
 
 
-#define HISTORY_RECORDS_BEFORE_REALLOC 1
+#define HISTORY_RECORDS_BEFORE_REALLOC 20
 
 struct history {
     int size;
