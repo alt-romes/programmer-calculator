@@ -37,6 +37,7 @@ extern WINDOW* displaywin, * inputwin;
 // General
 void process_input(operation**, char*);
 void get_input(char *);
+void exit_pcalc_success();
 
 
 /*---- Define Operations and Global Vars --------------------------*/
@@ -108,7 +109,7 @@ int main(int argc, char *argv[])
     init_gui(&displaywin, &inputwin);
 
     // Set handler for CTRL+C to clean exit
-    signal(SIGINT, exit_pcalc);
+    signal(SIGINT, exit_pcalc_success);
 
     /*
      * The numberstack is used to store numbers used in calculations
@@ -420,4 +421,9 @@ void exit_pcalc(int code) {
     endwin();
 
     exit(code);
+}
+
+void exit_pcalc_success() {
+
+    exit_pcalc(0);
 }
