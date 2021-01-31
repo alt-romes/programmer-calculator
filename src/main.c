@@ -387,10 +387,6 @@ void get_input(char *in) {
                 // Append char to in array
                 in[i++] = inp;
 
-                /* Avoid having to enter % twice */
-                if (inp == '%')
-                    in[i++] = inp;
-
                 in[i] = '\0';
                 if (inp == '\0')
                 {
@@ -402,7 +398,7 @@ void get_input(char *in) {
         // Finaly print input
         sweepline(inputwin, 1, 22);
 
-        mvwprintw(inputwin, 1, 22, in);
+        mvwprintw(inputwin, 1, 22, "%s", in);
         wrefresh(inputwin);
     }
 
