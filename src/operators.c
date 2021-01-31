@@ -145,6 +145,10 @@ long long rr(long long a, long long b) {
 
 long long modulus(long long a, long long b) {
 
+    //TODO not divisible by 0
+    if(!a)
+        return 0;
+
     return (b % a) & globalmask;
 }
 
