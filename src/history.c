@@ -82,6 +82,7 @@ void add_number_to_history(long long n, int type) {
 
     }
 
+
     add_to_history(&history, str);
     wrefresh(displaywin);
 }
