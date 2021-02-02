@@ -221,8 +221,11 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         // Because of the way we handled it, the operation will be right at the start of *in*
         op = in;
 
-        // The next while will only handle case 1 and 3 - we already have the operation ready
+        // Because we're manipulating the string, we need a variable to keep track of one of the addresses we need to free
+        char * last_allocated_addr = in_saved;
 
+        // The next while will only handle case 1 and 3 - we already have the operation ready
+        
         int niterations = 0;
 
         while (op != NULL) {
@@ -231,11 +234,11 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
             *current_op = getopcode(*op);
 
             /* Before the strtok replaces the operator with \0 when searching for tokens
-             * Save the string starting from right after the operator so we can search it later for more ops
+             * Save the string starting right from the operator so we can search it later for more ops
              */
-            in_saved = strdup(op) + 1;
+            in_saved = strdup(op+1);
 
-            // Find the first number in the string, by splitting with the op char and everything after 
+            // Find the next number in the string
             char * token = strtok(in, ALL_OPS);
 
             // Logic to add the op in the history
@@ -269,7 +272,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 
             }
 
-            // We'll try to apply the operation, which will only actually be applied if enough numbers were added to the numberstack
+            // Try to apply the operation, which will only actually be applied if enough numbers were added to the numberstack
             apply_operations(numbers, current_op);
 
 
@@ -277,15 +280,21 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
            
             // Define helper distances to check if the new operand comes before the last read token and avoid a++b
             int distance_to_previous_op, distance_to_new_op, distance_to_last_token;
-            distance_to_previous_op = op - in; // This has to come before we reassign *op* (distance from last op to the start of input)
+            // This has to come before we reassign *op* (distance from last op to the start of input)
+            distance_to_previous_op = op - in;
+            distance_to_last_token = token - in; // (token - in) is the distance from the last token to the beginning of the input
 
-            // Try to find a next operation in the string starting after the already processed operation
+
+            // We no longer need the memory saved in the last allocated address here, and we set it to the last allocated address so it is cleared again
+            free(last_allocated_addr);
+            last_allocated_addr = in_saved;
+
+            // Try to find a next operation in the string starting right after the last op
             op = strpbrk(in_saved, ALL_OPS);
         
             // Because op and token are two different strings, we need to measure the distance to the beginning first to compare them later 
             // (op - in_saved) is the distance from the new op to the saved string that starts directly after the previous op
             distance_to_new_op = distance_to_previous_op + (op - in_saved);
-            distance_to_last_token = token - in; // (token - in) is the distance from the last token to the beginning of the input
 
             // If the new op comes before the last token, then we have a++b. We'll search for a next possible op
             if (token != NULL && op != NULL && distance_to_new_op < distance_to_last_token)
@@ -296,6 +305,9 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 
             niterations++;
         }
+
+        // When we exit the loop, free the only allocated memory left (that's in *in_saved*)
+        free(in_saved);
 
     }
 
