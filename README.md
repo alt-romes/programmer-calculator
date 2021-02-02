@@ -49,7 +49,7 @@ To build from source you need gcc, ncurses, and the source files.
 To install ncurses in Debian based distros run
 ```
 $ sudo apt-get install libncurses5-dev libncursesw5-dev
-
+```
 
 First, clone the repository
 ```
