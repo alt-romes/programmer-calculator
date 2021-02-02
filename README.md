@@ -46,6 +46,11 @@ $ yay -S programmer-calculator
 To build from source you need gcc, ncurses, and the source files. 
 **If you don't have ncurses, please install it (i.e. with your system's package manager) first.**
 
+To install ncurses in Debian based distros run
+```
+$ sudo apt-get install libncurses5-dev libncursesw5-dev
+
+
 First, clone the repository
 ```
 $ git clone https://github.com/alt-romes/programmer-calculator
@@ -58,7 +63,7 @@ $ make
 
 Finally, move the executable to a directory reachable by $PATH
 ```
-$ mv -i output/pcalc /usr/local/bin
+$ mv -i pcalc /usr/local/bin
 ```
 
 #### Updating
