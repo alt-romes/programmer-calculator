@@ -87,7 +87,11 @@ There are various ways to insert values/operators, see the example `2 + 2` below
 * 2, followed by +, followed by 2
 * 2, followed by +2
 * 2+, followed by 2
-* 2+2 (or 2 + 2, 2 +2, 2+ 2, ...) (inline math only supports 2 operands at the moment)
+* 2+2 (or 2 + 2+ 2, 2 +2, 2+ 2, ...)
+
+You can also do inline math, but without priorities.
+This means `2 + 3 * 2` is valid, but it's equal to `10`, not `8`, because expressions are evaluated from left to right
+That said, any inline math is valid i.e.: `0x13 + 135 - 0b101 < 2 * 3 ~`
 
 ### Hex + Binary + Decimal
 
