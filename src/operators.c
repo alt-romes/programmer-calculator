@@ -145,15 +145,19 @@ long long rr(long long a, long long b) {
 
 long long modulus(long long a, long long b) {
 
+    //TODO not divisible by 0
+    if(!a)
+        return 0;
+
     return (b % a) & globalmask;
 }
 
-long long not(long long a, long long b) {
+long long not(long long a, long long UNUSED(b)) {
 
     return ~a & globalmask;
 }
 
-long long twos_complement(long long a, long long b) {
+long long twos_complement(long long a, long long UNUSED(b)) {
 
     return (~a + 1) & globalmask;
 }

@@ -1,7 +1,10 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <limits.h>
 #include <ncurses.h>
+#include <unistd.h>
+#include <signal.h>
 
 #include "draw.h"
 #include "global.h"
@@ -14,11 +17,16 @@
 
 
 
-/*---- Structures -------------------------------------------------*/
+/*---- Global Structures ------------------------------------------*/
 
 
 extern struct history history;
 extern struct history searchHistory;
+
+// Main number stack for calculations
+extern numberstack* numbers;
+
+
 
 
 /*---- Function Prototypes ----------------------------------------*/
@@ -27,10 +35,10 @@ extern struct history searchHistory;
 // Drawing
 extern WINDOW* displaywin, * inputwin;
 // General
-void process_input(numberstack*, operation**, char*);
+void process_input(operation**, char*);
 void get_input(char *);
 void apply_operations(numberstack*, operation**);
-
+void exit_pcalc_success();
 
 
 /*---- Define Operations and Global Vars --------------------------*/
@@ -65,46 +73,46 @@ extern operation operations[];
 
 int main(int argc, char *argv[])
 {
-
     // Get command line options to hide parts of the display
-    if (argc >= 2 && argv[1][0] == '-') {
+    int opt;
+    while ((opt = getopt(argc, argv, "hbxdos")) != -1) {
+        switch (opt) {
+        case 'h':
+            history_enabled = 0;
+            break;
 
-        for (int i=1; argv[1][i] != '\0'; i++) {
-            
-            switch (argv[1][i]) {
+        case 'b':
+            binary_enabled = 0;
+            break;
 
-                case 'h':
-                    history_enabled = 0;
-                    break;
-                
-                case 'b':
-                    binary_enabled = 0;
-                    break;
+        case 'x':
+            hex_enabled = 0;
+            break;
 
-                case 'x':
-                    hex_enabled = 0;
-                    break;
+        case 'd':
+            decimal_enabled = 0;
+            break;
 
-                case 'd':
-                    decimal_enabled = 0;
-                    break;
+        case 'o':
+            operation_enabled = 0;
+            break;
 
-                case 'o':
-                    operation_enabled = 0;
-                    break;
+        case 's':
+            symbols_enabled = 0;
+            break;
 
-                case 's':
-                    symbols_enabled = 0;
-                    break;
-
-            }
-
-        }    
+        default:
+            exit(EXIT_FAILURE);
+        }
     }
+
 
     init_gui(&displaywin, &inputwin);
 
-    /* 
+    // Set handler for CTRL+C to clean exit
+    signal(SIGINT, exit_pcalc_success);
+
+    /*
      * The numberstack is used to store numbers used in calculations
      * It's a normal stack data structure (LIFO) that holds long long integers
      * Check the stack.h file for its operations
@@ -114,13 +122,13 @@ int main(int argc, char *argv[])
      *
      * Numbers get pushed to the numberstack "numbers", and operations are set as the "current_op"
      *
-     * After receiving user input, if there's a current operation, the program compares the 
+     * After receiving user input, if there's a current operation, the program compares the
      * current stack size to the number of operands needed for that operation
      *
      * Should the operation be executed, the needed operands are popped from the stack,
      * the operation is executed, and the result of the calculation is pushed to the stack
      */
-    numberstack* numbers = create_numberstack(4);
+    numbers = create_numberstack(4);
     operation* current_op = &operations[0];
 
     // Initalize history pointers with NULL (realloc will bahave like malloc)
@@ -141,13 +149,13 @@ int main(int argc, char *argv[])
 
         // Get input
         char in[MAX_IN+1];
-        
+
         // Make sure that if enter is pressed, a len == 0 null terminated string is in "in"
         in[0] = '\0';
-        
+
         get_input(in);
-        
-        process_input(numbers, &current_op, in);
+
+        process_input(&current_op, in);
 
         // Display number on top of the stack
         draw(numbers, current_op);
@@ -158,7 +166,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void process_input(numberstack* numbers, operation** current_op, char* in) {
+void process_input(operation** current_op, char* in) {
 
     // Process input
 
@@ -199,7 +207,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
 
             // We have the number before the token, and we'll push it to the number stack right away
             long long aux = pushnumber(token, numbers);
-            
+
             // History will display the number in the format inserted
             // So we must separate 0b from 0x from a normal decimal
             // add_number_to_history takes a second parameter to display accordingly
@@ -304,12 +312,16 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
             in = op;
 
             niterations++;
+
         }
 
         // When we exit the loop, free the only allocated memory left (that's in *in_saved*)
         free(in_saved);
 
     }
+
+    else if (!strcmp(in, "quit") || !strcmp(in, "q") || !strcmp(in, "exit"))
+        exit_pcalc(0);
 
     // Handle other commands when an operation wasn't in the input string
     else if (!strcmp(in, "binary"))
@@ -335,7 +347,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
         globalmasksize = requestedmasksize > DEFAULT_MASK_SIZE || requestedmasksize <= 0 ? DEFAULT_MASK_SIZE : requestedmasksize;
 
         //globalmask cant be 0x16f's
-    	globalmask = DEFAULT_MASK >> (DEFAULT_MASK_SIZE-globalmasksize);
+        globalmask = DEFAULT_MASK >> (DEFAULT_MASK_SIZE-globalmasksize);
 
         // apply mask to all numbers in stack
         numberstack* aux = create_numberstack(numbers->size);
@@ -367,7 +379,7 @@ void process_input(numberstack* numbers, operation** current_op, char* in) {
                 add_number_to_history(aux, 1);
             else
                 add_number_to_history(aux, 0);
-        
+
         }
 
     }
@@ -442,6 +454,7 @@ void get_input(char *in) {
             if (i <= MAX_IN) {
                 // Append char to in array
                 in[i++] = inp;
+
                 in[i] = '\0';
                 if (inp == '\0')
                 {
@@ -452,13 +465,29 @@ void get_input(char *in) {
         }
         // Finaly print input
         sweepline(inputwin, 1, 22);
-            
-        mvwprintw(inputwin, 1, 22, in);
+
+        mvwprintw(inputwin, 1, 22, "%s", in);
         wrefresh(inputwin);
     }
-    
+
     if (in[0] != '\0' && (searchHistory.size == 0 || strcmp(in, searchHistory.records[searchHistory.size - 1])))
         add_to_history(&searchHistory, in);
 
 }
 
+
+void exit_pcalc(int code) {
+
+    free_history(&history);
+    free_history(&searchHistory);
+    free_numberstack(numbers);
+
+    endwin();
+
+    exit(code);
+}
+
+void exit_pcalc_success() {
+
+    exit_pcalc(0);
+}

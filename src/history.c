@@ -11,6 +11,8 @@ extern int globalmasksize;
 
 extern WINDOW *displaywin;
 
+extern numberstack* numbers;
+
 struct history searchHistory;
 struct history history;
 
@@ -19,6 +21,7 @@ void clear_history() {
     for (; history.size>0; history.size--)
         free(history.records[history.size-1]);
 
+    free(history.records);
     // To make sure realloc behaves like malloc later
     history.records = NULL;
 
@@ -40,7 +43,7 @@ void add_to_history(struct history* h, char* in) {
             // Exit
             endwin();
             fprintf(stderr, "OUT OF MEMORY");
-            exit(-1);
+            exit_pcalc(-1);
         }
     }
 
@@ -48,7 +51,7 @@ void add_to_history(struct history* h, char* in) {
         // strdup failed with allocating memory
         endwin();
         fprintf(stderr, "OUT OF MEMORY");
-        exit(-1);
+        exit_pcalc(-1);
 
     }
 
@@ -109,5 +112,14 @@ void browsehistory(char* in , int mode, int* counter) {
                         */
         strcpy(in, "");
     }
-        
+
+}
+
+void free_history(struct history *h) {
+
+    for (int i = 0; i < h->size; ++i)
+        free(h->records[i]);
+
+    free(h->records);
+
 }
