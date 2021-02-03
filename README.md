@@ -43,17 +43,16 @@ $ yay -S programmer-calculator
 
 #### Building from Source (alternative)
 
-To build from source you need gcc, ncurses, and the source files. 
+##### Prerequisites:
+To build from source you need `gcc`, `ncurses`, and the source files. 
 **If you don't have ncurses, please install it (i.e. with your system's package manager) first.**
+*(To install ncurses in Debian based distros run `sudo apt-get install libncurses5-dev libncursesw5-dev`)*
 
-To install ncurses in Debian based distros run
-```
-$ sudo apt-get install libncurses5-dev libncursesw5-dev
-```
+##### Building:
 
-First, clone the repository
+First, clone the repository and change directory to it
 ```
-$ git clone https://github.com/alt-romes/programmer-calculator
+$ git clone https://github.com/alt-romes/programmer-calculator ; cd programmer-calculator
 ```
 
 Then, compile the code into an executable file
