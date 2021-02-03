@@ -5,6 +5,7 @@
 #include "draw.h"
 #include "global.h"
 #include "history.h"
+#include "xmalloc.h"
 
 extern unsigned long long globalmask;
 extern int globalmasksize;
@@ -31,29 +32,11 @@ void clear_history() {
 
 void add_to_history(struct history* h, char* in) {
 
-    if (h->size % HISTORY_RECORDS_BEFORE_REALLOC == 0) {
-        // Void pointer for temporarily storing h->record's realloc
-        void *hrealloc;
+    if (h->size % HISTORY_RECORDS_BEFORE_REALLOC == 0)
+        h->records = xrealloc(h->records, ((h->size + 1) + HISTORY_RECORDS_BEFORE_REALLOC) * sizeof(char *));
 
-        if ((hrealloc = realloc(h->records, (h->size + 1) * sizeof(char *) * HISTORY_RECORDS_BEFORE_REALLOC))) {
-            // Contine if realloc succeded
-            h->records = hrealloc;
-        }
-        else {
-            // Exit
-            endwin();
-            fprintf(stderr, "OUT OF MEMORY");
-            exit_pcalc(-1);
-        }
-    }
-
-    if ((h->records[h->size++] = strdup(*in == '\0' && h == &history ? "0" : in)) == NULL) {
-        // strdup failed with allocating memory
-        endwin();
-        fprintf(stderr, "OUT OF MEMORY");
+    if ((h->records[h->size++] = strdup(*in == '\0' && h == &history ? "0" : in)) == NULL)
         exit_pcalc(-1);
-
-    }
 
 }
 

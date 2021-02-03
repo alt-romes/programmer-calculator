@@ -484,6 +484,14 @@ void exit_pcalc(int code) {
 
     endwin();
 
+    switch (code) {
+
+        case 0: break;
+        case -1: fprintf(stderr, "OUT OF MEMORY\n"); break;
+
+
+    }
+
     exit(code);
 }
 
