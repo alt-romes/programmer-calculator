@@ -121,15 +121,15 @@ void draw(numberstack* numbers, operation* current_op) {
     wrefresh(displaywin);
 
     // Clear input
-    sweepline(inputwin,1,19);
+    sweepline(inputwin, 1, 19);
 
     // Prompt input
     mvwprintw(inputwin, 1, 2, "Number or operator: ");
     wrefresh(inputwin);
 }
 
-void sweepline(WINDOW* w, int priority,int prompt) {
-    wmove(w,priority,prompt);
+void sweepline(WINDOW* w, int y, int x) {
+    wmove(w, y, x);
     wclrtoeol(w);
 }
 
@@ -144,6 +144,8 @@ long long pushnumber(char * in, numberstack* numbers) {
         n = strtoll(hbstr+2, NULL, 2) & globalmask;
     else
         n = atoll(in) & globalmask;
+
     push_numberstack(numbers, n);
     return n;
+
 }
