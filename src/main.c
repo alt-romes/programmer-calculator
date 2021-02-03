@@ -364,7 +364,7 @@ static void process_input(operation** current_op, char* in) {
         globalmasksize = requestedmasksize > DEFAULT_MASK_SIZE || requestedmasksize <= 0 ? DEFAULT_MASK_SIZE : requestedmasksize;
 
         //globalmask cant be 0x16f's
-        globalmask = sr((DEFAULT_MASK_SIZE-globalmasksize), DEFAULT_MASK);
+        globalmask = shr((DEFAULT_MASK_SIZE-globalmasksize), DEFAULT_MASK);
 
         // apply mask to all numbers in stack
         numberstack* aux = create_numberstack(numbers->size);

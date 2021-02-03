@@ -27,8 +27,8 @@ extern operation operations[];
 
 operation* getopcode(char c);
 
-long long sr(long long, long long);
-long long rr(long long, long long);
+long long shr(long long, long long);
+long long ror(long long, long long);
 
 
 #endif

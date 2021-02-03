@@ -13,8 +13,8 @@ static long long and(long long, long long);
 static long long or(long long, long long);
 static long long nor(long long, long long);
 static long long xor(long long, long long);
-static long long sl(long long, long long);
-static long long rl(long long, long long);
+static long long shl(long long, long long);
+static long long rol(long long, long long);
 static long long modulus(long long, long long);
 static long long not(long long, long long);
 static long long twos_complement(long long, long long);
@@ -29,10 +29,10 @@ operation operations[16] = {
     {'|', 2, or},
     {'$', 2, nor},
     {'^', 2, xor},
-    {'<', 2, sl},
-    {'>', 2, sr},
-    {'(', 2, rl},
-    {')', 2, rr},
+    {'<', 2, shl},
+    {'>', 2, shr},
+    {'(', 2, rol},
+    {')', 2, ror},
     {'%', 2, modulus},
     {'~', 1, not},
     {'\'', 1, twos_complement}
@@ -90,24 +90,24 @@ static long long xor(long long a, long long b) {
 
     return a ^ b;
 }
-static long long sl(long long a, long long b) {
+static long long shl(long long a, long long b) {
 
     return b << a;
 }
 
-long long sr(long long a, long long b) {
+long long shr(long long a, long long b) {
 
     return (b >> a) & ~((long long) -1 << (64-a));
 }
 
-static long long rl(long long a, long long b) {
+static long long rol(long long a, long long b) {
 
-    return b << a | sr(globalmasksize-a, b);
+    return b << a | shr(globalmasksize-a, b);
 }
 
-long long rr(long long a, long long b) {
+long long ror(long long a, long long b) {
 
-    return sr(a, b) | ( b << (globalmasksize- a) );
+    return shr(a, b) | ( b << (globalmasksize- a) );
 }
 
 static long long modulus(long long a, long long b) {

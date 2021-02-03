@@ -67,7 +67,7 @@ void add_number_to_history(long long n, int type) {
         sprintf(str,"0x%llX", n);
     else if (type == 2) {
 
-        unsigned long long mask = rr(1, 1);
+        unsigned long long mask = ror(1, 1);
 
         int i = 0;
         for (; i<64; i++, mask>>=1)
