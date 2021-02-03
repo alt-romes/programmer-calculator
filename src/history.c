@@ -33,7 +33,7 @@ void clear_history() {
 void add_to_history(struct history* h, char* in) {
 
     if (h->size % HISTORY_RECORDS_BEFORE_REALLOC == 0)
-        h->records = xrealloc(h->records, ((h->size + 1) + HISTORY_RECORDS_BEFORE_REALLOC) * sizeof(char *));
+        h->records = xrealloc(h->records, (h->size + HISTORY_RECORDS_BEFORE_REALLOC) * sizeof(char *));
 
     if ((h->records[h->size++] = strdup(*in == '\0' && h == &history ? "0" : in)) == NULL)
         exit_pcalc(-1);
@@ -101,8 +101,8 @@ void browsehistory(char* in , int mode, int* counter) {
 void free_history(struct history *h) {
 
     for (int i = 0; i < h->size; ++i)
-        free(h->records[i]);
+        xfree(h->records[i]);
 
-    free(h->records);
+    xfree(h->records);
 
 }
