@@ -139,8 +139,12 @@
             <li><span class="inline-code">2</span>, followed by <span class="inline-code">+</span>, followed by <span class="inline-code">2</span></li>
             <li><span class="inline-code">2</span>, followed by <span class="inline-code">+2</span></li>
             <li><span class="inline-code">2+</span>, followed by <span class="inline-code">2</span></li>
-            <li><span class="inline-code">2+2</span> <small class="comment">(or <span class="inline-code">2 + 2</span>, <span class="inline-code">2 +2</span>, <span class="inline-code">2+ 2</span>, ...)</small> <small class="comment">(inline math only supports 2 operands at the moment)</small></li>
+            <li><span class="inline-code">2+2</span> <small class="comment">(or <span class="inline-code">2 + 2</span>, <span class="inline-code">2 +2</span>, <span class="inline-code">2+ 2</span>, ...)</small></li>
         </ul>
+        
+        <p>You can also do inline math, but without priorities.</p>
+        <p>This means <span class="inline-code">2 + 3 * 2</span> is valid, but it's equal to <strong>10</strong>, not <strong>8</strong>, because expressions are evaluated from left to right</p>
+        <p>That said, any inline math is valid i.e.: <span class="inline-code">0x13 + 135 - 0b101 < 2 * 3 ~</span></p>
 
         <br>
 

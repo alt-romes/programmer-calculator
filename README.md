@@ -43,12 +43,16 @@ $ yay -S programmer-calculator
 
 #### Building from Source (alternative)
 
-To build from source you need gcc, ncurses, and the source files. 
+##### Prerequisites:
+To build from source you need `gcc`, `ncurses`, and the source files. 
 **If you don't have ncurses, please install it (i.e. with your system's package manager) first.**
+*(To install ncurses in Debian based distros run `sudo apt-get install libncurses5-dev libncursesw5-dev`)*
 
-First, clone the repository
+##### Building:
+
+First, clone the repository and change directory to it
 ```
-$ git clone https://github.com/alt-romes/programmer-calculator
+$ git clone https://github.com/alt-romes/programmer-calculator ; cd programmer-calculator
 ```
 
 Then, compile the code into an executable file
@@ -58,7 +62,7 @@ $ make
 
 Finally, move the executable to a directory reachable by $PATH
 ```
-$ mv -i output/pcalc /usr/local/bin
+$ mv -i pcalc /usr/local/bin
 ```
 
 #### Updating
@@ -87,7 +91,12 @@ There are various ways to insert values/operators, see the example `2 + 2` below
 * 2, followed by +, followed by 2
 * 2, followed by +2
 * 2+, followed by 2
-* 2+2 (or 2 + 2, 2 +2, 2+ 2, ...) (inline math only supports 2 operands at the moment)
+* 2+2 (or 2 + 2+ 2, 2 +2, 2+ 2, ...)
+
+You can also do inline math, but without priorities.
+This means `2 + 3 * 2` is valid, but it's equal to `10`, not `8`, because expressions are evaluated from left to right.
+
+That said, any inline math is valid i.e.: `0x13 + 135 - 0b101 < 2 * 3 ~`.
 
 ### Hex + Binary + Decimal
 

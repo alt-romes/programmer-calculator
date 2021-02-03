@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <signal.h>
 
-#include "draw.h"
 #include "global.h"
+#include "draw.h"
 #include "history.h"
 #include "numberstack.h"
 #include "operators.h"
@@ -35,10 +35,10 @@ extern numberstack* numbers;
 // Drawing
 extern WINDOW* displaywin, * inputwin;
 // General
-void process_input(operation**, char*);
-void get_input(char *);
-void apply_operations(numberstack*, operation**);
-void exit_pcalc_success();
+static void process_input(operation**, char*);
+static void get_input(char *);
+static void apply_operations(numberstack*, operation**);
+static void exit_pcalc_success();
 
 
 /*---- Define Operations and Global Vars --------------------------*/
@@ -166,7 +166,24 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void process_input(operation** current_op, char* in) {
+static long long pushnumber_from_string(char * in, numberstack* numbers) {
+
+    long long n;
+
+    char* hbstr;
+    if ((hbstr = strstr(in, "0x")) != NULL)
+        n = strtoll(hbstr+2, NULL, 16) & globalmask;
+    else if ((hbstr = strstr(in, "0b")) != NULL)
+        n = strtoll(hbstr+2, NULL, 2) & globalmask;
+    else
+        n = atoll(in) & globalmask;
+
+    push_numberstack(numbers, n);
+    return n;
+
+}
+
+static void process_input(operation** current_op, char* in) {
 
     // Process input
 
@@ -206,7 +223,7 @@ void process_input(operation** current_op, char* in) {
             clear_history();
 
             // We have the number before the token, and we'll push it to the number stack right away
-            long long aux = pushnumber(token, numbers);
+            long long aux = pushnumber_from_string(token, numbers);
 
             // History will display the number in the format inserted
             // So we must separate 0b from 0x from a normal decimal
@@ -266,7 +283,7 @@ void process_input(operation** current_op, char* in) {
             if (token != NULL) {
 
                 // We have a number, so we'll push it to the number stack
-                long long aux = pushnumber(token, numbers);
+                long long aux = pushnumber_from_string(token, numbers);
                 
                 // History will display the number in the format inserted
                 // So we must separate 0b from 0x from a normal decimal
@@ -371,7 +388,7 @@ void process_input(operation** current_op, char* in) {
                 clear_history();
             }
 
-            long long aux = pushnumber(in, numbers);
+            long long aux = pushnumber_from_string(in, numbers);
 
             if(strstr(in, "0b") != NULL)
                 add_number_to_history(aux, 2);
@@ -389,7 +406,7 @@ void process_input(operation** current_op, char* in) {
 }
 
 
-void apply_operations(numberstack* numbers, operation** current_op) {
+static void apply_operations(numberstack* numbers, operation** current_op) {
 
     if (*current_op != operations) {
 
@@ -413,7 +430,7 @@ void apply_operations(numberstack* numbers, operation** current_op) {
 }
 
 
-void get_input(char *in) {
+static void get_input(char *in) {
 
     char inp;
     int history_counter = searchHistory.size;
@@ -484,10 +501,13 @@ void exit_pcalc(int code) {
 
     endwin();
 
+    if (code >= 0xa0 && code < 0xb0)
+        fprintf(stderr, "Error allocating memory in numberstack\n");
+
     exit(code);
 }
 
-void exit_pcalc_success() {
+static void exit_pcalc_success() {
 
     exit_pcalc(0);
 }

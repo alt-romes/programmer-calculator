@@ -1,9 +1,7 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <ncurses.h>
 
-#include "global.h"
 #include "numberstack.h"
+#include "global.h"
 
 
 numberstack* numbers;
@@ -13,26 +11,27 @@ numberstack* numbers;
 numberstack * create_numberstack(int max_size) {
 
     numberstack* s;
-    s = malloc(sizeof (numberstack));
-    s->elements = malloc(max_size * sizeof(long long));
+    if (!(s = malloc(sizeof (numberstack)))) 
+        exit_pcalc(0xa0);
+
+    if (!(s->elements = malloc(max_size * sizeof(long long)))) 
+        exit_pcalc(0xa1);
+
     s->size = 0;
     s->max_size = max_size;
     return s;
 }
 
-numberstack * resize_numberstack(numberstack* s) {
+static numberstack * resize_numberstack(numberstack* s) {
 
     s->max_size *= 2;
+
     void *srealloc;
-    if ((srealloc = realloc(s->elements, s->max_size * sizeof(long long)))) {
+    if ((srealloc = realloc(s->elements, s->max_size * sizeof(long long))))
         s->elements = srealloc;
+    else
+        return NULL;
 
-    } else {
-        endwin();
-        fprintf(stderr, "OUT OF MEMORY");
-        exit_pcalc(-1);
-
-    }
     return s;
 
 }
@@ -59,7 +58,8 @@ long long * top_numberstack(numberstack* s) {
 void push_numberstack(numberstack* s, long long value) {
 
     if (s->size == s->max_size)
-        resize_numberstack(s);
+        if (!resize_numberstack(s))
+            exit_pcalc(0xa2);
 
     s->elements[s->size++] = value;
 }
