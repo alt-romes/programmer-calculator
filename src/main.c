@@ -470,6 +470,8 @@ void exit_pcalc(int code) {
 
     if (code >= 0xa0 && code < 0xb0)
         fprintf(stderr, "Error allocating memory in numberstack\n");
+    else if (code >= 0xb0 && code < 0xc0)
+        fprintf(stderr, "Error allocating memory in history\n");
 
     exit(code);
 }

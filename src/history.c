@@ -34,17 +34,14 @@ void add_to_history(struct history* h, char* in) {
         }
         else {
             // Exit
-            endwin();
-            fprintf(stderr, "OUT OF MEMORY");
-            exit_pcalc(-1);
+            exit_pcalc(0xb0);
         }
     }
 
     if ((h->records[h->size++] = strdup(*in == '\0' && h == &history ? "0" : in)) == NULL) {
         // strdup failed with allocating memory
-        endwin();
-        fprintf(stderr, "OUT OF MEMORY");
-        exit_pcalc(-1);
+
+        exit_pcalc(0xb1);
 
     }
 
