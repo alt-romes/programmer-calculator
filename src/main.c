@@ -229,11 +229,11 @@ static void process_input(operation** current_op, char* in) {
             // So we must separate 0b from 0x from a normal decimal
             // add_number_to_history takes a second parameter to display accordingly
             if(strstr(token, "0b") != NULL)
-                add_number_to_history(aux, 2);
+                add_number_to_history(aux, NTYPE_BIN);
             else if (strstr(token, "0x") != NULL)
-                add_number_to_history(aux, 1);
+                add_number_to_history(aux, NTYPE_HEX);
             else
-                add_number_to_history(aux, 0);
+                add_number_to_history(aux, NTYPE_DEC);
 
         }
 
@@ -391,11 +391,11 @@ static void process_input(operation** current_op, char* in) {
             long long aux = pushnumber_from_string(in, numbers);
 
             if(strstr(in, "0b") != NULL)
-                add_number_to_history(aux, 2);
+                add_number_to_history(aux, NTYPE_BIN);
             else if (strstr(in, "0x") != NULL)
-                add_number_to_history(aux, 1);
+                add_number_to_history(aux, NTYPE_HEX);
             else
-                add_number_to_history(aux, 0);
+                add_number_to_history(aux, NTYPE_DEC);
 
         }
 

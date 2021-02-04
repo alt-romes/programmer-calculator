@@ -61,11 +61,11 @@ void add_number_to_history(long long n, int type) {
 
     char str[67];
 
-    if (type == 0)
+    if (type == NTYPE_DEC)
         sprintf(str,"%lld", n);
-    else if (type == 1)
+    else if (type == NTYPE_HEX)
         sprintf(str,"0x%llX", n);
-    else if (type == 2) {
+    else if (type == NTYPE_BIN) {
 
         unsigned long long mask = ror(1, 1);
 

@@ -4,6 +4,10 @@
 
 #define HISTORY_RECORDS_BEFORE_REALLOC 20
 
+#define NTYPE_DEC 0
+#define NTYPE_HEX 1
+#define NTYPE_BIN 2
+
 struct history {
     int size;
     char **records;
