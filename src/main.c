@@ -17,23 +17,9 @@
 
 
 
-/*---- Global Structures ------------------------------------------*/
-
-
-extern struct history history;
-extern struct history searchHistory;
-
-// Main number stack for calculations
-extern numberstack* numbers;
-
-
-
-
 /*---- Function Prototypes ----------------------------------------*/
 
 
-// Drawing
-extern WINDOW* displaywin, * inputwin;
 // General
 static void process_input(operation**, char*);
 static void get_input(char *);
@@ -44,26 +30,8 @@ static void exit_pcalc_success();
 /*---- Define Operations and Global Vars --------------------------*/
 
 
-// Variables
-extern int wMaxX;
-extern int wMaxY;
-
-extern int operation_enabled;
-extern int decimal_enabled;
-extern int hex_enabled;
-extern int symbols_enabled;
-extern int binary_enabled;
-extern int history_enabled;
-
 #define ALL_OPS "+-*/&|$^<>()%~'"
 #define VALID_NUMBER_INPUT "0123456789abcdefx"
-
-extern unsigned long long globalmask;
-extern int globalmasksize;
-
-
-
-
 
 
 /*---- Main Logic -------------------------------------------------*/
@@ -248,7 +216,7 @@ static void process_input(operation** current_op, char* in) {
         char * last_allocated_addr = in_saved;
 
         // The next while will only handle case 1 and 3 - we already have the operation ready
-        
+
         int niterations = 0;
 
         while (op != NULL) {
@@ -282,7 +250,7 @@ static void process_input(operation** current_op, char* in) {
 
                 // We have a number, so we'll push it to the number stack
                 long long aux = pushnumber_from_string(token, numbers);
-                
+
                 // History will display the number in the format inserted
                 // So we must separate 0b from 0x from a normal decimal
                 // add_number_to_history takes a second parameter to display accordingly
@@ -300,7 +268,7 @@ static void process_input(operation** current_op, char* in) {
 
 
             // We need to make sure the new op we're going to read comes after the last token read, to avoid a++b
-           
+
             // Define helper distances to check if the new operand comes before the last read token and avoid a++b
             int distance_to_previous_op, distance_to_new_op, distance_to_last_token;
             // This has to come before we reassign *op* (distance from last op to the start of input)
@@ -314,8 +282,8 @@ static void process_input(operation** current_op, char* in) {
 
             // Try to find a next operation in the string starting right after the last op
             op = strpbrk(in_saved, ALL_OPS);
-        
-            // Because op and token are two different strings, we need to measure the distance to the beginning first to compare them later 
+
+            // Because op and token are two different strings, we need to measure the distance to the beginning first to compare them later
             // (op - in_saved) is the distance from the new op to the saved string that starts directly after the previous op
             distance_to_new_op = distance_to_previous_op + (op - in_saved);
 
@@ -401,7 +369,7 @@ static void process_input(operation** current_op, char* in) {
     }
 
     // Apply operations
-    apply_operations(numbers, current_op);    
+    apply_operations(numbers, current_op);
 }
 
 
