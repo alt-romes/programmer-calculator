@@ -110,7 +110,7 @@ void draw(numberstack* numbers, operation* current_op) {
     }
 
     if(!operation_enabled) prio += 2;
-    else mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op->character ? current_op->character : ' ');
+    else mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op ? current_op->character : ' ');
 
     if(!decimal_enabled) prio += 2;
     else mvwprintw(displaywin, 4-prio, 2, "Decimal:   %lld", n);

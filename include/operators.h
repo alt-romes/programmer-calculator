@@ -23,8 +23,6 @@ typedef struct operation {
 extern unsigned long long globalmask;
 extern int globalmasksize;
 
-extern operation operations[];
-
 operation* getopcode(char c);
 
 long long shr(long long, long long);

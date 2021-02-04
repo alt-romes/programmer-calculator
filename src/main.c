@@ -61,8 +61,6 @@ extern int history_enabled;
 extern unsigned long long globalmask;
 extern int globalmasksize;
 
-extern operation operations[];
-
 
 
 
@@ -129,7 +127,7 @@ int main(int argc, char *argv[])
      * the operation is executed, and the result of the calculation is pushed to the stack
      */
     numbers = create_numberstack(4);
-    operation* current_op = &operations[0];
+    operation* current_op = NULL;
 
     // Initalize history pointers with NULL (realloc will bahave like malloc)
     history.records = NULL;
@@ -382,7 +380,8 @@ static void process_input(operation** current_op, char* in) {
         if (strpbrk(in, VALID_NUMBER_INPUT) || in[0] == '\0') {
 
             // If is the invalid operation (first in array of operations)
-            if (*current_op == operations || (in[0] == '\0' && (*current_op = operations)) ) {
+            // Or if is an empty string (and if it is, set the operation as NULL)
+            if (*current_op == NULL || (in[0] == '\0' && !(*current_op = NULL)) ) {
 
                 clear_numberstack(numbers);
                 clear_history();
@@ -408,7 +407,7 @@ static void process_input(operation** current_op, char* in) {
 
 static void apply_operations(numberstack* numbers, operation** current_op) {
 
-    if (*current_op != operations) {
+    if (*current_op != NULL) {
 
         unsigned char noperands = (*current_op)->noperands;
 
@@ -423,7 +422,7 @@ static void apply_operations(numberstack* numbers, operation** current_op) {
 
             push_numberstack(numbers, result);
 
-            *current_op = &operations[0]; // Set to invalid operation
+            *current_op = NULL; // Set to invalid operation
         }
     }
 

@@ -19,8 +19,7 @@ static long long modulus(long long, long long);
 static long long not(long long, long long);
 static long long twos_complement(long long, long long);
 
-operation operations[16] = {
-    {0, 0, NULL},
+static operation operations[15] = {
     {'+', 2, add},
     {'-', 2, subtract},
     {'*', 2, multiply},
