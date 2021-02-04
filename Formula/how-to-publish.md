@@ -33,7 +33,7 @@ brew upgrade pcalc
     - change the version `pkgver` to `a.b`
     - update the sha sum to the one just calculated
 
-8) Clone the AUR repository https://aur.archlinux.org/programmer-calculator.git (you must be a colaborator)
+8) Clone the AUR repository from https://aur.archlinux.org/packages/programmer-calculator/ (you must be a colaborator)
 
 9) Edit `PKGBUILD`
     - change the version `pkgver` to `a.b`
