@@ -218,6 +218,8 @@ void process_input(operation** current_op, char* in) {
             else
                 add_number_to_history(aux, 0);
 
+            wrefresh(displaywin);
+
         }
 
         // We'll set the input string for the next while - it'll handle the rest of the user input
@@ -278,6 +280,7 @@ void process_input(operation** current_op, char* in) {
                 else
                     add_number_to_history(aux, 0);
 
+                wrefresh(displaywin);
             }
 
             // Try to apply the operation, which will only actually be applied if enough numbers were added to the numberstack
@@ -380,6 +383,7 @@ void process_input(operation** current_op, char* in) {
             else
                 add_number_to_history(aux, 0);
 
+            wrefresh(displaywin);
         }
 
     }
