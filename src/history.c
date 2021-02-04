@@ -6,13 +6,6 @@
 #include "global.h"
 #include "history.h"
 
-extern unsigned long long globalmask;
-extern int globalmasksize;
-
-extern WINDOW *displaywin;
-
-extern numberstack* numbers;
-
 struct history searchHistory;
 struct history history;
 

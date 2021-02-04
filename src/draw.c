@@ -7,9 +7,6 @@
 #include "numberstack.h"
 #include "operators.h"
 
-extern struct history history;
-extern struct history searchHistory;
-
 WINDOW* displaywin, * inputwin;
 
 int wMaxX;
@@ -22,16 +19,13 @@ int symbols_enabled = 1;
 int binary_enabled = 1;
 int history_enabled = 1;
 
-extern unsigned long long globalmask;
-extern int globalmasksize;
-
 static void printbinary(long long, int);
 static void printhistory(numberstack*, int);
 
 void init_gui() {
 
     initscr();
-    cbreak(); 
+    cbreak();
 
     getmaxyx(stdscr, wMaxY, wMaxX);
 
@@ -138,4 +132,3 @@ void sweepline(WINDOW* w, int y, int x) {
     wmove(w, y, x);
     wclrtoeol(w);
 }
-
