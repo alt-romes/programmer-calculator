@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "numberstack.h"
+#include "xmalloc.h"
 #include "global.h"
 
 
@@ -11,12 +12,8 @@ numberstack* numbers;
 numberstack * create_numberstack(int max_size) {
 
     numberstack* s;
-    if (!(s = malloc(sizeof (numberstack)))) 
-        exit_pcalc(0xa0);
-
-    if (!(s->elements = malloc(max_size * sizeof(long long)))) 
-        exit_pcalc(0xa1);
-
+    s = xmalloc(sizeof(numberstack));
+    s->elements = xmalloc(max_size * sizeof(long long));
     s->size = 0;
     s->max_size = max_size;
     return s;
@@ -25,13 +22,7 @@ numberstack * create_numberstack(int max_size) {
 static numberstack * resize_numberstack(numberstack* s) {
 
     s->max_size *= 2;
-
-    void *srealloc;
-    if ((srealloc = realloc(s->elements, s->max_size * sizeof(long long))))
-        s->elements = srealloc;
-    else
-        return NULL;
-
+    s->elements = xrealloc(s->elements, s->max_size * sizeof(long long));
     return s;
 
 }
@@ -72,7 +63,7 @@ void clear_numberstack(numberstack* s) {
 
 void free_numberstack(numberstack *s) {
 
-    free(s->elements);
-    free(s);
+    xfree(s->elements);
+    xfree(s);
 
 }

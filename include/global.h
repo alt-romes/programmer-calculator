@@ -5,4 +5,6 @@
 
 void exit_pcalc(int);
 
+char *str_with_base_of_number(long long, int type);
+
 #endif

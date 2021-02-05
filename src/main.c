@@ -468,10 +468,13 @@ void exit_pcalc(int code) {
 
     endwin();
 
-    if (code >= 0xa0 && code < 0xb0)
-        fprintf(stderr, "Error allocating memory in numberstack\n");
-    else if (code >= 0xb0 && code < 0xc0)
-        fprintf(stderr, "Error allocating memory in history\n");
+    switch (code) {
+
+        case 0: break;
+        case -1: fprintf(stderr, "OUT OF MEMORY\n"); break;
+
+
+    }
 
     exit(code);
 }
