@@ -409,7 +409,7 @@ static void get_input(char *in) {
         int searched = 0;
         // Handles all arrow keys
         if (inp == 27) {
-            getchar();
+			getchar();
             inp = getchar();
             if (inp == 'A')
             {
@@ -466,7 +466,6 @@ static void get_input(char *in) {
 				}
 				searched = 1;
 			}
-
 		}
 
         if (inp == 127)
@@ -480,7 +479,7 @@ static void get_input(char *in) {
 			inp = '\0';
         }
 
-		//TODO: delete, cursor ipv underscore (move/wmove?)
+		//TODO: remove debugging bit, cursor ipv underscore (move/wmove?)
 
         if(!searched) {
             // Prevent user to input more than MAX_IN
