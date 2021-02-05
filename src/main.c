@@ -477,12 +477,10 @@ static void get_input(char *in) {
 				--pos;
 				--len;
 			}
-            //pos == 0 ? pos = 0 : --pos;
-            //len == 0 ? len = 0 : --len;
 			inp = '\0';
         }
 
-		//TODO: backspace & delete, cursor ipv underscore (move/wmove?)
+		//TODO: delete, cursor ipv underscore (move/wmove?)
 
         if(!searched) {
             // Prevent user to input more than MAX_IN
@@ -499,13 +497,13 @@ static void get_input(char *in) {
             }
 			else if (len < MAX_IN && browsing) {
 				if (inp == '\0'){
-					in[pos] = '_';
-					if (pos != 0){
-						len++;	
+					// Check if pos is already at the start of the input, if so don't do anything
+					if (in[0] != '_'){
+						in[pos] = '_';
 						for (int i = pos; i <= len; i++){
 							in[i] = in[i + 1];
 						}
-                    	mvwprintw(inputwin, 1, 22 + --len ," ");
+                    	mvwprintw(inputwin, 1, 22 + len ," ");
 					}
 				}
 				else {
