@@ -67,6 +67,7 @@ static long long divide(long long a, long long b) {
     //TODO not divisible by 0
     if(!a)
         return 0;
+
     return b / a;
 }
 
@@ -96,7 +97,7 @@ static long long shl(long long a, long long b) {
 
 long long shr(long long a, long long b) {
 
-    return (b >> a) & ~((long long) -1 << (64-a));
+    return ((unsigned long long) b >> a);
 }
 
 static long long rol(long long a, long long b) {
