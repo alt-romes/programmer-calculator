@@ -42,7 +42,7 @@ void add_to_history(struct history* h, char* in) {
 
 void add_number_to_history(long long n, int type) {
 
-    char *str = convert_base_of_number(n, type);
+    char *str = str_with_base_of_number(n, type);
     add_to_history(&history, str);
     xfree(str);
 }
@@ -82,7 +82,7 @@ void free_history(struct history *h) {
 }
 
 
-char *convert_base_of_number(long long n, int type) {
+char *str_with_base_of_number(long long n, int type) {
 
     char *str = xmalloc(67);
 
