@@ -401,7 +401,7 @@ static void get_input(char *in) {
 
     char inp;
     int history_counter = searchHistory.size;
-	int len = 0, browsing = 0;
+    int len = 0, browsing = 0;
 
     // Collect input until enter is pressed
     for (int pos = 0; (inp = getchar()) != 13;)
@@ -409,7 +409,7 @@ static void get_input(char *in) {
         int searched = 0;
         // Handles all arrow keys
         if (inp == 27) {
-			getchar();
+            getchar();
             inp = getchar();
             if (inp == 'A')
             {
@@ -417,66 +417,66 @@ static void get_input(char *in) {
                 browsehistory(in, -1, &history_counter);
                 len = strlen(in);
                 searched = 1;
-				browsing = 0;
+                browsing = 0;
             }
             else if (inp == 'B')
             {
                 // Down arrow
                 browsehistory(in, 1, &history_counter);
                 len = strlen(in);
-				searched = 1;
-				browsing = 0;
+                searched = 1;
+                browsing = 0;
             }
-			else if (inp == 'D')
-			{
-				// Left arrow
-				if (pos != 0) {
-					if (!browsing) {
-						browsing = 1;
-						pos--;
-					
-						in[len++] = in[pos];
-						in[len] = '\0';
-						in[pos] = '_';
-					}
-					else {
-						in[pos] = in[pos - 1];
-						pos--;
-						in[pos] = '_';
-					}
-				}
-				searched = 1;
-			}
-			else if (inp == 'C')
-			{
-				// Right arrow
-				if (browsing) {
-					if (pos < len - 2) {
-						in[pos] = in[pos + 1];
-						pos++;
-						in[pos] = '_';
-					}
-					else if (pos < len - 1) {
-						in[pos] = in[pos + 1];
-						pos++;
-						in[pos] = '\0';
-						len = pos;
-						browsing = 0;
-					}
-				}
-				searched = 1;
-			}
-		}
+            else if (inp == 'D')
+            {
+                // Left arrow
+                if (pos != 0) {
+                    if (!browsing) {
+                        browsing = 1;
+                        pos--;
+                    
+                        in[len++] = in[pos];
+                        in[len] = '\0';
+                        in[pos] = '_';
+                    }
+                    else {
+                        in[pos] = in[pos - 1];
+                        pos--;
+                        in[pos] = '_';
+                    }
+                }
+                searched = 1;
+            }
+            else if (inp == 'C')
+            {
+                // Right arrow
+                if (browsing) {
+                    if (pos < len - 2) {
+                        in[pos] = in[pos + 1];
+                        pos++;
+                        in[pos] = '_';
+                    }
+                    else if (pos < len - 1) {
+                        in[pos] = in[pos + 1];
+                        pos++;
+                        in[pos] = '\0';
+                        len = pos;
+                        browsing = 0;
+                    }
+                }
+                searched = 1;
+            }
+        }
 
         if (inp == 127)
         {
             // Backspace
 
-			if (pos != 0){
-				--pos;
-				--len;
-			}
-			inp = '\0';
+            if (pos != 0){
+                --pos;
+                --len;
+            }
+            inp = '\0';
         }
 
         if(!searched) {
@@ -486,41 +486,41 @@ static void get_input(char *in) {
                 in[pos++] = inp;
                 in[pos] = '\0';
                 len++;
-				if (inp == '\0')
+                if (inp == '\0')
                 {
                     // Clear screen from previous input
                     mvwprintw(inputwin, 1, 22 + --len ," ");
                 }
             }
-			else if (len < MAX_IN && browsing) {
-				if (inp == '\0'){
-					// Check if pos is already at the start of the input, if so don't do anything
-					if (in[0] != '_'){
-						in[pos] = '_';
-						for (int i = pos; i <= len; i++){
-							in[i] = in[i + 1];
-						}
-                    	mvwprintw(inputwin, 1, 22 + len ," ");
-					}
-				}
-				else {
-					in[pos++] = inp;
+            else if (len < MAX_IN && browsing) {
+                if (inp == '\0'){
+                    // Check if pos is already at the start of the input, if so don't do anything
+                    if (in[0] != '_'){
+                        in[pos] = '_';
+                        for (int i = pos; i <= len; i++){
+                            in[i] = in[i + 1];
+                        }
+                        mvwprintw(inputwin, 1, 22 + len ," ");
+                    }
+                }
+                else {
+                    in[pos++] = inp;
 
-					// Move all of the input after pos one char forward
-					len++;
-					for (int i = len; i > pos; i--) {
-						in[i] = in[i - 1];
-					}
-				
-					in[pos] = '_';
-				}
-			}
+                    // Move all of the input after pos one char forward
+                    len++;
+                    for (int i = len; i > pos; i--) {
+                        in[i] = in[i - 1];
+                    }
+                
+                    in[pos] = '_';
+                }
+            }
         }
-		if (!browsing) { pos = len; }
+        if (!browsing) { pos = len; }
         
-		// Finaly print input
+        // Finaly print input
         sweepline(inputwin, 1, 22);
-	
+    
         mvwprintw(inputwin, 1, 22, "%s", in);
         wrefresh(inputwin);
     }
