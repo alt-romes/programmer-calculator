@@ -49,8 +49,7 @@ long long * top_numberstack(numberstack* s) {
 void push_numberstack(numberstack* s, long long value) {
 
     if (s->size == s->max_size)
-        if (!resize_numberstack(s))
-            exit_pcalc(0xa2);
+        resize_numberstack(s);
 
     s->elements[s->size++] = value;
 }
