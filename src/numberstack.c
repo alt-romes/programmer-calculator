@@ -1,10 +1,8 @@
-#include <stdio.h>
 #include <stdlib.h>
-#include <ncurses.h>
 
-#include "global.h"
 #include "numberstack.h"
 #include "xmalloc.h"
+#include "global.h"
 
 
 numberstack* numbers;
@@ -21,7 +19,7 @@ numberstack * create_numberstack(int max_size) {
     return s;
 }
 
-numberstack * resize_numberstack(numberstack* s) {
+static numberstack * resize_numberstack(numberstack* s) {
 
     s->max_size *= 2;
     s->elements = xrealloc(s->elements, s->max_size * sizeof(long long));
@@ -51,7 +49,8 @@ long long * top_numberstack(numberstack* s) {
 void push_numberstack(numberstack* s, long long value) {
 
     if (s->size == s->max_size)
-        resize_numberstack(s);
+        if (!resize_numberstack(s))
+            exit_pcalc(0xa2);
 
     s->elements[s->size++] = value;
 }

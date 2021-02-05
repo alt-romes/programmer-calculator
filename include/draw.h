@@ -6,12 +6,14 @@
 #include "numberstack.h"
 #include "operators.h"
 
+
+extern WINDOW* displaywin, *inputwin;
+
+extern int wMaxX, wMaxY;
+extern int operation_enabled, decimal_enabled, hex_enabled, symbols_enabled, binary_enabled, history_enabled;
+
 void init_gui();
 void draw(numberstack*, operation*);
-void printbinary(long long, int);
-void printhistory(numberstack*, int);
 void sweepline(WINDOW*, int, int);
-long long pushnumber(char * in, numberstack* numbers);
-
 
 #endif

@@ -7,8 +7,9 @@ typedef struct numberstack {
     long long * elements;
 } numberstack;
 
+extern numberstack* numbers;
+
 numberstack * create_numberstack(int max_size);
-numberstack * resize_numberstack(numberstack* s);
 long long * pop_numberstack(numberstack* s);
 long long * top_numberstack(numberstack* s);
 void push_numberstack(numberstack* s, long long value);

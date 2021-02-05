@@ -7,9 +7,6 @@
 #include "numberstack.h"
 #include "operators.h"
 
-extern struct history history;
-extern struct history searchHistory;
-
 WINDOW* displaywin, * inputwin;
 
 int wMaxX;
@@ -22,13 +19,13 @@ int symbols_enabled = 1;
 int binary_enabled = 1;
 int history_enabled = 1;
 
-extern unsigned long long globalmask;
-extern int globalmasksize;
+static void printbinary(long long, int);
+static void printhistory(numberstack*, int);
 
 void init_gui() {
 
     initscr();
-    cbreak(); 
+    cbreak();
 
     getmaxyx(stdscr, wMaxY, wMaxX);
 
@@ -36,8 +33,12 @@ void init_gui() {
     refresh();
 
     box(displaywin, ' ', 0);
-    if (symbols_enabled)
-        mvwprintw(displaywin, wMaxY-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n  SL   <    SR   >    RL   (    RR   )    2's  '");
+    if (symbols_enabled) {
+
+        mvwprintw(displaywin, wMaxY-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n");
+        wprintw(displaywin, "  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n");
+        wprintw(displaywin, "  SL   <    SR   >    RL   (    RR   )    2's  '");
+    }
     wrefresh(displaywin);
 
     inputwin = newwin(3, wMaxX, wMaxY-3, 0);
@@ -48,7 +49,7 @@ void init_gui() {
 
 }
 
-void printbinary(long long value, int priority) {
+static void printbinary(long long value, int priority) {
 
     unsigned long long mask = ((long long) 1) << (globalmasksize - 1); // Mask starts at the last bit to display, and is >> until the end
 
@@ -74,7 +75,7 @@ void printbinary(long long value, int priority) {
     }
 }
 
-void printhistory(numberstack* numbers, int priority) {
+static void printhistory(numberstack* numbers, int priority) {
     int currY,currX;
     mvwprintw(displaywin, 14-priority, 2, "History:   ");
     for (int i=0; i<history.size; i++) {
@@ -87,14 +88,13 @@ void printhistory(numberstack* numbers, int priority) {
         wprintw(displaywin, "%s ", history.records[i]);
     }
 }
-//-------------------------------------------------------------------------------------------------------------------------
-
 
 void draw(numberstack* numbers, operation* current_op) {
 
     long long* np = top_numberstack(numbers);
     long long n;
     int prio = 0;
+
     if (np == NULL) n = 0;
     else n = *np;
 
@@ -104,7 +104,7 @@ void draw(numberstack* numbers, operation* current_op) {
     }
 
     if(!operation_enabled) prio += 2;
-    else mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op->character ? current_op->character : ' ');
+    else mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op ? current_op->character : ' ');
 
     if(!decimal_enabled) prio += 2;
     else mvwprintw(displaywin, 4-prio, 2, "Decimal:   %lld", n);
@@ -121,29 +121,14 @@ void draw(numberstack* numbers, operation* current_op) {
     wrefresh(displaywin);
 
     // Clear input
-    sweepline(inputwin,1,19);
+    sweepline(inputwin, 1, 19);
 
     // Prompt input
     mvwprintw(inputwin, 1, 2, "Number or operator: ");
     wrefresh(inputwin);
 }
 
-void sweepline(WINDOW* w, int priority,int prompt) {
-    wmove(w,priority,prompt);
+void sweepline(WINDOW* w, int y, int x) {
+    wmove(w, y, x);
     wclrtoeol(w);
-}
-
-long long pushnumber(char * in, numberstack* numbers) {
-
-    long long n;
-
-    char* hbstr;
-    if ((hbstr = strstr(in, "0x")) != NULL)
-        n = strtoll(hbstr+2, NULL, 16) & globalmask;
-    else if ((hbstr = strstr(in, "0b")) != NULL)
-        n = strtoll(hbstr+2, NULL, 2) & globalmask;
-    else
-        n = atoll(in) & globalmask;
-    push_numberstack(numbers, n);
-    return n;
 }

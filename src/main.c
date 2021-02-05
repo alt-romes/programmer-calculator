@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <signal.h>
 
-#include "draw.h"
 #include "global.h"
+#include "draw.h"
 #include "history.h"
 #include "numberstack.h"
 #include "operators.h"
@@ -17,55 +17,21 @@
 
 
 
-/*---- Global Structures ------------------------------------------*/
-
-
-extern struct history history;
-extern struct history searchHistory;
-
-// Main number stack for calculations
-extern numberstack* numbers;
-
-
-
-
 /*---- Function Prototypes ----------------------------------------*/
 
 
-// Drawing
-extern WINDOW* displaywin, * inputwin;
 // General
-void process_input(operation**, char*);
-void get_input(char *);
-void apply_operations(numberstack*, operation**);
-void exit_pcalc_success();
+static void process_input(operation**, char*);
+static void get_input(char *);
+static void apply_operations(numberstack*, operation**);
+static void exit_pcalc_success();
 
 
 /*---- Define Operations and Global Vars --------------------------*/
 
 
-// Variables
-extern int wMaxX;
-extern int wMaxY;
-
-extern int operation_enabled;
-extern int decimal_enabled;
-extern int hex_enabled;
-extern int symbols_enabled;
-extern int binary_enabled;
-extern int history_enabled;
-
 #define ALL_OPS "+-*/&|$^<>()%~'"
 #define VALID_NUMBER_INPUT "0123456789abcdefx"
-
-extern unsigned long long globalmask;
-extern int globalmasksize;
-
-extern operation operations[];
-
-
-
-
 
 
 /*---- Main Logic -------------------------------------------------*/
@@ -129,7 +95,7 @@ int main(int argc, char *argv[])
      * the operation is executed, and the result of the calculation is pushed to the stack
      */
     numbers = create_numberstack(4);
-    operation* current_op = &operations[0];
+    operation* current_op = NULL;
 
     // Initalize history pointers with NULL (realloc will bahave like malloc)
     history.records = NULL;
@@ -166,7 +132,24 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void process_input(operation** current_op, char* in) {
+static long long pushnumber_from_string(char * in, numberstack* numbers) {
+
+    long long n;
+
+    char* hbstr;
+    if ((hbstr = strstr(in, "0x")) != NULL)
+        n = strtoll(hbstr+2, NULL, 16) & globalmask;
+    else if ((hbstr = strstr(in, "0b")) != NULL)
+        n = strtoll(hbstr+2, NULL, 2) & globalmask;
+    else
+        n = atoll(in) & globalmask;
+
+    push_numberstack(numbers, n);
+    return n;
+
+}
+
+static void process_input(operation** current_op, char* in) {
 
     // Process input
 
@@ -206,17 +189,17 @@ void process_input(operation** current_op, char* in) {
             clear_history();
 
             // We have the number before the token, and we'll push it to the number stack right away
-            long long aux = pushnumber(token, numbers);
+            long long aux = pushnumber_from_string(token, numbers);
 
             // History will display the number in the format inserted
             // So we must separate 0b from 0x from a normal decimal
             // add_number_to_history takes a second parameter to display accordingly
             if(strstr(token, "0b") != NULL)
-                add_number_to_history(aux, 2);
+                add_number_to_history(aux, NTYPE_BIN);
             else if (strstr(token, "0x") != NULL)
-                add_number_to_history(aux, 1);
+                add_number_to_history(aux, NTYPE_HEX);
             else
-                add_number_to_history(aux, 0);
+                add_number_to_history(aux, NTYPE_DEC);
 
         }
 
@@ -233,7 +216,7 @@ void process_input(operation** current_op, char* in) {
         char * last_allocated_addr = in_saved;
 
         // The next while will only handle case 1 and 3 - we already have the operation ready
-        
+
         int niterations = 0;
 
         while (op != NULL) {
@@ -266,8 +249,8 @@ void process_input(operation** current_op, char* in) {
             if (token != NULL) {
 
                 // We have a number, so we'll push it to the number stack
-                long long aux = pushnumber(token, numbers);
-                
+                long long aux = pushnumber_from_string(token, numbers);
+
                 // History will display the number in the format inserted
                 // So we must separate 0b from 0x from a normal decimal
                 // add_number_to_history takes a second parameter to display accordingly
@@ -285,7 +268,7 @@ void process_input(operation** current_op, char* in) {
 
 
             // We need to make sure the new op we're going to read comes after the last token read, to avoid a++b
-           
+
             // Define helper distances to check if the new operand comes before the last read token and avoid a++b
             int distance_to_previous_op, distance_to_new_op, distance_to_last_token;
             // This has to come before we reassign *op* (distance from last op to the start of input)
@@ -299,8 +282,8 @@ void process_input(operation** current_op, char* in) {
 
             // Try to find a next operation in the string starting right after the last op
             op = strpbrk(in_saved, ALL_OPS);
-        
-            // Because op and token are two different strings, we need to measure the distance to the beginning first to compare them later 
+
+            // Because op and token are two different strings, we need to measure the distance to the beginning first to compare them later
             // (op - in_saved) is the distance from the new op to the saved string that starts directly after the previous op
             distance_to_new_op = distance_to_previous_op + (op - in_saved);
 
@@ -347,7 +330,7 @@ void process_input(operation** current_op, char* in) {
         globalmasksize = requestedmasksize > DEFAULT_MASK_SIZE || requestedmasksize <= 0 ? DEFAULT_MASK_SIZE : requestedmasksize;
 
         //globalmask cant be 0x16f's
-        globalmask = DEFAULT_MASK >> (DEFAULT_MASK_SIZE-globalmasksize);
+        globalmask = shr((DEFAULT_MASK_SIZE-globalmasksize), DEFAULT_MASK);
 
         // apply mask to all numbers in stack
         numberstack* aux = create_numberstack(numbers->size);
@@ -365,33 +348,34 @@ void process_input(operation** current_op, char* in) {
         if (strpbrk(in, VALID_NUMBER_INPUT) || in[0] == '\0') {
 
             // If is the invalid operation (first in array of operations)
-            if (*current_op == operations || (in[0] == '\0' && (*current_op = operations)) ) {
+            // Or if is an empty string (and if it is, set the operation as NULL)
+            if (*current_op == NULL || (in[0] == '\0' && !(*current_op = NULL)) ) {
 
                 clear_numberstack(numbers);
                 clear_history();
             }
 
-            long long aux = pushnumber(in, numbers);
+            long long aux = pushnumber_from_string(in, numbers);
 
             if(strstr(in, "0b") != NULL)
-                add_number_to_history(aux, 2);
+                add_number_to_history(aux, NTYPE_BIN);
             else if (strstr(in, "0x") != NULL)
-                add_number_to_history(aux, 1);
+                add_number_to_history(aux, NTYPE_HEX);
             else
-                add_number_to_history(aux, 0);
+                add_number_to_history(aux, NTYPE_DEC);
 
         }
 
     }
 
     // Apply operations
-    apply_operations(numbers, current_op);    
+    apply_operations(numbers, current_op);
 }
 
 
-void apply_operations(numberstack* numbers, operation** current_op) {
+static void apply_operations(numberstack* numbers, operation** current_op) {
 
-    if (*current_op != operations) {
+    if (*current_op != NULL) {
 
         unsigned char noperands = (*current_op)->noperands;
 
@@ -402,18 +386,18 @@ void apply_operations(numberstack* numbers, operation** current_op) {
             for (unsigned char i=0; i < noperands; i++)
                 operands[i] = *pop_numberstack(numbers);
 
-            long long result = (*current_op)->execute(operands[0], operands[1]);
+            long long result = (*current_op)->execute(operands[0], operands[1]) & globalmask;
 
             push_numberstack(numbers, result);
 
-            *current_op = &operations[0]; // Set to invalid operation
+            *current_op = NULL; // Set to invalid operation
         }
     }
 
 }
 
 
-void get_input(char *in) {
+static void get_input(char *in) {
 
     char inp;
     int history_counter = searchHistory.size;
@@ -495,7 +479,7 @@ void exit_pcalc(int code) {
     exit(code);
 }
 
-void exit_pcalc_success() {
+static void exit_pcalc_success() {
 
     exit_pcalc(0);
 }

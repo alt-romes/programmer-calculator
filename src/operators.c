@@ -5,8 +5,21 @@
 unsigned long long globalmask = DEFAULT_MASK;
 int globalmasksize = DEFAULT_MASK_SIZE;
 
-operation operations[16] = {
-    {0, 0, NULL},
+static long long add(long long, long long);
+static long long subtract(long long, long long);
+static long long multiply(long long, long long);
+static long long divide(long long, long long);
+static long long and(long long, long long);
+static long long or(long long, long long);
+static long long nor(long long, long long);
+static long long xor(long long, long long);
+static long long shl(long long, long long);
+static long long rol(long long, long long);
+static long long modulus(long long, long long);
+static long long not(long long, long long);
+static long long twos_complement(long long, long long);
+
+static operation operations[15] = {
     {'+', 2, add},
     {'-', 2, subtract},
     {'*', 2, multiply},
@@ -15,10 +28,10 @@ operation operations[16] = {
     {'|', 2, or},
     {'$', 2, nor},
     {'^', 2, xor},
-    {'<', 2, sl},
-    {'>', 2, sr},
-    {'(', 2, rl},
-    {')', 2, rr},
+    {'<', 2, shl},
+    {'>', 2, shr},
+    {'(', 2, rol},
+    {')', 2, ror},
     {'%', 2, modulus},
     {'~', 1, not},
     {'\'', 1, twos_complement}
@@ -26,138 +39,91 @@ operation operations[16] = {
 
 operation* getopcode(char c)  {
 
-    operation* r;
-    switch (c) {
+    for (unsigned long i=0; i < sizeof(operations); i++)
+        if (operations[i].character == c)
+            return &operations[i];
 
-        case '+':
-            r = &operations[1];
-            break;
-        case '-':
-            r = &operations[2];
-            break;
-        case '*':
-            r = &operations[3];
-            break;
-        case '/':
-            r = &operations[4];
-            break;
-        case '&':
-            r = &operations[5];
-            break;
-        case '|':
-            r = &operations[6];
-            break;
-        case '$':
-            r = &operations[7];
-            break;
-        case '^':
-            r = &operations[8];
-            break;
-        case '<':
-            r = &operations[9];
-            break;
-        case '>':
-            r = &operations[10];
-            break;
-        case '(':
-            r = &operations[11];
-            break;
-        case ')':
-            r = &operations[12];
-            break;
-        case '%':
-            r = &operations[13];
-            break;
-        case '~':
-            r = &operations[14];
-            break;
-        case '\'':
-            r = &operations[15];
-            break;
-
-    }
-
-    return r;
+    return NULL;
 }
 
 
-long long add(long long a, long long b) {
+static long long add(long long a, long long b) {
 
-    return (a + b) & globalmask;
+    return a + b;
 }
 
 // remember op1 = first popped ( right operand ), op2 = second popped ( left operand )
-long long subtract(long long a, long long b) {
+static long long subtract(long long a, long long b) {
 
-    return (b - a) & globalmask;
+    return b - a;
 }
-long long multiply(long long a, long long b) {
+static long long multiply(long long a, long long b) {
 
-    return (a * b) & globalmask;
+    return a * b;
 }
 
-long long divide(long long a, long long b) {
+static long long divide(long long a, long long b) {
 
     //TODO not divisible by 0
     if(!a)
         return 0;
-    return (b / a) & globalmask;
+    return b / a;
 }
 
-long long and(long long a, long long b) {
+static long long and(long long a, long long b) {
 
-    return (a & b) & globalmask;
+    return a & b;
 }
 
-long long or(long long a, long long b) {
+static long long or(long long a, long long b) {
 
-    return (a | b) & globalmask;
+    return a | b;
 }
 
-long long nor(long long a, long long b) {
+static long long nor(long long a, long long b) {
 
-    return (~or(a,b)) & globalmask;
+    return ~(a | b);
 }
 
-long long xor(long long a, long long b) {
+static long long xor(long long a, long long b) {
 
-    return (a ^ b) & globalmask;
+    return a ^ b;
 }
-long long sl(long long a, long long b) {
+static long long shl(long long a, long long b) {
 
-    return (b << a) & globalmask;
-}
-
-long long sr(long long a, long long b) {
-
-    return ( (b >> a) & ~((long long) -1 << (64-a)) ) & globalmask;
+    return b << a;
 }
 
-long long rl(long long a, long long b) {
+long long shr(long long a, long long b) {
 
-    return ( b << a | sr(globalmasksize-a, b) ) & globalmask;
+    return (b >> a) & ~((long long) -1 << (64-a));
 }
 
-long long rr(long long a, long long b) {
+static long long rol(long long a, long long b) {
 
-    return ( sr(a, b) | ( b << (globalmasksize- a) ) ) & globalmask;
+    return b << a | shr(globalmasksize-a, b);
 }
 
-long long modulus(long long a, long long b) {
+long long ror(long long a, long long b) {
+
+    return shr(a, b) | ( b << (globalmasksize- a) );
+}
+
+static long long modulus(long long a, long long b) {
 
     //TODO not divisible by 0
     if(!a)
         return 0;
 
-    return (b % a) & globalmask;
+    return b % a;
 }
 
-long long not(long long a, long long UNUSED(b)) {
+static long long not(long long a, long long UNUSED(b)) {
 
-    return ~a & globalmask;
+    return ~a;
 }
 
-long long twos_complement(long long a, long long UNUSED(b)) {
+static long long twos_complement(long long a, long long UNUSED(b)) {
 
-    return (~a + 1) & globalmask;
+    return -a;
 }
