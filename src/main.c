@@ -401,10 +401,10 @@ static void get_input(char *in) {
 
     char inp;
     int history_counter = searchHistory.size;
-    int len = 0, browsing = 0;
+    int browsing = 0;
 
     // Collect input until enter is pressed
-    for (int pos = 0; (inp = getchar()) != 13;)
+    for (int pos = 0, len = 0; (inp = getchar()) != 13;)
     {
         int searched = 0;
         // Handles all arrow keys
@@ -506,7 +506,7 @@ static void get_input(char *in) {
                 else {
                     in[pos++] = inp;
 
-                    // Move all of the input after pos one char forward
+                    // Move all of the input after pos forward to make room for the underscore
                     len++;
                     for (int i = len; i > pos; i--) {
                         in[i] = in[i - 1];
@@ -520,7 +520,7 @@ static void get_input(char *in) {
         
         // Finaly print input
         sweepline(inputwin, 1, 22);
-    
+
         mvwprintw(inputwin, 1, 22, "%s", in);
         wrefresh(inputwin);
     }
