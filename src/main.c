@@ -471,34 +471,62 @@ static void get_input(char *in) {
 
         if (inp == 127)
         {
-            //Backspace
-            len == 0 ? len = 0 : --len;
-            pos = len;
+            // Backspace
+
+			if (pos != 0){
+				--pos;
+				--len;
+			}
+            //pos == 0 ? pos = 0 : --pos;
+            //len == 0 ? len = 0 : --len;
 			inp = '\0';
         }
 
-		//TODO: backspace & delete, actually typing while browsing, cursor ipv underscore (move/wmove?)
+		//TODO: backspace & delete, cursor ipv underscore (move/wmove?)
 
         if(!searched) {
             // Prevent user to input more than MAX_IN
-            if (len <= MAX_IN) {
+            if (len <= MAX_IN && !browsing) {
                 // Append char to in array
                 in[pos++] = inp;
-				len++;
-                in[len] = '\0';
-                if (inp == '\0')
+                in[pos] = '\0';
+                len++;
+				if (inp == '\0')
                 {
                     // Clear screen from previous input
                     mvwprintw(inputwin, 1, 22 + --len ," ");
                 }
             }
+			else if (len < MAX_IN && browsing) {
+				if (inp == '\0'){
+					in[pos] = '_';
+					if (pos != 0){
+						len++;	
+						for (int i = pos; i <= len; i++){
+							in[i] = in[i + 1];
+						}
+                    	mvwprintw(inputwin, 1, 22 + --len ," ");
+					}
+				}
+				else {
+					in[pos++] = inp;
+
+					// Move all of the input after pos one char forward
+					len++;
+					for (int i = len; i > pos; i--) {
+						in[i] = in[i - 1];
+					}
+				
+					in[pos] = '_';
+				}
+			}
         }
 		if (!browsing) { pos = len; }
         
 		// Finaly print input
         sweepline(inputwin, 1, 22);
 	
-        mvwprintw(inputwin, 1, 22, "%s - browsing: %i, len: %i, pos: %i", in, browsing, len, pos);
+        mvwprintw(inputwin, 1, 22, "browsing: %i, len: %i, pos: %i - %s", browsing, len, pos, in);
         wrefresh(inputwin);
     }
 
