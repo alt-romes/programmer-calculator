@@ -479,8 +479,6 @@ static void get_input(char *in) {
 			inp = '\0';
         }
 
-		//TODO: remove debugging bit, cursor ipv underscore (move/wmove?)
-
         if(!searched) {
             // Prevent user to input more than MAX_IN
             if (len <= MAX_IN && !browsing) {
@@ -523,7 +521,7 @@ static void get_input(char *in) {
 		// Finaly print input
         sweepline(inputwin, 1, 22);
 	
-        mvwprintw(inputwin, 1, 22, "browsing: %i, len: %i, pos: %i - %s", browsing, len, pos, in);
+        mvwprintw(inputwin, 1, 22, "%s", in);
         wrefresh(inputwin);
     }
 
