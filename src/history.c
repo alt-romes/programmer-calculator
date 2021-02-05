@@ -29,7 +29,7 @@ void add_to_history(struct history* h, char* in) {
         h->records = xrealloc(h->records, (h->size + HISTORY_RECORDS_BEFORE_REALLOC) * sizeof(char *));
 
     if ((h->records[h->size++] = strdup(*in == '\0' && h == &history ? "0" : in)) == NULL)
-        exit_pcalc(-1);
+        exit_pcalc(MEM_FAIL);
 
 }
 
@@ -41,6 +41,12 @@ void add_number_to_history(long long n, int type) {
 }
 
 void browsehistory(char* in , int mode, int* counter) {
+
+    /* @mode is -1 when scrolling up
+     * @mode is 1 when scrolling down
+     * this is due to the fact that when scrolling up we're browsing the history backwards,
+     * starting at the most recent command, until we hit the oldest command added to history
+     */
 
     if( (mode == 1 && *counter < searchHistory.size-1) || (mode == -1 && *counter > 0)) {
 
