@@ -475,7 +475,7 @@ static void get_input(char* in) {
 
                 if (inp == '\0') {
                     // Clear screen from previous input
-                    mvwprintw(inputwin, 1, 22 + --len ," ");
+                    mvwprintw(inputwin, 1, 22 + --len, " ");
                 }
             }
             else {
@@ -489,7 +489,7 @@ static void get_input(char* in) {
                         in[i] = in[i + 1];
                     }
                     // Clear screen from previous input
-                    mvwprintw(inputwin, 1, 22 + len ," ");
+                    mvwprintw(inputwin, 1, 22 + len, " ");
                 }
                 else {
                     // Everything except backspace
@@ -498,7 +498,7 @@ static void get_input(char* in) {
                     len++;
                     for (int i = len; i > pos; i--) {
                         in[i] = in[i - 1];
-                     }
+                    }
                     // Append char to in array
                     in[pos++] = inp;
                 
