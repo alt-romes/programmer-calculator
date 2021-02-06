@@ -154,7 +154,7 @@ SL   <    SR   >    RL   (    RR   )    2's  '
 * 2's: a'    2's complement (') operation : 2's complement of a
 
 
-#### Contributing
+## Contributing
 
 Please reference [Contributing](https://github.com/alt-romes/programmer-calculator/blob/master/CONTRIBUTING.md)
 
