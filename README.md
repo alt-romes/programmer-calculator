@@ -154,10 +154,10 @@ SL   <    SR   >    RL   (    RR   )    2's  '
 * 2's: a'    2's complement (') operation : 2's complement of a
 
 
-#### Todo
+#### Contributing
 
-* Compare two numbers?
-* Up arrow scrolls history (like a terminal)
+Please reference [Contributing](https://github.com/alt-romes/programmer-calculator/blob/master/CONTRIBUTING.md)
+
 
 ---
 
