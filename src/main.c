@@ -547,6 +547,10 @@ static void get_input(char *in) {
         sweepline(inputwin, 1, 22);
 
         mvwprintw(inputwin, 1, 22, "%s", in);
+
+        if (browsing)
+            wmove(inputwin, 1, 22+pos);
+        
         wrefresh(inputwin);
     }
 
