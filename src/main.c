@@ -22,7 +22,7 @@
 
 // General
 static void process_input(operation**, char*);
-static void get_input(char *);
+static void get_input(char*);
 static void apply_operations(numberstack*, operation**);
 static void exit_pcalc_success();
 
@@ -37,7 +37,7 @@ static void exit_pcalc_success();
 /*---- Main Logic -------------------------------------------------*/
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     // Get command line options to hide parts of the display
     int opt;
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-static long long pushnumber_from_string(char * in, numberstack* numbers) {
+static long long pushnumber_from_string(char* in, numberstack* numbers) {
 
     long long n;
 
@@ -154,7 +154,7 @@ static void process_input(operation** current_op, char* in) {
     // Process input
 
     // There's an operation if one of the operation symbols is found in the input string
-    char * op = strpbrk(in, ALL_OPS);
+    char* op = strpbrk(in, ALL_OPS);
 
     if (op != NULL) {
 
@@ -175,10 +175,10 @@ static void process_input(operation** current_op, char* in) {
         /* Before the strtok replaces the operator with \0 when searching for tokens
          * Save the string starting at the operator so we can reuse after handling the first number
          */
-        char * in_saved = strdup(op);
+        char* in_saved = strdup(op);
 
         // Find the first number in the string, by removing the operation symbol and everything after from the string
-        char * token = strtok(in, ALL_OPS);
+        char* token = strtok(in, ALL_OPS);
 
         // When the first number comes before the operation symbol (case 2 and 4)
         if (token != NULL && token < op) {
@@ -213,7 +213,7 @@ static void process_input(operation** current_op, char* in) {
         op = in;
 
         // Because we're manipulating the string, we need a variable to keep track of one of the addresses we need to free
-        char * last_allocated_addr = in_saved;
+        char* last_allocated_addr = in_saved;
 
         // The next while will only handle case 1 and 3 - we already have the operation ready
 
@@ -230,7 +230,7 @@ static void process_input(operation** current_op, char* in) {
             in_saved = strdup(op+1);
 
             // Find the next number in the string
-            char * token = strtok(in, ALL_OPS);
+            char* token = strtok(in, ALL_OPS);
 
             // Logic to add the op in the history
 
@@ -397,7 +397,7 @@ static void apply_operations(numberstack* numbers, operation** current_op) {
 }
 
 
-static void get_input(char *in) {
+static void get_input(char* in) {
 
     char inp;
     int history_counter = searchHistory.size;
