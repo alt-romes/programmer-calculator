@@ -401,6 +401,8 @@ static void get_input(char *in) {
 
     char inp;
     int history_counter = searchHistory.size;
+    
+    // Is the cursor at the end of the line or in the middle
     int browsing = 0;
 
     // Collect input until enter is pressed
@@ -432,17 +434,19 @@ static void get_input(char *in) {
                 // Left arrow
                 if (pos != 0) {
                     if (!browsing) {
+                        // Move the cursor into the line when it isn't already there
+                        
                         browsing = 1;
-                        pos--;
-                    
-                        in[len++] = in[pos];
+ 
+                        in[len++] = in[--pos];
                         in[len] = '\0';
                         in[pos] = '_';
                     }
                     else {
-                        in[pos] = in[pos - 1];
-                        pos--;
-                        in[pos] = '_';
+                        // Move the cursor one position back
+
+                        in[pos] = in[pos -1]; // This has to use -1 instead of --, as otherwise it does it in the wrong order and it goes wrong 
+                        in[--pos] = '_';
                     }
                 }
                 searched = 1;
@@ -451,15 +455,21 @@ static void get_input(char *in) {
             {
                 // Right arrow
                 if (browsing) {
+                    // This uses len-2 instead of len-1 because the cursor makes len one longer
+
                     if (pos < len - 2) {
+                        // If the cursor is still in the middle of the text
+                        
                         in[pos] = in[pos + 1];
                         pos++;
                         in[pos] = '_';
                     }
-                    else if (pos < len - 1) {
-                        in[pos] = in[pos + 1];
-                        pos++;
-                        in[pos] = '\0';
+                    else if (pos < len) {
+                        // If the cursor is moving out of the text
+
+                        in[pos] = in[pos + 1]; // Again, ++ doesn't work (see the left arrow)
+
+                        in[++pos] = '\0';
                         len = pos;
                         browsing = 0;
                     }
@@ -473,8 +483,8 @@ static void get_input(char *in) {
             // Backspace
 
             if (pos != 0){
-                --pos;
-                --len;
+                pos--;
+                len--;
             }
             inp = '\0';
         }
@@ -482,10 +492,13 @@ static void get_input(char *in) {
         if(!searched) {
             // Prevent user to input more than MAX_IN
             if (len <= MAX_IN && !browsing) {
+                // If the cursor is at the end of the text
+                
                 // Append char to in array
-                in[pos++] = inp;
-                in[pos] = '\0';
-                len++;
+                in[pos] = inp;
+                in[++pos] = '\0';
+                len++; // Make sure that len is still equal to pos
+
                 if (inp == '\0')
                 {
                     // Clear screen from previous input
@@ -493,20 +506,31 @@ static void get_input(char *in) {
                 }
             }
             else if (len < MAX_IN && browsing) {
+                // If the cursor is in the text, not at the end
+                // len < MAX_IN is allowed because the underscore adds one to length and the underscore isn't really a part of in
+
                 if (inp == '\0'){
+                    // Backspace
+                    
                     // Check if pos is already at the start of the input, if so don't do anything
                     if (in[0] != '_'){
                         in[pos] = '_';
+
+                        // Move all of in after pos one space back
                         for (int i = pos; i <= len; i++){
                             in[i] = in[i + 1];
                         }
+                        // Clear screen from previous input
                         mvwprintw(inputwin, 1, 22 + len ," ");
                     }
                 }
                 else {
+                    // Everything except backspace
+
+                    // Append char to in array
                     in[pos++] = inp;
 
-                    // Move all of the input after pos forward to make room for the underscore
+                    // Move all of in after pos one space forward to make room for the underscore
                     len++;
                     for (int i = len; i > pos; i--) {
                         in[i] = in[i - 1];
@@ -516,6 +540,7 @@ static void get_input(char *in) {
                 }
             }
         }
+        // This saves having to increment pos everytime len is incremented when youre not browsing
         if (!browsing) { pos = len; }
         
         // Finaly print input
@@ -525,6 +550,9 @@ static void get_input(char *in) {
         wrefresh(inputwin);
     }
 
+    //TODO: Remove the underscore from in before committing it to history, or it will stay there when you search back through the history
+    // Or will this be solved by using the ncurses cursor?
+    
     if (in[0] != '\0' && (searchHistory.size == 0 || strcmp(in, searchHistory.records[searchHistory.size - 1])))
         add_to_history(&searchHistory, in);
 
