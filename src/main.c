@@ -1,3 +1,4 @@
+#include <getopt.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -40,35 +41,62 @@ static void exit_pcalc_success();
 int main(int argc, char *argv[])
 {
     // Get command line options to hide parts of the display
+    struct option long_options[] = {
+
+        {"help", no_argument, NULL, 'h'},
+        {"version", no_argument, NULL, 'v'},
+        {"history", no_argument, NULL, 'i'},
+        {"binary", no_argument, NULL, 'b'},
+        {"hex", no_argument, NULL, 'x'},
+        {"decimal", no_argument, NULL, 'd'},
+        {"operation", no_argument, NULL, 'o'},
+        {"symbol", no_argument, NULL, 's'}
+
+        };
+
+    int option_index = 0;
+
+    // Get command line options to hide parts of the display
     int opt;
-    while ((opt = getopt(argc, argv, "hbxdos")) != -1) {
+    while ((opt = getopt_long(argc, argv, "hvibxdos", long_options, &option_index)) != -1) {
         switch (opt) {
-        case 'h':
-            history_enabled = 0;
-            break;
 
-        case 'b':
-            binary_enabled = 0;
-            break;
+            case 'h':
+                puts("HELP\n");
+                exit(0);
+                break;
 
-        case 'x':
-            hex_enabled = 0;
-            break;
+            case 'v':
+                puts("Programmer calculator version 1.8\n");
+                exit(0);
+                break;
 
-        case 'd':
-            decimal_enabled = 0;
-            break;
+            case 'i':
+                history_enabled = 0;
+                break;
 
-        case 'o':
-            operation_enabled = 0;
-            break;
+            case 'b':
+                binary_enabled = 0;
+                break;
 
-        case 's':
-            symbols_enabled = 0;
-            break;
+            case 'x':
+                hex_enabled = 0;
+                break;
 
-        default:
-            exit(EXIT_FAILURE);
+            case 'd':
+                decimal_enabled = 0;
+                break;
+
+            case 'o':
+                operation_enabled = 0;
+                break;
+
+            case 's':
+                symbols_enabled = 0;
+                break;
+
+            default:
+                exit(EXIT_FAILURE);
         }
     }
 
