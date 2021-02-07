@@ -60,12 +60,20 @@ int main(int argc, char *argv[])
         switch (opt) {
 
             case 'h':
-                puts("HELP");
+                puts("\nCurrently --help only displays the following information about the program options.");
+                puts("If you think something else should be here let us know @ github.com/alt-romes/programmer-calculator");
+                puts("The following options customize the interface: -ibxdos");
+                puts("--history = -i");
+                puts("--binary = -b");
+                puts("--hex = -x");
+                puts("--decimal = -d");
+                puts("--operation = -o");
+                puts("--symbol = -s\n");
                 exit(0);
                 break;
 
             case 'v':
-                puts("Programmer calculator version 1.8");
+                puts("Programmer calculator v1.8");
                 exit(0);
                 break;
 
