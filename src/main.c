@@ -442,6 +442,13 @@ static void get_input(char* in) {
     // Collect input until enter is pressed
     for (int pos = 0, len = 0; (inp = getchar()) != 13;) {
 
+        /* Check for forbidden keys
+         * -1 is a key that indicates the terminal got resized
+         */
+        if (inp <= 0) {
+            continue;
+        }
+
         // Get max possible input length
         int max = getmaxx(inputwin) - INPUT_START;
 
