@@ -551,10 +551,10 @@ static void get_input(char* in, int max_in) {
         }
         // This saves having to increment pos everytime len is incremented when youre not browsing
         if (!browsing) { pos = len; }
-        
+
         // Finaly print input
         sweepline(inputwin, 1, 22);
-    
+
         mvwprintw(inputwin, 1, 22, "%s", in);
 
         wmove(inputwin, 1, 22 + pos); // Move the cursor
