@@ -23,7 +23,7 @@
 
 // General
 static void process_input(operation**, char*);
-static void get_input(char*, int);
+static void get_input(char*);
 static void apply_operations(numberstack*, operation**);
 static void exit_pcalc_success();
 
@@ -144,26 +144,15 @@ int main(int argc, char* argv[])
     // No longer add empty string to history bottom, because the scroll was reversed
     /* add_to_history(&searchHistory, ""); */
 
-    // Get the maximum input length given the width of the terminal
-    // This could be moved into the main loop so that if the window is resized max_in is also adjusted (after pressing enter), but it doesn't account for entries from the history being longer
-    // So when the code for resizing the windows is implemented this might also need changing a bit 
-    int x;
-    getmaxyx(inputwin, x, x);    // Get the width of the window, slightly abusing how getmaxyx works to not have to use a second variable for the y value (which we don't need)
-
-    int max_in = MAX_IN;
-    if (x < (MAX_IN + 24)) {                      // 24 is the width that is used regardless of input, so MAX_IN + 24 is the minimum width of the terminal for MAX_IN characters of input 
-        max_in = MAX_IN - ((MAX_IN + 24) - x);    // So this gives the maximum input size for a given terminal width (MAX_IN minus the difference between the minimum width for MAX_IN and the current width)
-    }
-
     //Main Loop
     for (;;) {
         // Get input
-        char in[max_in+1];
+        char in[MAX_IN + 1];
 
         // Make sure that if enter is pressed, a len == 0 null terminated string is in "in"
         in[0] = '\0';
 
-        get_input(in, max_in);
+        get_input(in);
 
         process_input(&current_op, in);
 
@@ -441,7 +430,7 @@ static void apply_operations(numberstack* numbers, operation** current_op) {
 }
 
 
-static void get_input(char* in, int max_in) {
+static void get_input(char* in) {
 
     char inp;
     int history_counter = searchHistory.size;
@@ -451,7 +440,17 @@ static void get_input(char* in, int max_in) {
 
     // Collect input until enter is pressed
     for (int pos = 0, len = 0; (inp = getchar()) != 13;) {
-        int searched = 0;
+        
+		// Get the maximum input length given the width of the terminal
+	    int x;
+	    getmaxyx(inputwin, x, x);    // Get the width of the window, slightly abusing how getmaxyx works to not have to use a second variable for the y value (which we don't need)
+
+	    int max_in = MAX_IN;
+	    if (x < (MAX_IN + 24)) {                      // 24 is the width that is used regardless of input, so MAX_IN + 24 is the minimum width of the terminal for MAX_IN characters of input 
+	        max_in = MAX_IN - ((MAX_IN + 24) - x);    // So this gives the maximum input size for a given terminal width (MAX_IN minus the difference between the minimum width for MAX_IN and the current width)
+	    }
+
+		int searched = 0;
         
         // Handles all arrow keys
         if (inp == 27) {
