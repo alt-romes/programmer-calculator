@@ -1,0 +1,39 @@
+# This is just a normal text file
+
+Priorities:
+
+1. parenthesis ((, )),
+2. sign before a number (+, -)
+3. bitwise not (~)
+4. mult, div, remainder (*, /, %)
+5. shifts and rotates (<<, >>, RoR, RoL)
+6. bitwise and (&)
+7. bitwise xor (^)
+8. bitwiser or and nor (|, nor)
+
+
+Grammar:
+
+input := (symbol)? expression
+
+expression := or_exp
+
+or_exp := xor_exp ( (| | $) xor_exp )*
+
+xor_exp := and_exp (^ and_exp)*
+
+and_exp := shift_exp (& shift_exp)*
+
+shift_exp := add_exp ((<< | >> | ror | rol) add_exp)*
+
+add_exp := mult_exp ((+ | -) mult_exp)*
+
+mult_exp := not_exp ((* | / | %) not_exp)*
+
+not_exp: (~)? atom_exp
+
+atom_exp: number | left_parenthesis expression right_parenthesis
+
+number: (+ | -)? ( (0-9)+ | 0x(0-9a-f)+ | 0b(0-1)+ )
+
+symbol: any symbol

@@ -40,7 +40,7 @@ $(MAIN): $(OBJECTS)
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-.PHONY: clean
+.PHONY: clean parser
 clean:
 	$(RM) $(MAIN)
 	$(RM) $(call FIXPATH,$(OBJECTS))
@@ -49,3 +49,9 @@ clean:
 run: all
 	./$(MAIN)
 	@echo Executing "run: all" complete!
+
+parser: $(MAIN)
+	$(CC) $(CFLAGS) $(INCLUDES) -o parser/parser src/operators.o parser/parser.c $(LFLAGS)
+
+rparser: parser
+	parser/parser
