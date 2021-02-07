@@ -126,9 +126,12 @@ While running the calculator, you can type *what you see* for it to appear/disap
 
 To set a default interface, define an alias for the program with the desired hidden options
 ```
-$ alias pcalc='pcalc -hbxdos'
+$ alias pcalc='pcalc -ibxdos'
 ```
-h: history, b: binary, x: hex, d: decimal, o: operation, s: symbols
+i: history, b: binary, x: hex, d: decimal, o: operation, s: symbols
+
+You can also use the long options to hide parts: `--history`, `--decimal`, etc.
+
 
 ### Operations
 ```
