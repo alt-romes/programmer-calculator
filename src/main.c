@@ -441,16 +441,16 @@ static void get_input(char* in) {
     // Collect input until enter is pressed
     for (int pos = 0, len = 0; (inp = getchar()) != 13;) {
         
-		// Get the maximum input length given the width of the terminal
-	    int x;
-	    getmaxyx(inputwin, x, x);    // Get the width of the window, slightly abusing how getmaxyx works to not have to use a second variable for the y value (which we don't need)
+        // Get the maximum input length given the width of the terminal
+        int x;
+        getmaxyx(inputwin, x, x);    // Get the width of the window, slightly abusing how getmaxyx works to not have to use a second variable for the y value (which we don't need)
 
-	    int max_in = MAX_IN;
-	    if (x < (MAX_IN + 24)) {                      // 24 is the width that is used regardless of input, so MAX_IN + 24 is the minimum width of the terminal for MAX_IN characters of input 
-	        max_in = MAX_IN - ((MAX_IN + 24) - x);    // So this gives the maximum input size for a given terminal width (MAX_IN minus the difference between the minimum width for MAX_IN and the current width)
-	    }
+        int max_in = MAX_IN;
+        if (x < (MAX_IN + 24)) {                      // 24 is the width that is used regardless of input, so MAX_IN + 24 is the minimum width of the terminal for MAX_IN characters of input 
+            max_in = MAX_IN - ((MAX_IN + 24) - x);    // So this gives the maximum input size for a given terminal width (MAX_IN minus the difference between the minimum width for MAX_IN and the current width)
+        }
 
-		int searched = 0;
+        int searched = 0;
         
         // Handles all arrow keys
         if (inp == 27) {
