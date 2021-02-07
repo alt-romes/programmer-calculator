@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
     for (;;) {
 
         // Get input
-        char in[MAX_IN+1];
+        char in[MAX_IN + 1];
 
         // Make sure that if enter is pressed, a len == 0 null terminated string is in "in"
         in[0] = '\0';
@@ -443,7 +443,7 @@ static void get_input(char* in) {
     for (int pos = 0, len = 0; (inp = getchar()) != 13;) {
 
         // Get max possible input length
-        int max = getmaxx(inputwin) - 24;
+        int max = getmaxx(inputwin) - INPUT_START;
 
         int searched = 0;
         
