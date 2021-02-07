@@ -23,7 +23,7 @@
 
 // General
 static void process_input(operation**, char*);
-static void get_input(char *);
+static void get_input(char*);
 static void apply_operations(numberstack*, operation**);
 static void exit_pcalc_success();
 
@@ -38,7 +38,7 @@ static void exit_pcalc_success();
 /*---- Main Logic -------------------------------------------------*/
 
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     // Set all long arguments that can be used
     struct option long_options[] = {
@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-static long long pushnumber_from_string(char * in, numberstack* numbers) {
+static long long pushnumber_from_string(char* in, numberstack* numbers) {
 
     long long n;
 
@@ -188,7 +188,7 @@ static void process_input(operation** current_op, char* in) {
     // Process input
 
     // There's an operation if one of the operation symbols is found in the input string
-    char * op = strpbrk(in, ALL_OPS);
+    char* op = strpbrk(in, ALL_OPS);
 
     if (op != NULL) {
 
@@ -209,10 +209,10 @@ static void process_input(operation** current_op, char* in) {
         /* Before the strtok replaces the operator with \0 when searching for tokens
          * Save the string starting at the operator so we can reuse after handling the first number
          */
-        char * in_saved = strdup(op);
+        char* in_saved = strdup(op);
 
         // Find the first number in the string, by removing the operation symbol and everything after from the string
-        char * token = strtok(in, ALL_OPS);
+        char* token = strtok(in, ALL_OPS);
 
         // When the first number comes before the operation symbol (case 2 and 4)
         if (token != NULL && token < op) {
@@ -247,7 +247,7 @@ static void process_input(operation** current_op, char* in) {
         op = in;
 
         // Because we're manipulating the string, we need a variable to keep track of one of the addresses we need to free
-        char * last_allocated_addr = in_saved;
+        char* last_allocated_addr = in_saved;
 
         // The next while will only handle case 1 and 3 - we already have the operation ready
 
@@ -264,7 +264,7 @@ static void process_input(operation** current_op, char* in) {
             in_saved = strdup(op+1);
 
             // Find the next number in the string
-            char * token = strtok(in, ALL_OPS);
+            char* token = strtok(in, ALL_OPS);
 
             // Logic to add the op in the history
 
@@ -431,65 +431,130 @@ static void apply_operations(numberstack* numbers, operation** current_op) {
 }
 
 
-static void get_input(char *in) {
+static void get_input(char* in) {
 
     char inp;
     int history_counter = searchHistory.size;
+    
+    // Is the cursor at the end of the line or somewhere in the middle
+    int browsing = 0;
 
     // Collect input until enter is pressed
-    for (int i = 0; (inp = getchar()) != 13;)
-    {
+    for (int pos = 0, len = 0; (inp = getchar()) != 13;) {
         int searched = 0;
+        
         // Handles all arrow keys
         if (inp == 27) {
             getchar();
             inp = getchar();
-            if (inp == 'A')
-            {
+            if (inp == 'A') {
                 // Up arrow
                 browsehistory(in, -1, &history_counter);
-                i = strlen(in);
+                len = strlen(in);
                 searched = 1;
+                browsing = 0;
             }
-            else if (inp == 'B')
-            {
+            else if (inp == 'B') {
                 // Down arrow
                 browsehistory(in, 1, &history_counter);
-                i = strlen(in);
+                len = strlen(in);
+                searched = 1;
+                browsing = 0;
+            }
+            else if (inp == 'D') {
+                // Left arrow
+                if (pos != 0) {
+                    pos--;
+                    browsing = 1; // The left arrow will always be in browsing mode, so no need for a check
+                }
+                searched = 1;
+            }
+            else if (inp == 'C') {
+                // Right arrow
+                if (browsing) {    // The right arrow should only work while in the middle of the input
+                    pos++;
+    
+                    // Exit browsing mode if the cursor is at the end of the input
+                    if (pos == len) {
+                        browsing = 0;
+                    }
+                }
                 searched = 1;
             }
         }
 
-        if (inp == 127)
-        {
-            //Backspace
-            i == 0 ? i = 0 : --i;
-            inp = '\0';
+        if (inp == 127) {
+            // Backspace
+
+            if (pos != 0) {
+                pos--;
+                len--;
+                inp = '\0';
+            }
+            else {
+                // Skip printing if backspace was pressed but nothing was done, otherwise a strange undefined character is printed
+                searched = 1;
+            }
         }
 
-        if(!searched) {
-            // Prevent user to input more than MAX_IN
-            if (i <= MAX_IN) {
+        // Prevent user to input more than MAX_IN
+        if(!searched && len <= MAX_IN) {
+            if (!browsing) {
+                // If the cursor is at the end of the text
+                
                 // Append char to in array
-                in[i++] = inp;
+                in[pos] = inp;
+                in[++pos] = '\0';
+                len++; // Make sure that len is still equal to pos
 
-                in[i] = '\0';
-                if (inp == '\0')
-                {
+                if (inp == '\0') {
                     // Clear screen from previous input
-                    mvwprintw(inputwin, 1, 22 + --i ," ");
+                    mvwprintw(inputwin, 1, 22 + --len, " ");
+                }
+            }
+            else {
+                // If the cursor is in the text, not at the end
+
+                if (inp == '\0') {
+                    // Backspace
+                    
+                    // Move all of in after pos one space back
+                    for (int i = pos; i <= len; i++) {
+                        in[i] = in[i + 1];
+                    }
+                    // Clear screen from previous input
+                    mvwprintw(inputwin, 1, 22 + len, " ");
+                }
+                else {
+                    // Everything except backspace
+
+                    // Move all of in after pos one space forward to make room for the new input
+                    len++;
+                    for (int i = len; i > pos; i--) {
+                        in[i] = in[i - 1];
+                    }
+                    // Append char to in array
+                    in[pos++] = inp;
+                
                 }
             }
         }
+        // This saves having to increment pos everytime len is incremented when youre not browsing
+        if (!browsing) { pos = len; }
+        
         // Finaly print input
         sweepline(inputwin, 1, 22);
 
         mvwprintw(inputwin, 1, 22, "%s", in);
+
+        wmove(inputwin, 1, 22 + pos); // Move the cursor
+        
         wrefresh(inputwin);
     }
 
-    if (in[0] != '\0' && (searchHistory.size == 0 || strcmp(in, searchHistory.records[searchHistory.size - 1])))
+    if (in[0] != '\0' && (searchHistory.size == 0 || strcmp(in, searchHistory.records[searchHistory.size - 1]))) {
         add_to_history(&searchHistory, in);
+    }
 
 }
 

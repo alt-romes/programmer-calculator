@@ -3,7 +3,7 @@
 CC = gcc
 CFLAGS := -Wall -Wextra -g -Werror=missing-declarations -Werror=redundant-decls
 LFLAGS = -lncurses
-OUTPUT := output
+# OUTPUT := output
 SRC := src
 INCLUDE := include
 #	LIB := lib
@@ -15,7 +15,7 @@ INCLUDEDIRS := $(INCLUDE)
 #	LIBDIRS := $(LIB)
 FIXPATH = $(subst /,\,$1)
 RM := del /q /f
-MD := mkdir
+# MD := mkdir
 else
 MAIN := pcalc
 SOURCEDIRS := $(shell find $(SRC) -type d)
@@ -23,7 +23,7 @@ INCLUDEDIRS := $(shell find $(INCLUDE) -type d)
 #	LIBDIRS := $(shell find $(LIB) -type d)
 FIXPATH = $1
 RM = rm -f
-MD := mkdir -p
+# MD := mkdir -p
 endif
 
 INCLUDES := $(patsubst %,-I%, $(INCLUDEDIRS:%/=%))
@@ -31,11 +31,8 @@ INCLUDES := $(patsubst %,-I%, $(INCLUDEDIRS:%/=%))
 SOURCES := $(wildcard $(patsubst %,%/*.c, $(SOURCEDIRS)))
 OBJECTS := $(SOURCES:.c=.o)
 
-all: $(OUTPUT) $(MAIN)
+all: $(MAIN)
 	@echo Executing "all" complete!
-
-$(OUTPUT):
-	$(MD) $(OUTPUT)
 
 $(MAIN): $(OBJECTS)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJECTS) $(LFLAGS) # $(LIBS)
