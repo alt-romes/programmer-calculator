@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
     for (;;) {
 
         // Get input
-        char in[MAX_IN+1];
+        char in[MAX_IN + 1];
 
         // Make sure that if enter is pressed, a len == 0 null terminated string is in "in"
         in[0] = '\0';
@@ -441,6 +441,10 @@ static void get_input(char* in) {
 
     // Collect input until enter is pressed
     for (int pos = 0, len = 0; (inp = getchar()) != 13;) {
+
+        // Get max possible input length
+        int max = getmaxx(inputwin) - INPUT_START;
+
         int searched = 0;
         
         // Handles all arrow keys
@@ -498,7 +502,7 @@ static void get_input(char* in) {
         }
 
         // Prevent user to input more than MAX_IN
-        if(!searched && len <= MAX_IN) {
+        if(!searched && len <= max && len <= MAX_IN) {
             if (!browsing) {
                 // If the cursor is at the end of the text
                 
