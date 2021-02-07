@@ -40,7 +40,7 @@ static void exit_pcalc_success();
 
 int main(int argc, char *argv[])
 {
-    // Get command line options to hide parts of the display
+    // Set all long arguments that can be used
     struct option long_options[] = {
 
         {"help", no_argument, NULL, 'h'},
@@ -52,22 +52,20 @@ int main(int argc, char *argv[])
         {"operation", no_argument, NULL, 'o'},
         {"symbol", no_argument, NULL, 's'}
 
-        };
-
-    int option_index = 0;
+     };
 
     // Get command line options to hide parts of the display
     int opt;
-    while ((opt = getopt_long(argc, argv, "hvibxdos", long_options, &option_index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hvibxdos", long_options, NULL)) != -1) {
         switch (opt) {
 
             case 'h':
-                puts("HELP\n");
+                puts("HELP");
                 exit(0);
                 break;
 
             case 'v':
-                puts("Programmer calculator version 1.8\n");
+                puts("Programmer calculator version 1.8");
                 exit(0);
                 break;
 
