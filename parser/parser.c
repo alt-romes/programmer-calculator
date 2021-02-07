@@ -5,15 +5,23 @@
 #include "parser.h"
 
 // Static functions
-static char* tokenize(char*);
 
 static exprtree parse_expr(parser_t);
-static exprtree parse_add_exp(parser_t);
-static exprtree parse_mult_exp(parser_t);
+static exprtree parse_or_expr(parser_t);
+static exprtree parse_xor_expr(parser_t);
+static exprtree parse_and_expr(parser_t);
+static exprtree parse_shift_expr(parser_t);
+static exprtree parse_add_expr(parser_t);
+static exprtree parse_mult_expr(parser_t);
+static exprtree parse_prefix_expr(parser_t);
+static exprtree parse_atom_expr(parser_t);
 static exprtree parse_number(parser_t);
+static exprtree parse_stdop_expr(parser_t, char*, exprtree (*) (parser_t));
 static exprtree create_exprtree(int, void*, exprtree, exprtree);
 static void free_exprtree(exprtree);
 
+
+// For a clearer explanation of this parser check github.com/alt-romes/calculator-c-parser ? (TODO)
 
 // Main
 int main(int argc, char* argv[]) {
@@ -27,7 +35,9 @@ int main(int argc, char* argv[]) {
     scanf("%[^\n]", in);
 
     // Parse the expression
-    exprtree expression = parse(in);
+    char* tokens = tokenize(in);
+
+    exprtree expression = parse(tokens);
 
     long long value = calculate(expression);
 
@@ -71,12 +81,14 @@ long long calculate(exprtree expr) {
         
 }
 
-exprtree parse(char* in) {
+exprtree parse(char* tokens) {
 
     // TODO: How to stop with errors?
 
     parser_t parser = malloc(sizeof(parser_t));
-    parser->tokens = tokenize(in);
+    parser->tokens = tokens;
+    parser->ntokens = strlen(tokens);
+    parser->pos = 0;
 
     exprtree expression = parse_expr(parser);
 
@@ -88,63 +100,174 @@ exprtree parse(char* in) {
 
 static exprtree parse_expr(parser_t parser) {
 
-    return parse_add_exp(parser);
+    // Grammar rule: expression := or_exp
+
+    return parse_or_expr(parser);
 }
 
-static exprtree parse_add_exp(parser_t parser) {
+static exprtree parse_or_expr(parser_t parser) {
 
-    exprtree expr = parse_mult_exp(parser);
-    
-    while (parser->tokens[parser->pos] == '+' || parser->tokens[parser->pos] == '-') {
+    // Grammar rule: or_exp := xor_exp ( (| | $) xor_exp )*
 
-        operation* op = getopcode(parser->tokens[parser->pos]);
+    char ops[3];
+    ops[0] = OR_SYMBOL;
+    ops[1] = NOR_SYMBOL;
+    ops[2] = '\0';
 
-        parser->pos++; // Consume token
-
-        exprtree right_expr = parse_mult_exp(parser);
-
-        expr = create_exprtree(OP_TYPE, op, expr, right_expr);
-    }
-    
-    return expr;
+    return parse_stdop_expr(parser, ops, parse_xor_expr);
 
 }
 
-static exprtree parse_mult_exp(parser_t parser) {
+static exprtree parse_xor_expr(parser_t parser) {
 
-    exprtree expr = parse_number(parser);
-    
-    while (parser->tokens[parser->pos] == '*' || parser->tokens[parser->pos] == '/' || parser->tokens[parser->pos] == '%') {
+    // Grammar rule: xor_exp := and_exp (^ and_exp)*
 
-        operation* op = getopcode(parser->tokens[parser->pos]);
+    char ops[2];
+    ops[0] = XOR_SYMBOL;
+    ops[1] = '\0';
 
-        parser->pos++; // Consume token
+    return parse_stdop_expr(parser, ops, parse_and_expr);
 
-        exprtree right_expr = parse_number(parser);
-
-        expr = create_exprtree(OP_TYPE, op, expr, right_expr);
-    }
-    
-    return expr;
 }
 
+static exprtree parse_and_expr(parser_t parser) {
 
-static exprtree parse_number(parser_t parser) {
+    // Grammar rule: and_exp := shift_exp (& shift_exp)*
+
+    char ops[2];
+    ops[0] = AND_SYMBOL;
+    ops[1] = '\0';
+
+    return parse_stdop_expr(parser, ops, parse_shift_expr);
+
+}
+
+static exprtree parse_shift_expr(parser_t parser) {
+
+    // Grammar rule: shift_exp := add_exp ((<< | >> | ror | rol) add_exp)*
+
+    char ops[5];
+    ops[0] = SHR_SYMBOL;
+    ops[1] = SHL_SYMBOL;
+    ops[2] = ROR_SYMBOL;
+    ops[3] = ROL_SYMBOL;
+    ops[4] = '\0';
+
+    return parse_stdop_expr(parser, ops, parse_add_expr);
+
+}
+
+static exprtree parse_add_expr(parser_t parser) {
+
+    // Grammar rule: add_exp := mult_exp ((+ | -) mult_exp)*
+
+    // TODO: This example should go away in favour of a repository containing this simple code explained
+    // Example of how all other common parse_expressions work
+    // The others use *parse_stdop_expr* which basically factors out the following code:
+
+    char ops[3];
+    ops[0] = ADD_SYMBOL;
+    ops[1] = SUB_SYMBOL;
+    ops[2] = '\0';
     
-    int sign_prefix = 1;
-    if (strchr(VALID_SIGN_SYMBOLS, parser->tokens[parser->pos])) {
+    return parse_stdop_expr(parser, ops, parse_mult_expr);
+
+}
+
+static exprtree parse_mult_expr(parser_t parser) {
+
+    // Grammar rule: mult_exp := not_exp ((* | / | %) not_exp)*
+
+    char ops[4];
+    ops[0] = MUL_SYMBOL;
+    ops[1] = DIV_SYMBOL;
+    ops[2] = MOD_SYMBOL;
+    ops[3] = '\0';
+
+    return parse_stdop_expr(parser, ops, parse_prefix_expr);
+
+}
+
+static exprtree parse_prefix_expr(parser_t parser) {
+
+    // Grammar rule: prefix_exp: (~ | + | -)? atom_exp
+
+    char prefixes[4];
+    prefixes[0] = ADD_SYMBOL;
+    prefixes[1] = SUB_SYMBOL;
+    prefixes[2] = NOT_SYMBOL;
+    prefixes[3] = '\0';
+
+    char prefix = 0;
+    if (strchr(prefixes, parser->tokens[parser->pos])) {
 
         // Find + or - before the number (to make numbers positive or negative)
 
         // When the symbol found is +, there's no need to do anything
 
-        if (parser->tokens[parser->pos] == MINUS_SYMBOL)
-            sign_prefix = -1;
+        prefix = parser->tokens[parser->pos];
 
         parser->pos++; // Consume token
-
     }
 
+    exprtree expr = parse_atom_expr(parser);
+
+    if (prefix == 0 || prefix == ADD_SYMBOL) // Do nothing to expression
+        return expr;
+    else {
+
+        // Prefix is either SUB_SYMBOL or NOT_SYMBOL
+
+        // Since it's one of these two, we need to apply an operation to the expression
+        operation* op = NULL;
+
+        // Sub sets the symmetric of number, the expression (0 - expression) does that
+        if (prefix == SUB_SYMBOL) 
+            op = getopcode(SUB_SYMBOL);
+
+        // Bitwise NOT of a number - only one parameter is used: because the order is changed in execute(), set the number to
+        // apply the NOT operation to on the right branch. The other branch doesn't matter so we set it as the same as SUB
+        else if (prefix == NOT_SYMBOL) 
+            op = getopcode(NOT_SYMBOL);
+
+        long long zero_val = 0;
+        exprtree zero_val_expr = create_exprtree(DEC_TYPE, &zero_val, NULL, NULL);
+        return create_exprtree(OP_TYPE, op, zero_val_expr, expr);
+    }
+
+}
+
+static exprtree parse_atom_expr(parser_t parser) {
+
+    // Grammar rule: atom_expr := number | left_parenthesis expression right_parenthesis
+    
+    exprtree expr;
+
+    if (parser->tokens[parser->pos] == LPAR_SYMBOL) {
+        // If the atomic expression starts with parenthesis
+
+        parser->pos++; // Consume left parenthesis
+
+        expr = parse_expr(parser);
+
+        if (parser->tokens[parser->pos] == RPAR_SYMBOL)
+            parser->pos++; // Consume right parenthesis
+        else
+            fprintf(stderr, "Invalid expression!!!\n"); // TODO: Find a way to do error handling and displaying, possibly give one more type to exprtree type = ERR_TYPE and have in the union a char* for the error message
+
+    }
+    else {
+        // If it doesn't start with parenthesis then it's a normal number
+
+        expr = parse_number(parser);
+    }
+
+    return expr;
+
+}
+
+static exprtree parse_number(parser_t parser) {
+    
     int numbertype = DEC_TYPE;
     if (parser->tokens[parser->pos] == '0') {
         if (parser->tokens[parser->pos+1] == 'x') {
@@ -172,6 +295,7 @@ static exprtree parse_number(parser_t parser) {
     numberfound[numberlen] = '\0';
 
     // If no number was found, return the null expression
+    // TODO: return the error expression
     if (numberlen == 0)
         return NULL;
 
@@ -189,11 +313,30 @@ static exprtree parse_number(parser_t parser) {
             break;
     }
 
-    long long value = sign_prefix * strtoll(numberfound, NULL, numberbase);
+    long long value = strtoll(numberfound, NULL, numberbase);
 
     exprtree number_expr = create_exprtree(numbertype, &value, NULL, NULL);
 
     return number_expr;
+}
+
+static exprtree parse_stdop_expr(parser_t parser, char* ops, exprtree (*parse_inner_expr) (parser_t)) {
+
+    exprtree expr = parse_inner_expr(parser);
+    
+    while (parser->pos < parser->ntokens && strchr(ops, parser->tokens[parser->pos])) {
+
+        operation* op = getopcode(parser->tokens[parser->pos]);
+
+        parser->pos++; // Consume token
+
+        exprtree right_expr = parse_inner_expr(parser);
+
+        expr = create_exprtree(OP_TYPE, op, expr, right_expr);
+    }
+    
+    return expr;
+
 }
 
 static exprtree create_exprtree(int type, void* content, exprtree left, exprtree right) {
@@ -220,22 +363,30 @@ static exprtree create_exprtree(int type, void* content, exprtree left, exprtree
 
 static void free_exprtree(exprtree expr) {
 
-    if (expr->left)
-        free_exprtree(expr->left);
-    if (expr->right)
-        free_exprtree(expr->right);
+    if (expr) {
 
-    free(expr);
+        if (expr->left)
+            free_exprtree(expr->left);
+        if (expr->right)
+            free_exprtree(expr->right);
+
+        free(expr);
+
+    }
+
 }
 
-static char* tokenize(char* in) {
+char* tokenize(char* in) {
 
     char* tokens = malloc(sizeof(char) * MAX_TOKENS);
 
     int in_len = strlen(in);
-    for (int i = 0, token_pos = 0; i < in_len; i++)
+    int token_pos = 0;
+    for (int i = 0; i < in_len; i++)
         if (strchr(VALID_TOKENS, in[i]))
             tokens[token_pos++] = in[i];
+
+    tokens[token_pos] = '\0';
 
     return tokens;
 }

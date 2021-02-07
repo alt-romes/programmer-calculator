@@ -30,10 +30,8 @@ add_exp := mult_exp ((+ | -) mult_exp)*
 
 mult_exp := not_exp ((* | / | %) not_exp)*
 
-not_exp: (~)? atom_exp
+prefix_exp: (~ | + | -)? atom_exp
 
 atom_exp: number | left_parenthesis expression right_parenthesis
 
-number: (+ | -)? ( (0-9)+ | 0x(0-9a-f)+ | 0b(0-1)+ )
-
-symbol: any symbol
+number: ( (0-9)+ | 0x(0-9a-f)+ | 0b(0-1)+ )
