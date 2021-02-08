@@ -49,9 +49,3 @@ clean:
 run: all
 	./$(MAIN)
 	@echo Executing "run: all" complete!
-
-parser: $(MAIN)
-	$(CC) $(CFLAGS) $(INCLUDES) -o parser/parser src/operators.o parser/parser.c $(LFLAGS)
-
-rparser: parser
-	parser/parser

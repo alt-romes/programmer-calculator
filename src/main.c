@@ -12,7 +12,13 @@
 #include "history.h"
 #include "numberstack.h"
 #include "operators.h"
+#include "parser.h"
 
+
+
+
+
+#define VERSION "v1.8"
 
 
 
@@ -28,11 +34,7 @@ static void apply_operations(numberstack*, operation**);
 static void exit_pcalc_success();
 
 
-/*---- Define Operations and Global Vars --------------------------*/
 
-
-#define ALL_OPS "+-*/&|$^<>()%~'"
-#define VALID_NUMBER_INPUT "0123456789abcdefx"
 
 
 /*---- Main Logic -------------------------------------------------*/
@@ -73,7 +75,7 @@ int main(int argc, char* argv[])
                 break;
 
             case 'v':
-                puts("Programmer calculator v1.8");
+                printf("Programmer calculator %s\n", VERSION);
                 exit(0);
                 break;
 
@@ -197,143 +199,84 @@ static void process_input(operation** current_op, char* in) {
         /* There are four valid situations when an operation symbol
          * is found in the input string
          *
-         * 1 - just the symbol i.e. "+"
-         * 2 - a number then a symbol i.e. "2+"
-         * 3 - a symbol then a number i.e. "+2"
-         * 4 - a number, a symbol and a number i.e. "2+2"
-         *
-         * The following code, first, handles a number that comes before the operation
-         * And then, in the while loop, handles the rest of the input that starts with an operation
+         * 1 - just the op i.e. "+"
+         * 2 - an expression ending with an op i.e. "2+"
+         * 3 - an op then an expression i.e. "+2"
+         * 4 - an expression i.e. "1+2*3"
          */
 
-        /* Before the strtok replaces the operator with \0 when searching for tokens
-         * Save the string starting at the operator so we can reuse after handling the first number
-         */
-        char* in_saved = strdup(op);
+        // Tokenize the input
+        char* tokens = tokenize(in);
 
-        // Find the first number in the string, by removing the operation symbol and everything after from the string
-        char* token = strtok(in, ALL_OPS);
+        // TODO: add the tokens and groups of tokens found to the history
 
-        // When the first number comes before the operation symbol (case 2 and 4)
-        if (token != NULL && token < op) {
+        if (strchr(ALL_OPS, tokens[0]) && tokens[0] != NOT_SYMBOL) {
 
-            // History and numbers will be overridden by the input number and operation
-            // So we clean the stack and the history
+            // The first token is an op that's not a prefix | case 1 or case 3
+
+            // Set the current operation as the operation structure for that symbol
+            *current_op = getopcode(tokens[0]);
+
+            // Add the operation to history
+            char opchar[2] = {tokens[0], '\0'};
+            add_to_history(&history, opchar);
+
+            // Duplicate tokens string starting from the next position and free previous tokens
+            char* tokens_wout_op = strdup(tokens+1);
+
+            free(tokens);
+
+            tokens = tokens_wout_op;
+
+        }
+        else {
+
+            // The first token is a number or number with prefix -> clear the previous stack and history
+
             clear_numberstack(numbers);
             clear_history();
 
-            // We have the number before the token, and we'll push it to the number stack right away
-            long long aux = pushnumber_from_string(token, numbers);
-
-            // History will display the number in the format inserted
-            // So we must separate 0b from 0x from a normal decimal
-            // add_number_to_history takes a second parameter to display accordingly
-            if(strstr(token, "0b") != NULL)
-                add_number_to_history(aux, NTYPE_BIN);
-            else if (strstr(token, "0x") != NULL)
-                add_number_to_history(aux, NTYPE_HEX);
-            else
-                add_number_to_history(aux, NTYPE_DEC);
-
         }
 
-        // We'll set the input string for the next while - it'll handle the rest of the user input
-        // The worked input should now be of type "[op](expression)"
-        // this means, it'll start right where the operation is - after having handled the first number
-        in = in_saved;
+        int ntokens = strlen(tokens);
+        if (ntokens > 0) {
 
-        // The op string was deleted because of the strtok, we're now setting it to the beginning of the *in* string
-        // Because of the way we handled it, the operation will be right at the start of *in*
-        op = in;
+            // Add the tokens to history as a whole, for now...
+            add_to_history(&history, tokens);
+            /* fprintf(stderr, "Added to history\n"); */
 
-        // Because we're manipulating the string, we need a variable to keep track of one of the addresses we need to free
-        char* last_allocated_addr = in_saved;
+            // Parse the tokens into an expression
+            // This function will free *tokens*
+            exprtree expression = parse(tokens);
+            /* fprintf(stderr, "Parsed expression\n"); */
 
-        // The next while will only handle case 1 and 3 - we already have the operation ready
+            // Calculate the result of the expression
+            // The globalmask is applied inside calculate
+            long long result = calculate(expression);
+            /* fprintf(stderr, "Calculated expression\n"); */
 
-        int niterations = 0;
+            // The expression is no longer needed since we have its value
+            free_exprtree(expression);
+            /* fprintf(stderr, "Freed expression\n"); */
 
-        while (op != NULL) {
-
-            // Set the current operation as the operation structure for that symbol
-            *current_op = getopcode(*op);
-
-            /* Before the strtok replaces the operator with \0 when searching for tokens
-             * Save the string starting right from the operator so we can search it later for more ops
-             */
-            in_saved = strdup(op+1);
-
-            // Find the next number in the string
-            char* token = strtok(in, ALL_OPS);
-
-            // Logic to add the op in the history
-
-            // String to hold just the operator symbol character
-            char opchar[2];
-            opchar[0] = *op;
-            opchar[1] = '\0';
-
-            // Make sure the operation isn't already in history to avoid duplicate symbols
-            // History size is always > 0 because when "nothing" is in it, there should actually be a 0 there
-            if (strcmp(opchar, history.records[history.size-1]))
-                add_to_history(&history, opchar);
-
-            // Logic to add the number to the stack and to the history
-
-            if (token != NULL) {
-
-                // We have a number, so we'll push it to the number stack
-                long long aux = pushnumber_from_string(token, numbers);
-
-                // History will display the number in the format inserted
-                // So we must separate 0b from 0x from a normal decimal
-                // add_number_to_history takes a second parameter to display accordingly
-                if(strstr(token, "0b") != NULL)
-                    add_number_to_history(aux, 2);
-                else if (strstr(token, "0x") != NULL)
-                    add_number_to_history(aux, 1);
-                else
-                    add_number_to_history(aux, 0);
-
-            }
-
-            // Try to apply the operation, which will only actually be applied if enough numbers were added to the numberstack
-            apply_operations(numbers, current_op);
+            // Push result to the numberstack
+            push_numberstack(numbers, result);
+            /* fprintf(stderr, "Pushed result\n"); */
 
 
-            // We need to make sure the new op we're going to read comes after the last token read, to avoid a++b
+            /* if (strchr(ALL_OPS, tokens[ntokens-1])) { */
+                
+            /*     // Last token is an op | case 2 */
+                
+            /*     // Apply pending operations, then set a new one */
+            /*     apply_operations(numbers, current_op); */
 
-            // Define helper distances to check if the new operand comes before the last read token and avoid a++b
-            int distance_to_previous_op, distance_to_new_op, distance_to_last_token;
-            // This has to come before we reassign *op* (distance from last op to the start of input)
-            distance_to_previous_op = op - in;
-            distance_to_last_token = token - in; // (token - in) is the distance from the last token to the beginning of the input
-
-
-            // We no longer need the memory saved in the last allocated address here, and we set it to the last allocated address so it is cleared again
-            free(last_allocated_addr);
-            last_allocated_addr = in_saved;
-
-            // Try to find a next operation in the string starting right after the last op
-            op = strpbrk(in_saved, ALL_OPS);
-
-            // Because op and token are two different strings, we need to measure the distance to the beginning first to compare them later
-            // (op - in_saved) is the distance from the new op to the saved string that starts directly after the previous op
-            distance_to_new_op = distance_to_previous_op + (op - in_saved);
-
-            // If the new op comes before the last token, then we have a++b. We'll search for a next possible op
-            if (token != NULL && op != NULL && distance_to_new_op < distance_to_last_token)
-                op = strpbrk(op+1, ALL_OPS);
-
-            // In the next iteration will start right with at the new operation, and have the rest of the input in front of it
-            in = op;
-
-            niterations++;
+            /*     // Set a new operation from the symbol */
+            /*     *current_op = getopcode(tokens[ntokens-1]); */
+                
+            /* } */
 
         }
-
-        // When we exit the loop, free the only allocated memory left (that's in *in_saved*)
-        free(in_saved);
 
     }
 

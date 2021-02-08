@@ -16,49 +16,33 @@ static exprtree parse_mult_expr(parser_t);
 static exprtree parse_prefix_expr(parser_t);
 static exprtree parse_atom_expr(parser_t);
 static exprtree parse_number(parser_t);
+
 static exprtree parse_stdop_expr(parser_t, char*, exprtree (*) (parser_t));
+
 static exprtree create_exprtree(int, void*, exprtree, exprtree);
-static void free_exprtree(exprtree);
 
 
 // For a clearer explanation of this parser check github.com/alt-romes/calculator-c-parser ? (TODO)
 
-// Main
-int main(int argc, char* argv[]) {
+char* tokenize(char* in) {
 
-    argc = 1;
-    argv = NULL;
+    char* tokens = malloc(sizeof(char) * MAX_TOKENS);
 
-    char in[MAX_TOKENS];
+    int in_len = strlen(in);
+    int token_pos = 0;
+    for (int i = 0; i < in_len; i++)
+        if (strchr(VALID_TOKENS, in[i]))
+            tokens[token_pos++] = in[i];
 
-    printf("\nEnter input: ");
-    scanf("%[^\n]", in);
+    tokens[token_pos] = '\0';
 
-    // Parse the expression
-    char* tokens = tokenize(in);
-
-    exprtree expression = parse(tokens);
-
-    long long value = calculate(expression);
-
-    printf("The result of the calculation is %lld\n", value);
-
-
-    free_exprtree(expression);
-
-    return 0;
+    return tokens;
 }
 
 long long calculate(exprtree expr) {
 
-    if (expr == NULL) {
-
-        // If a NULL expr is being calculated then the operation calling calculate is not going to use it the value return from here.
-        // This is because when parsing the input we've made sure all operations have the correct amount of operands.
-        // This being said, it doesn't matter what value we return
-
-        return 0;
-    }
+    // expr shouldn't be null if being calculated.
+    // all expressions have 2 operands because 1 operand operators are taken care of immediately
 
     if (expr->type == OP_TYPE) {
 
@@ -66,17 +50,17 @@ long long calculate(exprtree expr) {
 
         long long right_value = calculate(expr->right);
 
-        // TODO: Change order of operands in operators.c and then change the order here
+        // Execute takes the operands switched because the stack inverts the order of the numbers
         long long value = expr->op->execute(right_value, left_value);
 
-        return value;
+        return value & globalmask;
 
     }
     else {
 
         // Expression is a leaf (is a number) - so return the number directly
 
-        return *(expr->value);
+        return *(expr->value) & globalmask;
     }
         
 }
@@ -85,7 +69,8 @@ exprtree parse(char* tokens) {
 
     // TODO: How to stop with errors?
 
-    parser_t parser = malloc(sizeof(parser_t));
+    // attention: allocate size for *struct parser_t*, because *parser_t* is type defined as a pointer to *struct parser_t*
+    parser_t parser = malloc(sizeof(struct parser_t));
     parser->tokens = tokens;
     parser->ntokens = strlen(tokens);
     parser->pos = 0;
@@ -96,6 +81,21 @@ exprtree parse(char* tokens) {
     free(parser);
     
     return expression;
+}
+
+void free_exprtree(exprtree expr) {
+
+    if (expr) {
+
+        if (expr->left)
+            free_exprtree(expr->left);
+        if (expr->right)
+            free_exprtree(expr->right);
+
+        free(expr);
+
+    }
+
 }
 
 static exprtree parse_expr(parser_t parser) {
@@ -109,10 +109,7 @@ static exprtree parse_or_expr(parser_t parser) {
 
     // Grammar rule: or_exp := xor_exp ( (| | $) xor_exp )*
 
-    char ops[3];
-    ops[0] = OR_SYMBOL;
-    ops[1] = NOR_SYMBOL;
-    ops[2] = '\0';
+    char ops[] = {OR_SYMBOL, NOR_SYMBOL};
 
     return parse_stdop_expr(parser, ops, parse_xor_expr);
 
@@ -122,9 +119,7 @@ static exprtree parse_xor_expr(parser_t parser) {
 
     // Grammar rule: xor_exp := and_exp (^ and_exp)*
 
-    char ops[2];
-    ops[0] = XOR_SYMBOL;
-    ops[1] = '\0';
+    char ops[] = {XOR_SYMBOL};
 
     return parse_stdop_expr(parser, ops, parse_and_expr);
 
@@ -134,9 +129,7 @@ static exprtree parse_and_expr(parser_t parser) {
 
     // Grammar rule: and_exp := shift_exp (& shift_exp)*
 
-    char ops[2];
-    ops[0] = AND_SYMBOL;
-    ops[1] = '\0';
+    char ops[] = {AND_SYMBOL};
 
     return parse_stdop_expr(parser, ops, parse_shift_expr);
 
@@ -146,12 +139,7 @@ static exprtree parse_shift_expr(parser_t parser) {
 
     // Grammar rule: shift_exp := add_exp ((<< | >> | ror | rol) add_exp)*
 
-    char ops[5];
-    ops[0] = SHR_SYMBOL;
-    ops[1] = SHL_SYMBOL;
-    ops[2] = ROR_SYMBOL;
-    ops[3] = ROL_SYMBOL;
-    ops[4] = '\0';
+    char ops[] = {SHR_SYMBOL, SHL_SYMBOL, ROR_SYMBOL, ROL_SYMBOL};
 
     return parse_stdop_expr(parser, ops, parse_add_expr);
 
@@ -161,14 +149,7 @@ static exprtree parse_add_expr(parser_t parser) {
 
     // Grammar rule: add_exp := mult_exp ((+ | -) mult_exp)*
 
-    // TODO: This example should go away in favour of a repository containing this simple code explained
-    // Example of how all other common parse_expressions work
-    // The others use *parse_stdop_expr* which basically factors out the following code:
-
-    char ops[3];
-    ops[0] = ADD_SYMBOL;
-    ops[1] = SUB_SYMBOL;
-    ops[2] = '\0';
+    char ops[] = {ADD_SYMBOL, SUB_SYMBOL};
     
     return parse_stdop_expr(parser, ops, parse_mult_expr);
 
@@ -178,11 +159,7 @@ static exprtree parse_mult_expr(parser_t parser) {
 
     // Grammar rule: mult_exp := not_exp ((* | / | %) not_exp)*
 
-    char ops[4];
-    ops[0] = MUL_SYMBOL;
-    ops[1] = DIV_SYMBOL;
-    ops[2] = MOD_SYMBOL;
-    ops[3] = '\0';
+    char ops[] = {MUL_SYMBOL, DIV_SYMBOL, MOD_SYMBOL};
 
     return parse_stdop_expr(parser, ops, parse_prefix_expr);
 
@@ -190,13 +167,9 @@ static exprtree parse_mult_expr(parser_t parser) {
 
 static exprtree parse_prefix_expr(parser_t parser) {
 
-    // Grammar rule: prefix_exp: (~ | + | -)? atom_exp
+    // Grammar rule: prefix_exp := (~ | + | -)? atom_exp
 
-    char prefixes[4];
-    prefixes[0] = ADD_SYMBOL;
-    prefixes[1] = SUB_SYMBOL;
-    prefixes[2] = NOT_SYMBOL;
-    prefixes[3] = '\0';
+    char prefixes[] = {ADD_SYMBOL, SUB_SYMBOL, NOT_SYMBOL};
 
     char prefix = 0;
     if (strchr(prefixes, parser->tokens[parser->pos])) {
@@ -361,32 +334,3 @@ static exprtree create_exprtree(int type, void* content, exprtree left, exprtree
 
 }
 
-static void free_exprtree(exprtree expr) {
-
-    if (expr) {
-
-        if (expr->left)
-            free_exprtree(expr->left);
-        if (expr->right)
-            free_exprtree(expr->right);
-
-        free(expr);
-
-    }
-
-}
-
-char* tokenize(char* in) {
-
-    char* tokens = malloc(sizeof(char) * MAX_TOKENS);
-
-    int in_len = strlen(in);
-    int token_pos = 0;
-    for (int i = 0; i < in_len; i++)
-        if (strchr(VALID_TOKENS, in[i]))
-            tokens[token_pos++] = in[i];
-
-    tokens[token_pos] = '\0';
-
-    return tokens;
-}

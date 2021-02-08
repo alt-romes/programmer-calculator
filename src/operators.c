@@ -20,21 +20,21 @@ static long long not(long long, long long);
 static long long twos_complement(long long, long long);
 
 static operation operations[15] = {
-    {'+', 2, add},
-    {'-', 2, subtract},
-    {'*', 2, multiply},
-    {'/', 2, divide},
-    {'&', 2, and},
-    {'|', 2, or},
-    {'$', 2, nor},
-    {'^', 2, xor},
-    {'<', 2, shl},
-    {'>', 2, shr},
-    {'(', 2, rol},
-    {')', 2, ror},
-    {'%', 2, modulus},
-    {'~', 1, not},
-    {'\'', 1, twos_complement}
+    {ADD_SYMBOL, 2, add},
+    {SUB_SYMBOL, 2, subtract},
+    {MUL_SYMBOL, 2, multiply},
+    {DIV_SYMBOL, 2, divide},
+    {AND_SYMBOL, 2, and},
+    {OR_SYMBOL, 2, or},
+    {NOR_SYMBOL, 2, nor},
+    {XOR_SYMBOL, 2, xor},
+    {SHL_SYMBOL, 2, shl},
+    {SHR_SYMBOL, 2, shr},
+    {ROL_SYMBOL, 2, rol},
+    {ROR_SYMBOL, 2, ror},
+    {MOD_SYMBOL, 2, modulus},
+    {NOT_SYMBOL, 1, not},
+    {TWOSC_SYMBOL, 1, twos_complement}
 };
 
 operation* getopcode(char c)  {
