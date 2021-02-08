@@ -23,7 +23,7 @@ static exprtree parse_stdop_expr(parser_t, char*, exprtree (*) (parser_t));
 static exprtree create_exprtree(int, void*, exprtree, exprtree);
 
 
-// For a clearer explanation of this parser check github.com/alt-romes/calculator-c-parser ? (TODO)
+// For a simpler version of this parser check github.com/alt-romes/calculator-c-parser 
 
 char* tokenize(char* in) {
 

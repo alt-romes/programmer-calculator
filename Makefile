@@ -40,7 +40,7 @@ $(MAIN): $(OBJECTS)
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-.PHONY: clean parser
+.PHONY: clean
 clean:
 	$(RM) $(MAIN)
 	$(RM) $(call FIXPATH,$(OBJECTS))
