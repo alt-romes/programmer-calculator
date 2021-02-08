@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,9 +40,35 @@ char* tokenize(char* in) {
     return tokens;
 }
 
+
+exprtree parse(char* tokens) {
+
+    // TODO: How to stop with errors?
+
+    // attention: allocate size for *struct parser_t*, because *parser_t* is type defined as a pointer to *struct parser_t*
+    parser_t parser = malloc(sizeof(struct parser_t));
+
+    assert(tokens != NULL);
+    parser->tokens = tokens;
+
+    int ntokens = strlen(tokens);
+    assert(ntokens > 0);
+    parser->ntokens = ntokens;
+
+    parser->pos = 0;
+
+    exprtree expression = parse_expr(parser);
+
+    free(parser->tokens);
+    free(parser);
+    
+    return expression;
+}
+
 long long calculate(exprtree expr) {
 
     // expr shouldn't be null if being calculated.
+    assert(expr != NULL);
     // all expressions have 2 operands because 1 operand operators are taken care of immediately
 
     if (expr->type == OP_TYPE) {
@@ -63,24 +90,6 @@ long long calculate(exprtree expr) {
         return *(expr->value) & globalmask;
     }
         
-}
-
-exprtree parse(char* tokens) {
-
-    // TODO: How to stop with errors?
-
-    // attention: allocate size for *struct parser_t*, because *parser_t* is type defined as a pointer to *struct parser_t*
-    parser_t parser = malloc(sizeof(struct parser_t));
-    parser->tokens = tokens;
-    parser->ntokens = strlen(tokens);
-    parser->pos = 0;
-
-    exprtree expression = parse_expr(parser);
-
-    free(parser->tokens);
-    free(parser);
-    
-    return expression;
 }
 
 void free_exprtree(exprtree expr) {
@@ -168,6 +177,9 @@ static exprtree parse_mult_expr(parser_t parser) {
 static exprtree parse_prefix_expr(parser_t parser) {
 
     // Grammar rule: prefix_exp := (~ | + | -)? atom_exp
+    
+    // If we've exceeded the number of tokens we should detect an error
+    assert(parser->pos < parser->ntokens);
 
     char prefixes[] = {ADD_SYMBOL, SUB_SYMBOL, NOT_SYMBOL};
 
@@ -194,12 +206,13 @@ static exprtree parse_prefix_expr(parser_t parser) {
         // Since it's one of these two, we need to apply an operation to the expression
         operation* op = NULL;
 
-        // Sub sets the symmetric of number, the expression (0 - expression) does that
+        // Sub sets the symmetric of number, the expression (0 - expression) does that so create one
         if (prefix == SUB_SYMBOL) 
             op = getopcode(SUB_SYMBOL);
 
-        // Bitwise NOT of a number - only one parameter is used: because the order is changed in execute(), set the number to
-        // apply the NOT operation to on the right branch. The other branch doesn't matter so we set it as the same as SUB
+        // Bitwise NOT of a number - only one parameter is used:
+        // And because the order is changed in execute(), put a number in the right expr instead of the left one 
+        // apply the NOT operation to the number on the right branch. The other branch doesn't matter so we set it as the same as SUB
         else if (prefix == NOT_SYMBOL) 
             op = getopcode(NOT_SYMBOL);
 
@@ -214,6 +227,9 @@ static exprtree parse_atom_expr(parser_t parser) {
 
     // Grammar rule: atom_expr := number | left_parenthesis expression right_parenthesis
     
+    // If we've exceeded the number of tokens we should detect an error
+    assert(parser->pos < parser->ntokens);
+    
     exprtree expr;
 
     if (parser->tokens[parser->pos] == LPAR_SYMBOL) {
@@ -222,6 +238,9 @@ static exprtree parse_atom_expr(parser_t parser) {
         parser->pos++; // Consume left parenthesis
 
         expr = parse_expr(parser);
+
+        // If we've exceeded the number of tokens we should detect an error
+        assert(parser->pos < parser->ntokens);
 
         if (parser->tokens[parser->pos] == RPAR_SYMBOL)
             parser->pos++; // Consume right parenthesis
@@ -240,9 +259,12 @@ static exprtree parse_atom_expr(parser_t parser) {
 }
 
 static exprtree parse_number(parser_t parser) {
+
+    // If we've exceeded the number of tokens we should detect an error
+    assert(parser->pos < parser->ntokens);
     
     int numbertype = DEC_TYPE;
-    if (parser->tokens[parser->pos] == '0') {
+    if (parser->tokens[parser->pos] == '0' && parser->pos+1 < parser->ntokens) {
         if (parser->tokens[parser->pos+1] == 'x') {
             numbertype = HEX_TYPE;
             parser->pos += 2;
@@ -256,9 +278,10 @@ static exprtree parse_number(parser_t parser) {
     char numberfound[MAX_TOKENS + 1];
     int numberlen = 0;
 
-    while ( (numbertype == DEC_TYPE && strchr(VALID_DEC_SYMBOLS, parser->tokens[parser->pos]))
+    while ( parser->pos < parser->ntokens && 
+            ((numbertype == DEC_TYPE && strchr(VALID_DEC_SYMBOLS, parser->tokens[parser->pos]))
             || (numbertype == HEX_TYPE && strchr(VALID_HEX_SYMBOLS, parser->tokens[parser->pos]))
-            || (numbertype == BIN_TYPE && strchr(VALID_BIN_SYMBOLS, parser->tokens[parser->pos])) ) {
+            || (numbertype == BIN_TYPE && strchr(VALID_BIN_SYMBOLS, parser->tokens[parser->pos]))) ) {
 
         numberfound[numberlen++] = parser->tokens[parser->pos];
 
@@ -294,6 +317,9 @@ static exprtree parse_number(parser_t parser) {
 }
 
 static exprtree parse_stdop_expr(parser_t parser, char* ops, exprtree (*parse_inner_expr) (parser_t)) {
+
+    // When the position gets here it should be smaller than the ntokens, or maybe only inner_expr should worry about it? 
+    assert(parser->pos < parser->ntokens);
 
     exprtree expr = parse_inner_expr(parser);
     

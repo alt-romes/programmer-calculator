@@ -1,4 +1,4 @@
-tests=( "number-bases" "random" )
+tests=( "number-bases" "random" "inline-expressions" )
 for t in "${tests[@]}"
 do
     echo tests/$t

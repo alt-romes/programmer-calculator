@@ -16,8 +16,11 @@ To test all files at the same time run:
 $ ./run-tests.sh
 ```
 
+It would be better to run `./run-tests.sh` multiple times because i.e. I currently have a bug that crashes the code with segfault only half of the times
+
 ### Test file
 
 A test file contains sequences of expressions to be run in the calculator and must end with "quit" or "exit"
 
 When creating a new test file, add the name to the array of tests in `run-tests.sh`
+
