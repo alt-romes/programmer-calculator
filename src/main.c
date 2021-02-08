@@ -27,7 +27,6 @@
 /*---- Function Prototypes ----------------------------------------*/
 
 
-// General
 static void process_input(operation**, char*);
 static void get_input(char*);
 static void apply_operations(numberstack*, operation**);
@@ -174,122 +173,14 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-static long long pushnumber_from_string(char* in, numberstack* numbers) {
-
-    long long n;
-
-    char* hbstr;
-    if ((hbstr = strstr(in, "0x")) != NULL)
-        n = strtoll(hbstr+2, NULL, 16) & globalmask;
-    else if ((hbstr = strstr(in, "0b")) != NULL)
-        n = strtoll(hbstr+2, NULL, 2) & globalmask;
-    else
-        n = atoll(in) & globalmask;
-
-    push_numberstack(numbers, n);
-    return n;
-
-}
-
 static void process_input(operation** current_op, char* in) {
 
     // Process input
 
-    // There's an operation if one of the operation symbols is found in the input string
-    char* op = strpbrk(in, ALL_OPS);
-
-    if (op != NULL) {
-
-        // An operation symbol was found
-
-        /* There are four valid situations when an operation symbol
-         * is found in the input string
-         *
-         * 1 - just the op i.e. "+"
-         * 2 - an expression ending with an op i.e. "2+"
-         * 3 - an op then an expression i.e. "+2"
-         * 4 - an expression i.e. "1+2*3"
-         */
-
-        // Tokenize the input
-        char* tokens = tokenize(in);
-
-        // TODO: add the tokens and groups of tokens found to the history
-
-        if (strchr(ALL_OPS, tokens[0]) && tokens[0] != NOT_SYMBOL) {
-
-            // The first token is an op that's not a prefix | case 1 or case 3
-
-            // Set the current operation as the operation structure for that symbol
-            *current_op = getopcode(tokens[0]);
-
-            // Add the operation to history
-            char opchar[2] = {tokens[0], '\0'};
-            add_to_history(&history, opchar);
-
-            // Duplicate tokens string starting from the next position and free previous tokens
-            char* tokens_wout_op = strdup(tokens+1);
-
-            free(tokens);
-
-            tokens = tokens_wout_op;
-
-        }
-        else {
-
-            // The first token is a number or number with prefix -> clear the previous stack and history
-
-            clear_numberstack(numbers);
-            clear_history();
-
-        }
-
-        int ntokens = strlen(tokens);
-        if (ntokens > 0) {
-
-            // Add the tokens to history as a whole, for now...
-            add_to_history(&history, tokens);
-            /* fprintf(stderr, "Added to history\n"); */
-
-            // Parse the tokens into an expression
-            // This function will free *tokens*
-            exprtree expression = parse(tokens);
-            /* fprintf(stderr, "Parsed expression\n"); */
-
-            // Calculate the result of the expression
-            // The globalmask is applied inside calculate
-            long long result = calculate(expression);
-            /* fprintf(stderr, "Calculated expression\n"); */
-
-            // The expression is no longer needed since we have its value
-            free_exprtree(expression);
-            /* fprintf(stderr, "Freed expression\n"); */
-
-            // Push result to the numberstack
-            push_numberstack(numbers, result);
-            /* fprintf(stderr, "Pushed result\n"); */
-
-
-            /* if (strchr(ALL_OPS, tokens[ntokens-1])) { */
-                
-            /*     // Last token is an op | case 2 */
-                
-            /*     // Apply pending operations, then set a new one */
-            /*     apply_operations(numbers, current_op); */
-
-            /*     // Set a new operation from the symbol */
-            /*     *current_op = getopcode(tokens[ntokens-1]); */
-                
-            /* } */
-
-        }
-
-    }
-
-    else if (!strcmp(in, "quit") || !strcmp(in, "q") || !strcmp(in, "exit"))
+    // Try to find a known command and handle it
+    if (!strcmp(in, "quit") || !strcmp(in, "q") || !strcmp(in, "exit"))
         exit_pcalc(0);
 
-    // Handle other commands when an operation wasn't in the input string
     else if (!strcmp(in, "binary"))
         binary_enabled = !binary_enabled;
 
@@ -325,27 +216,124 @@ static void process_input(operation** current_op, char* in) {
 
     }
 
-    // If there's no operation, and it's not a known command, handle input as a number
     else {
 
-        if (strpbrk(in, VALID_NUMBER_INPUT) || in[0] == '\0') {
+        // It's not a known command - handle input as expression
+        
+        
+        // To handle the expression, first tokenize the input
 
-            // If is the invalid operation (first in array of operations)
-            // Or if is an empty string (and if it is, set the operation as NULL)
-            if (*current_op == NULL || (in[0] == '\0' && !(*current_op = NULL)) ) {
+        // Tokenize the input
+        char* tokens = tokenize(in);
 
-                clear_numberstack(numbers);
-                clear_history();
+        // There's an operation if one of the operation symbols is found in the input string
+        // We need to check input instead of tokens because TWOSCOMPLEMENT_SYMBOL is an op but it isn't a valid token.
+        char* op = strpbrk(in, ALL_OPS);
+
+        // We need to check if the last token is an operation before it gets freed,
+        // And save it, to set it as the current op after the input is processed
+        operation* suffix_op = NULL;
+
+        // TODO: TWOSCOMPLEMENT SYMBOL isn't working because it's never in tokens[]
+        if (op != NULL) {
+
+            // An operation symbol was found 
+
+            /* There are four valid situations when an operation symbol
+             * is found in the input string
+             *
+             * 1 - just the op i.e. "+"
+             * 2 - an expression ending with an op i.e. "2+"
+             * 3 - an op then an expression i.e. "+2"
+             * 4 - an expression i.e. "1+2*3" (this case is handled as a number)
+             */
+
+            if (strchr(ALL_OPS, tokens[0]) && tokens[0] != NOT_SYMBOL) {
+
+                // The first token is an op that's not a prefix | case 1 or case 3
+
+                // Set the current operation as the operation structure for that symbol
+                *current_op = getopcode(tokens[0]);
+
+                // Add the operation to history
+                char opchar[2] = {tokens[0], '\0'};
+                add_to_history(&history, opchar);
+
+                // Duplicate tokens string starting from the next position and free previous tokens
+                char* tokens_wout_op = strdup(tokens+1);
+
+                free(tokens);
+
+                tokens = tokens_wout_op;
+
             }
 
-            long long aux = pushnumber_from_string(in, numbers);
+            int ntokens = strlen(tokens);
+            if (strchr(ALL_OPS, tokens[ntokens-1])) {
+                
+                // Last token is an op | case 2
 
-            if(strstr(in, "0b") != NULL)
-                add_number_to_history(aux, NTYPE_BIN);
-            else if (strstr(in, "0x") != NULL)
-                add_number_to_history(aux, NTYPE_HEX);
-            else
-                add_number_to_history(aux, NTYPE_DEC);
+                // Set a new operation from the last symbol
+                suffix_op = getopcode(tokens[ntokens-1]);
+                
+            }
+
+        }
+
+        if (*current_op == NULL ||
+                (in[0] == '\0' && !(*current_op = NULL))) {
+
+            // There's no current operation and we're going to process a new number
+            // -> clear the stack and history before processing it
+            // Or the input was empty. When the input is empty set the operation to NULL
+
+            clear_numberstack(numbers);
+            clear_history();
+
+        }
+
+        int ntokens = strlen(tokens);
+        if (ntokens > 0) {
+
+            // Add the tokens to history as a whole, for now...
+            add_to_history(&history, tokens);
+
+            // Parse the tokens into an expression
+            // This function will free *tokens*
+            exprtree expression = parse(tokens);
+
+            // Calculate the result of the expression
+            // The globalmask is applied inside calculate
+            long long result = calculate(expression);
+
+            // The expression is no longer needed since we have its value
+            free_exprtree(expression);
+
+            // Push result to the numberstack
+            push_numberstack(numbers, result);
+
+            if (suffix_op != NULL) {
+                
+                // Last token is an op | case 2
+                
+                // Apply pending operation right away, to then set a new one
+                apply_operations(numbers, current_op);
+
+                // Set a new operation from the symbol
+                *current_op = suffix_op;
+                
+            }
+
+        }
+
+        if (ntokens == 0 && *current_op == NULL) {
+
+            // The op is null (means we cleared the stack before reading a number)
+            // But we didn't read a number - so the stack is empty
+
+            // Add needed 0 to history and to stack
+            push_numberstack(numbers, 0);
+            add_to_history(&history, "0");
 
         }
 
@@ -353,6 +341,7 @@ static void process_input(operation** current_op, char* in) {
 
     // Apply operations
     apply_operations(numbers, current_op);
+
 }
 
 

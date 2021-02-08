@@ -41,7 +41,7 @@ void init_gui() {
 
             mvwprintw(displaywin, wMaxY-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n");
             wprintw(displaywin, "  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n");
-            wprintw(displaywin, "  SL   <    SR   >    RL   (    RR   )    2's  '");
+            wprintw(displaywin, "  SL   <    SR   >    RL   :    RR   ;    2's  '");
         }
         wrefresh(displaywin);
 
