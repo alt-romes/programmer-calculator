@@ -34,7 +34,7 @@ static operation operations[15] = {
     {ROR_SYMBOL, 2, ror},
     {MOD_SYMBOL, 2, modulus},
     {NOT_SYMBOL, 1, not},
-    {TWOSC_SYMBOL, 1, twos_complement}
+    {TWOSCOMPLEMENT_SYMBOL, 1, twos_complement}
 };
 
 operation* getopcode(char c)  {

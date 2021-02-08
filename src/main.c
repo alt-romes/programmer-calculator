@@ -226,58 +226,55 @@ static void process_input(operation** current_op, char* in) {
         // Tokenize the input
         char* tokens = tokenize(in);
 
-        // There's an operation if one of the operation symbols is found in the input string
-        // We need to check input instead of tokens because TWOSCOMPLEMENT_SYMBOL is an op but it isn't a valid token.
-        char* op = strpbrk(in, ALL_OPS);
-
         // We need to check if the last token is an operation before it gets freed,
         // And save it, to set it as the current op after the input is processed
         operation* suffix_op = NULL;
 
-        // TODO: TWOSCOMPLEMENT SYMBOL isn't working because it's never in tokens[]
-        if (op != NULL) {
 
-            // An operation symbol was found 
+        // Search for an operation symbol as the first token
 
-            /* There are four valid situations when an operation symbol
-             * is found in the input string
-             *
-             * 1 - just the op i.e. "+"
-             * 2 - an expression ending with an op i.e. "2+"
-             * 3 - an op then an expression i.e. "+2"
-             * 4 - an expression i.e. "1+2*3" (this case is handled as a number)
-             */
+        /* There are four valid situations when an operation symbol
+         * is found in the tokens
+         *
+         * 1 - just the op i.e. "+"
+         * 2 - an expression ending with an op i.e. "2+"
+         * 3 - an op then an expression i.e. "+2"
+         * 4 - an expression i.e. "1+2*3" (this case is handled as a number)
+         */
 
-            if (strchr(ALL_OPS, tokens[0]) && tokens[0] != NOT_SYMBOL) {
+        int ntokens = strlen(tokens);
 
-                // The first token is an op that's not a prefix | case 1 or case 3
+        if (tokens[0] != '\0' && strchr(ALL_OPS, tokens[0]) && 
+                (ntokens == 1 || (tokens[0] != NOT_SYMBOL && tokens[0] != TWOSCOMPLEMENT_SYMBOL))) {
 
-                // Set the current operation as the operation structure for that symbol
-                *current_op = getopcode(tokens[0]);
+            // The input is either just an op, or an expression that starts with an op that isn't a prefix | case 1 or case 3
 
-                // Add the operation to history
-                char opchar[2] = {tokens[0], '\0'};
-                add_to_history(&history, opchar);
+            // Set the current operation as the operation structure for that symbol
+            *current_op = getopcode(tokens[0]);
 
-                // Duplicate tokens string starting from the next position and free previous tokens
-                char* tokens_wout_op = strdup(tokens+1);
+            // Add the operation to history
+            char opchar[2] = {tokens[0], '\0'};
+            add_to_history(&history, opchar);
 
-                free(tokens);
+            // Duplicate the *tokens* string starting from the immediate next position, and free previous tokens afterwards
+            char* tokens_wout_op = strdup(tokens+1);
 
-                tokens = tokens_wout_op;
+            free(tokens);
 
-            }
+            tokens = tokens_wout_op;
 
-            int ntokens = strlen(tokens);
-            if (strchr(ALL_OPS, tokens[ntokens-1])) {
-                
-                // Last token is an op | case 2
+            // The length of the tokens is now 1 character smaller
+            ntokens--;
 
-                // Set a new operation from the last symbol
-                suffix_op = getopcode(tokens[ntokens-1]);
-                
-            }
+        }
 
+        if (ntokens > 0 && strchr(ALL_OPS, tokens[ntokens-1])) {
+            
+            // Last token is an op | case 2
+
+            // Set a new operation from the last symbol
+            suffix_op = getopcode(tokens[ntokens-1]);
+            
         }
 
         if (*current_op == NULL ||
@@ -292,7 +289,6 @@ static void process_input(operation** current_op, char* in) {
 
         }
 
-        int ntokens = strlen(tokens);
         if (ntokens > 0) {
 
             // Add the tokens to history as a whole, for now...

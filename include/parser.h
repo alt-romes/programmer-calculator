@@ -5,8 +5,8 @@
 
 #define MAX_TOKENS 80
 
-#define VALID_TOKENS "+-*/%&|$^~<>():;0123456789abcdefx"
-#define VALID_NUMBER_INPUT "0123456789abcdefx"
+#define VALID_TOKENS "+-*/%&|$^~<>():;_0123456789abcdefx"
+#define VALID_NUMBER_INPUT "0123456789abcdefx()"
 #define VALID_DEC_SYMBOLS "0123456789"
 #define VALID_HEX_SYMBOLS "0123456789abcdef"
 #define VALID_BIN_SYMBOLS "01"

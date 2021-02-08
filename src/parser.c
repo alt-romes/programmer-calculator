@@ -178,7 +178,7 @@ static exprtree parse_prefix_expr(parser_t parser) {
 
     // Grammar rule: prefix_exp := (~ | + | -)? atom_exp
 
-    char prefixes[] = {ADD_SYMBOL, SUB_SYMBOL, NOT_SYMBOL, '\0'};
+    char prefixes[] = {ADD_SYMBOL, SUB_SYMBOL, NOT_SYMBOL, TWOSCOMPLEMENT_SYMBOL, '\0'};
 
     // If we've exceeded the number of tokens we should detect an error
     assert(parser->pos < parser->ntokens);
@@ -201,21 +201,21 @@ static exprtree parse_prefix_expr(parser_t parser) {
         return expr;
     else {
 
-        // Prefix is either SUB_SYMBOL or NOT_SYMBOL
+        // Prefix is either SUB_SYMBOL, NOT_SYMBOL or TWOSCOMPLEMENT_SYMBOL
 
-        // Since it's one of these two, we need to apply an operation to the expression
-        operation* op = NULL;
+        // We get the operation to use in the expression
+        operation* op = getopcode(prefix);
 
-        // Sub sets the symmetric of number, the expression (0 - expression) does that so create one
-        if (prefix == SUB_SYMBOL) 
-            op = getopcode(SUB_SYMBOL);
+        // SUB sets the symmetric of number with the expression (0 - expression), so we create a
+        // subtraction expression with 0 as the left tree
 
         // Bitwise NOT of a number - only one parameter is used:
         // And because the order is changed in execute(), put a number in the right expr instead of the left one 
         // apply the NOT operation to the number on the right branch. The other branch doesn't matter so we set it as the same as SUB
-        else if (prefix == NOT_SYMBOL) 
-            op = getopcode(NOT_SYMBOL);
 
+        // Two's complement serves the same logic - since it only uses one parameter we can set the other as anything
+
+        // So we create an expression with 0 on the left, and the correct op, and it works
         long long zero_val = 0;
         exprtree zero_val_expr = create_exprtree(DEC_TYPE, &zero_val, NULL, NULL);
         return create_exprtree(OP_TYPE, op, zero_val_expr, expr);
@@ -240,12 +240,21 @@ static exprtree parse_atom_expr(parser_t parser) {
         expr = parse_expr(parser);
 
         // If we've exceeded the number of tokens we should detect an error
-        assert(parser->pos < parser->ntokens);
+        // This assertion is triggered if an expression without right parenthesis is the input
+        // It should be handled as an error below
+        /* assert(parser->pos < parser->ntokens); */
 
         if (parser->tokens[parser->pos] == RPAR_SYMBOL)
             parser->pos++; // Consume right parenthesis
-        else
-            fprintf(stderr, "Invalid expression!!!\n"); // TODO: Find a way to do error handling and displaying, possibly give one more type to exprtree type = ERR_TYPE and have in the union a char* for the error message
+        else {
+
+            // For now, everything to the right of an unclosed left parenthesis will be equivalent to 0
+            long long zerov = 0;
+            return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
+
+            // TODO: Find a way to do error handling and displaying, possibly give one more type to exprtree type = ERR_TYPE and have in the union a char* for the error message
+            /* fprintf(stderr, "Invalid expression!!!\n"); */
+        }
 
     }
     else {
@@ -290,10 +299,17 @@ static exprtree parse_number(parser_t parser) {
     }
     numberfound[numberlen] = '\0';
 
-    // If no number was found, return the null expression
-    // TODO: return the error expression
-    if (numberlen == 0)
-        return NULL;
+    // If no number was found, return for now a zero value expression
+    //
+    // TODO: return the error expression instead
+    // this happens when the input is valid tokens like abc, but then the number doesn't start with 0x,
+    // and possibly in other situations
+    if (numberlen == 0) {
+
+        long long zerov = 0;
+        return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
+    }
+
 
     // Else, create the expression from the found number
     int numberbase = 0;
