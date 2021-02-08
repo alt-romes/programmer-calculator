@@ -118,7 +118,7 @@ static exprtree parse_or_expr(parser_t parser) {
 
     // Grammar rule: or_exp := xor_exp ( (| | $) xor_exp )*
 
-    char ops[] = {OR_SYMBOL, NOR_SYMBOL};
+    char ops[] = {OR_SYMBOL, NOR_SYMBOL, '\0'};
 
     return parse_stdop_expr(parser, ops, parse_xor_expr);
 
@@ -128,7 +128,7 @@ static exprtree parse_xor_expr(parser_t parser) {
 
     // Grammar rule: xor_exp := and_exp (^ and_exp)*
 
-    char ops[] = {XOR_SYMBOL};
+    char ops[] = {XOR_SYMBOL, '\0'};
 
     return parse_stdop_expr(parser, ops, parse_and_expr);
 
@@ -138,7 +138,7 @@ static exprtree parse_and_expr(parser_t parser) {
 
     // Grammar rule: and_exp := shift_exp (& shift_exp)*
 
-    char ops[] = {AND_SYMBOL};
+    char ops[] = {AND_SYMBOL, '\0'};
 
     return parse_stdop_expr(parser, ops, parse_shift_expr);
 
@@ -148,7 +148,7 @@ static exprtree parse_shift_expr(parser_t parser) {
 
     // Grammar rule: shift_exp := add_exp ((<< | >> | ror | rol) add_exp)*
 
-    char ops[] = {SHR_SYMBOL, SHL_SYMBOL, ROR_SYMBOL, ROL_SYMBOL};
+    char ops[] = {SHR_SYMBOL, SHL_SYMBOL, ROR_SYMBOL, ROL_SYMBOL, '\0'};
 
     return parse_stdop_expr(parser, ops, parse_add_expr);
 
@@ -158,7 +158,7 @@ static exprtree parse_add_expr(parser_t parser) {
 
     // Grammar rule: add_exp := mult_exp ((+ | -) mult_exp)*
 
-    char ops[] = {ADD_SYMBOL, SUB_SYMBOL};
+    char ops[] = {ADD_SYMBOL, SUB_SYMBOL, '\0'};
     
     return parse_stdop_expr(parser, ops, parse_mult_expr);
 
@@ -168,7 +168,7 @@ static exprtree parse_mult_expr(parser_t parser) {
 
     // Grammar rule: mult_exp := not_exp ((* | / | %) not_exp)*
 
-    char ops[] = {MUL_SYMBOL, DIV_SYMBOL, MOD_SYMBOL};
+    char ops[] = {MUL_SYMBOL, DIV_SYMBOL, MOD_SYMBOL, '\0'};
 
     return parse_stdop_expr(parser, ops, parse_prefix_expr);
 
@@ -177,11 +177,11 @@ static exprtree parse_mult_expr(parser_t parser) {
 static exprtree parse_prefix_expr(parser_t parser) {
 
     // Grammar rule: prefix_exp := (~ | + | -)? atom_exp
-    
+
+    char prefixes[] = {ADD_SYMBOL, SUB_SYMBOL, NOT_SYMBOL, '\0'};
+
     // If we've exceeded the number of tokens we should detect an error
     assert(parser->pos < parser->ntokens);
-
-    char prefixes[] = {ADD_SYMBOL, SUB_SYMBOL, NOT_SYMBOL};
 
     char prefix = 0;
     if (strchr(prefixes, parser->tokens[parser->pos])) {
