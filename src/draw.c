@@ -19,33 +19,39 @@ int symbols_enabled = 1;
 int binary_enabled = 1;
 int history_enabled = 1;
 
+int use_interface = 1;
+
 static void printbinary(long long, int);
 static void printhistory(numberstack*, int);
 
 void init_gui() {
 
-    initscr();
-    cbreak();
+    if (use_interface) {
 
-    getmaxyx(stdscr, wMaxY, wMaxX);
+        initscr();
+        cbreak();
 
-    displaywin = newwin(wMaxY-3, wMaxX, 0, 0);
-    refresh();
+        getmaxyx(stdscr, wMaxY, wMaxX);
 
-    box(displaywin, ' ', 0);
-    if (symbols_enabled) {
+        displaywin = newwin(wMaxY-3, wMaxX, 0, 0);
+        refresh();
 
-        mvwprintw(displaywin, wMaxY-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n");
-        wprintw(displaywin, "  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n");
-        wprintw(displaywin, "  SL   <    SR   >    RL   (    RR   )    2's  '");
+        box(displaywin, ' ', 0);
+        if (symbols_enabled) {
+
+            mvwprintw(displaywin, wMaxY-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n");
+            wprintw(displaywin, "  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n");
+            wprintw(displaywin, "  SL   <    SR   >    RL   (    RR   )    2's  '");
+        }
+        wrefresh(displaywin);
+
+        inputwin = newwin(3, wMaxX, wMaxY-3, 0);
+        refresh();
+
+        box(inputwin, ' ', 0);
+        wrefresh(inputwin);
+
     }
-    wrefresh(displaywin);
-
-    inputwin = newwin(3, wMaxX, wMaxY-3, 0);
-    refresh();
-
-    box(inputwin, ' ', 0);
-    wrefresh(inputwin);
 
 }
 
@@ -90,42 +96,51 @@ static void printhistory(numberstack* numbers, int priority) {
 }
 
 void draw(numberstack* numbers, operation* current_op) {
-
+    
     long long* np = top_numberstack(numbers);
     long long n;
-    int prio = 0;
 
     if (np == NULL) n = 0;
     else n = *np;
 
-    // Clear lines
-    for(int i = 2 ; i < 16 ; i++) {
-        sweepline(displaywin, i, 0);
+    if (use_interface) {
+
+        int prio = 0; // Priority
+
+        // Clear lines
+        for(int i = 2 ; i < 16 ; i++) {
+            sweepline(displaywin, i, 0);
+        }
+
+        if(!operation_enabled) prio += 2;
+        else mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op ? current_op->character : ' ');
+
+        if(!decimal_enabled) prio += 2;
+        else mvwprintw(displaywin, 4-prio, 2, "Decimal:   %lld", n);
+
+        if(!hex_enabled) prio += 2;
+        else mvwprintw(displaywin, 6-prio, 2, "Hex:       0x%llX", n);
+
+        if(!binary_enabled) prio +=6;
+        else printbinary(n,prio);
+
+        if(!history_enabled) prio += 2;
+        else printhistory(numbers,prio);
+
+        wrefresh(displaywin);
+
+        // Clear input
+        sweepline(inputwin, 1, 19);
+
+        // Prompt input
+        mvwprintw(inputwin, 1, 2, "Number or operator: ");
+        wrefresh(inputwin);
+
     }
+    else {
 
-    if(!operation_enabled) prio += 2;
-    else mvwprintw(displaywin, 2, 2, "Operation: %c\n", current_op ? current_op->character : ' ');
-
-    if(!decimal_enabled) prio += 2;
-    else mvwprintw(displaywin, 4-prio, 2, "Decimal:   %lld", n);
-
-    if(!hex_enabled) prio += 2;
-    else mvwprintw(displaywin, 6-prio, 2, "Hex:       0x%llX", n);
-
-    if(!binary_enabled) prio +=6;
-    else printbinary(n,prio);
-
-    if(!history_enabled) prio += 2;
-    else printhistory(numbers,prio);
-
-    wrefresh(displaywin);
-
-    // Clear input
-    sweepline(inputwin, 1, 19);
-
-    // Prompt input
-    mvwprintw(inputwin, 1, 2, "Number or operator: ");
-    wrefresh(inputwin);
+        printf("Decimal: %lld, Hex: 0x%llx, Operation: %c\n", n, n, current_op ? current_op->character : ' ');
+    }
 }
 
 void sweepline(WINDOW* w, int y, int x) {

@@ -52,13 +52,14 @@ int main(int argc, char* argv[])
         {"hex", no_argument, NULL, 'x'},
         {"decimal", no_argument, NULL, 'd'},
         {"operation", no_argument, NULL, 'o'},
-        {"symbol", no_argument, NULL, 's'}
+        {"symbol", no_argument, NULL, 's'},
+        {"no-interface", no_argument, NULL, 'c'}
 
      };
 
     // Get command line options to hide parts of the display
     int opt;
-    while ((opt = getopt_long(argc, argv, "hvibxdos", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hvibxdosc", long_options, NULL)) != -1) {
         switch (opt) {
 
             case 'h':
@@ -71,6 +72,7 @@ int main(int argc, char* argv[])
                 puts("--decimal = -d");
                 puts("--operation = -o");
                 puts("--symbol = -s\n");
+                puts("--no-interface = -c\n");
                 exit(0);
                 break;
 
@@ -101,6 +103,10 @@ int main(int argc, char* argv[])
 
             case 's':
                 symbols_enabled = 0;
+                break;
+
+            case 'c':
+                use_interface = 0;
                 break;
 
             default:
@@ -383,7 +389,7 @@ static void get_input(char* in) {
     int browsing = 0;
 
     // Collect input until enter is pressed
-    for (int pos = 0, len = 0; (inp = getchar()) != 13;) {
+    for (int pos = 0, len = 0; (inp = getchar()) != 13 && inp != '\n';) {
         int searched = 0;
         
         // Handles all arrow keys
@@ -450,7 +456,7 @@ static void get_input(char* in) {
                 in[++pos] = '\0';
                 len++; // Make sure that len is still equal to pos
 
-                if (inp == '\0') {
+                if (inp == '\0' && use_interface) {
                     // Clear screen from previous input
                     mvwprintw(inputwin, 1, 22 + --len, " ");
                 }
@@ -465,8 +471,9 @@ static void get_input(char* in) {
                     for (int i = pos; i <= len; i++) {
                         in[i] = in[i + 1];
                     }
-                    // Clear screen from previous input
-                    mvwprintw(inputwin, 1, 22 + len, " ");
+
+                    if (use_interface)
+                        mvwprintw(inputwin, 1, 22 + len, " "); // Clear screen from previous input
                 }
                 else {
                     // Everything except backspace
@@ -484,15 +491,20 @@ static void get_input(char* in) {
         }
         // This saves having to increment pos everytime len is incremented when youre not browsing
         if (!browsing) { pos = len; }
-        
-        // Finaly print input
-        sweepline(inputwin, 1, 22);
 
-        mvwprintw(inputwin, 1, 22, "%s", in);
+        if (use_interface) {
 
-        wmove(inputwin, 1, 22 + pos); // Move the cursor
+            // Finaly print input
+            sweepline(inputwin, 1, 22);
+
+            mvwprintw(inputwin, 1, 22, "%s", in);
+
+            wmove(inputwin, 1, 22 + pos); // Move the cursor
+            
+            wrefresh(inputwin);
+
+        }
         
-        wrefresh(inputwin);
     }
 
     if (in[0] != '\0' && (searchHistory.size == 0 || strcmp(in, searchHistory.records[searchHistory.size - 1]))) {
