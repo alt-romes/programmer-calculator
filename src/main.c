@@ -274,7 +274,10 @@ static void process_input(operation** current_op, char* in) {
 
             // Set a new operation from the last symbol
             suffix_op = getopcode(tokens[ntokens-1]);
-            
+
+            // Remove the last token from the string
+            tokens[ntokens-1] = '\0';
+
         }
 
         if (*current_op == NULL ||
