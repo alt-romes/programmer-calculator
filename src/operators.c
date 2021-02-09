@@ -102,12 +102,14 @@ long long shr(long long a, long long b) {
 
 static long long rol(long long a, long long b) {
 
-    return b << a | shr(globalmasksize-a, b);
+    // prevent shift by 64 bits because a shift longer than type length is undefined behaviour
+    return b << a | ( globalmasksize < 64 ? shr(globalmasksize-a, b) : 0 );
 }
 
 long long ror(long long a, long long b) {
 
-    return shr(a, b) | ( b << (globalmasksize- a) );
+    // prevent shift by 64 bits because a shift longer than type length is undefined behaviour
+    return shr(a, b) | (globalmasksize < 64 ? b << (globalmasksize- a) : 0);
 }
 
 static long long modulus(long long a, long long b) {
