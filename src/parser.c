@@ -27,7 +27,7 @@ static exprtree create_exprtree(int, void*, exprtree, exprtree);
 
 char* tokenize(char* in) {
 
-    char* tokens = malloc(sizeof(char) * MAX_TOKENS);
+    char* tokens = xmalloc(sizeof(char) * MAX_TOKENS);
 
     int in_len = strlen(in);
     int token_pos = 0;
@@ -46,7 +46,7 @@ exprtree parse(char* tokens) {
     // TODO: How to stop with errors?
 
     // attention: allocate size for *struct parser_t*, because *parser_t* is type defined as a pointer to *struct parser_t*
-    parser_t parser = malloc(sizeof(struct parser_t));
+    parser_t parser = xmalloc(sizeof(struct parser_t));
 
     assert(tokens != NULL);
     parser->tokens = tokens;
@@ -357,7 +357,7 @@ static exprtree parse_stdop_expr(parser_t parser, char* ops, exprtree (*parse_in
 static exprtree create_exprtree(int type, void* content, exprtree left, exprtree right) {
 
     // attention: allocate size for *struct exprtree*, because *exprtree* is type defined as a pointer to *struct exprtree*
-    exprtree expr = malloc(sizeof(struct exprtree));
+    exprtree expr = xmalloc(sizeof(struct exprtree));
 
     expr->type = type;
 
@@ -365,7 +365,7 @@ static exprtree create_exprtree(int type, void* content, exprtree left, exprtree
         expr->op = getopcode(*((char*) content));
     else {
 
-        expr->value = malloc(sizeof(long long));
+        expr->value = xmalloc(sizeof(long long));
         *(expr->value) = *((long long*) content);
     }
 
