@@ -6,10 +6,11 @@ Priorities:
 2. sign before a number (+, -)
 3. bitwise not (~)
 4. mult, div, remainder (*, /, %)
-5. shifts and rotates (<<, >>, RoR, RoL)
-6. bitwise and (&)
-7. bitwise xor (^)
-8. bitwiser or and nor (|, nor)
+5. add, sub (+, -)
+6. shifts and rotates (<<, >>, RoR, RoL)
+7. bitwise and (&)
+8. bitwise xor (^)
+9. bitwiser or and nor (|, nor)
 
 
 Grammar:

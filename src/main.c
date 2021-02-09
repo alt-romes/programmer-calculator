@@ -277,7 +277,7 @@ static void process_input(operation** current_op, char* in) {
 
             // Remove the last token from the string
             tokens[ntokens-1] = '\0';
-
+            ntokens--;
         }
 
         if (*current_op == NULL ||
@@ -321,6 +321,8 @@ static void process_input(operation** current_op, char* in) {
                 // Set a new operation from the symbol
                 *current_op = suffix_op;
                 
+                char opchar[2] = {suffix_op->character, '\0'};
+                add_to_history(&history, opchar);
             }
 
         }
@@ -328,6 +330,7 @@ static void process_input(operation** current_op, char* in) {
             // The input expression generated an empty token string.
             // Because parse() isn't called, we must free *tokens* manually
             free(tokens);
+            total_tokens_freed++;
         }
 
         if (ntokens == 0 && *current_op == NULL) {

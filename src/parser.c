@@ -192,6 +192,14 @@ static exprtree parse_prefix_expr(parser_t parser) {
 
     // Grammar rule: prefix_exp := (~ | + | -)? atom_exp
 
+    // TODO: Display input invalid instead of using a zero-val expression
+    if (!(parser->pos < parser->ntokens)) {
+
+        long long zerov = 0;
+        return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
+    }
+
+
     char prefixes[] = {ADD_SYMBOL, SUB_SYMBOL, NOT_SYMBOL, TWOSCOMPLEMENT_SYMBOL, '\0'};
 
     // If we've exceeded the number of tokens we should detect an error
@@ -240,6 +248,15 @@ static exprtree parse_prefix_expr(parser_t parser) {
 static exprtree parse_atom_expr(parser_t parser) {
 
     // Grammar rule: atom_expr := number | left_parenthesis expression right_parenthesis
+
+    // TODO: An error should be displayed here instead of return a zero value expression.
+    // This assertion fails if the only token is a prefix, the prefix is read, and this function is called without enough tokens
+    // to be parsed. There are possibly more cases
+    if (!(parser->pos < parser->ntokens)) {
+
+        long long zerov = 0;
+        return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
+    }
     
     // If we've exceeded the number of tokens we should detect an error
     assert(parser->pos < parser->ntokens);
@@ -347,6 +364,14 @@ static exprtree parse_number(parser_t parser) {
 }
 
 static exprtree parse_stdop_expr(parser_t parser, char* ops, exprtree (*parse_inner_expr) (parser_t)) {
+
+    // TODO: We don't want to do this - when the input is badly formatted an error should be displayed.
+    // This is a temporary fix that returns the expression immediately as zero.
+    if (!(parser->pos < parser->ntokens)) {
+
+        long long zerov = 0;
+        return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
+    }
 
     // When the position gets here it should be smaller than the ntokens, or maybe only inner_expr should worry about it? 
     assert(parser->pos < parser->ntokens);

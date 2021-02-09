@@ -92,24 +92,27 @@ static long long xor(long long a, long long b) {
 }
 static long long shl(long long a, long long b) {
 
+    // Shift longer than type length is undefined behaviour
     return b << a;
 }
 
 long long shr(long long a, long long b) {
 
+    // Shift longer than 64 bits is undefined behaviour
+    // don't include shift in tests or //TODO: define behaviour for this calculator
     return ((unsigned long long) b >> a);
 }
 
 static long long rol(long long a, long long b) {
 
     // prevent shift by 64 bits because a shift longer than type length is undefined behaviour
-    return b << a | ( globalmasksize < 64 ? shr(globalmasksize-a, b) : 0 );
+    return b << a | ( globalmasksize - a < 64 ? shr(globalmasksize - a, b) : 0 );
 }
 
 long long ror(long long a, long long b) {
 
     // prevent shift by 64 bits because a shift longer than type length is undefined behaviour
-    return shr(a, b) | (globalmasksize < 64 ? b << (globalmasksize- a) : 0);
+    return shr(a, b) | (globalmasksize - a < 64 ? b << (globalmasksize - a) : 0);
 }
 
 static long long modulus(long long a, long long b) {
