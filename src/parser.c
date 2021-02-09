@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "parser.h"
+#include "xmalloc.h"
 
 // Static functions
 

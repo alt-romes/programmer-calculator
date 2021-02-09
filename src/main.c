@@ -443,7 +443,7 @@ static void get_input(char* in) {
         }
 
         // Prevent user to input more than MAX_IN
-        if(!searched && len <= max && len <= MAX_IN) {
+        if(!searched && len <= MAX_IN && (len <= max || !use_interface)) {
             if (!browsing) {
                 // If the cursor is at the end of the text
                 
@@ -452,9 +452,9 @@ static void get_input(char* in) {
                 in[++pos] = '\0';
                 len++; // Make sure that len is still equal to pos
 
-                if (inp == '\0' && use_interface) {
+                if (inp == '\0') {
                     // Clear screen from previous input
-                    mvwprintw(inputwin, 1, 22 + --len, " ");
+                    sweepline(inputwin, 1, 22 + --len);
                 }
             }
             else {
@@ -468,8 +468,7 @@ static void get_input(char* in) {
                         in[i] = in[i + 1];
                     }
 
-                    if (use_interface)
-                        mvwprintw(inputwin, 1, 22 + len, " "); // Clear screen from previous input
+                    sweepline(inputwin, 1, 22 + len);
                 }
                 else {
                     // Everything except backspace
@@ -488,19 +487,15 @@ static void get_input(char* in) {
         // This saves having to increment pos everytime len is incremented when youre not browsing
         if (!browsing) { pos = len; }
 
-        if (use_interface) {
+        // Finaly print input
+        sweepline(inputwin, 1, 22);
 
-            // Finaly print input
-            sweepline(inputwin, 1, 22);
+        mvwprintw(inputwin, 1, 22, "%s", in);
 
-            mvwprintw(inputwin, 1, 22, "%s", in);
-
-            wmove(inputwin, 1, 22 + pos); // Move the cursor
-            
-            wrefresh(inputwin);
-
-        }
+        wmove(inputwin, 1, 22 + pos); // Move the cursor
         
+        wrefresh(inputwin);
+
     }
 
     if (in[0] != '\0' && (searchHistory.size == 0 || strcmp(in, searchHistory.records[searchHistory.size - 1]))) {
