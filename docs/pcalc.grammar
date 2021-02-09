@@ -14,8 +14,6 @@ Priorities:
 
 Grammar:
 
-input := (symbol)? expression
-
 expression := or_exp
 
 or_exp := xor_exp ( (| | $) xor_exp )*
