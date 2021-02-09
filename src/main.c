@@ -324,6 +324,11 @@ static void process_input(operation** current_op, char* in) {
             }
 
         }
+        else {
+            // The input expression generated an empty token string.
+            // Because parse() isn't called, we must free *tokens* manually
+            free(tokens);
+        }
 
         if (ntokens == 0 && *current_op == NULL) {
 
