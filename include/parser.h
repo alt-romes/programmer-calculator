@@ -40,4 +40,11 @@ exprtree parse(char*);
 long long calculate(exprtree);
 void free_exprtree(exprtree);
 
+extern int total_trees_created;
+extern int total_trees_freed;
+extern int total_parsers_created;
+extern int total_parsers_freed;
+extern int total_tokens_created;
+extern int total_tokens_freed;
+
 #endif

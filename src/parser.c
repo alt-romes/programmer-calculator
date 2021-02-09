@@ -23,6 +23,13 @@ static exprtree parse_stdop_expr(parser_t, char*, exprtree (*) (parser_t));
 
 static exprtree create_exprtree(int, void*, exprtree, exprtree);
 
+int total_trees_created = 0;
+int total_trees_freed = 0;
+int total_parsers_created = 0;
+int total_parsers_freed = 0;
+int total_tokens_created = 0;
+int total_tokens_freed = 0;
+
 
 // For a simpler version of this parser check github.com/alt-romes/calculator-c-parser 
 
@@ -38,6 +45,7 @@ char* tokenize(char* in) {
 
     tokens[token_pos] = '\0';
 
+    total_tokens_created++;
     return tokens;
 }
 
@@ -48,6 +56,7 @@ exprtree parse(char* tokens) {
 
     // attention: allocate size for *struct parser_t*, because *parser_t* is type defined as a pointer to *struct parser_t*
     parser_t parser = xmalloc(sizeof(struct parser_t));
+    total_parsers_created++;
 
     assert(tokens != NULL);
     parser->tokens = tokens;
@@ -62,7 +71,9 @@ exprtree parse(char* tokens) {
 
     free(parser->tokens);
     free(parser);
+    total_parsers_freed++;
     
+    total_tokens_freed++;
     return expression;
 }
 
@@ -103,6 +114,8 @@ void free_exprtree(exprtree expr) {
             free_exprtree(expr->right);
 
         free(expr);
+
+        total_trees_freed++;
 
     }
 
@@ -373,6 +386,7 @@ static exprtree create_exprtree(int type, void* content, exprtree left, exprtree
     expr->left = left;
     expr->right = right;
 
+    total_trees_created++;
     return expr;
 
 }
