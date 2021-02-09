@@ -93,6 +93,7 @@ There are various ways to insert values/operators, see the example `2 + 2` below
 * 2+, followed by 2
 * 2+2 (or 2 + 2+ 2, 2 +2, 2+ 2, ...)
 
+##### inline math with priorities and parenthesis is being worked on right now - stay tuned
 You can also do inline math, but without priorities.
 This means `2 + 3 * 2` is valid, but it's equal to `10`, not `8`, because expressions are evaluated from left to right.
 
