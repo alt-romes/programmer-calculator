@@ -499,8 +499,6 @@ static void get_input(char* in) {
         if (!browsing) { pos = len; }
 
         // Finaly print input
-        sweepline(inputwin, 1, 22);
-
         mvwprintw(inputwin, 1, 22, "%s", in);
 
         wmove(inputwin, 1, 22 + pos); // Move the cursor
