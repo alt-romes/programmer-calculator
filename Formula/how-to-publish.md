@@ -1,3 +1,8 @@
+0) Set the `VERSION` in `src/main.c`
+```
+#define VERSION "va.b"
+```
+
 1) Set a tag for the version
 ```
 git tag v(a.b)

@@ -18,7 +18,7 @@
 
 
 
-#define VERSION "v1.8"
+#define VERSION "v2.0"
 
 
 
