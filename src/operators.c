@@ -20,21 +20,21 @@ static long long not(long long, long long);
 static long long twos_complement(long long, long long);
 
 static operation operations[15] = {
-    {'+', 2, add},
-    {'-', 2, subtract},
-    {'*', 2, multiply},
-    {'/', 2, divide},
-    {'&', 2, and},
-    {'|', 2, or},
-    {'$', 2, nor},
-    {'^', 2, xor},
-    {'<', 2, shl},
-    {'>', 2, shr},
-    {'(', 2, rol},
-    {')', 2, ror},
-    {'%', 2, modulus},
-    {'~', 1, not},
-    {'\'', 1, twos_complement}
+    {ADD_SYMBOL, 2, add},
+    {SUB_SYMBOL, 2, subtract},
+    {MUL_SYMBOL, 2, multiply},
+    {DIV_SYMBOL, 2, divide},
+    {AND_SYMBOL, 2, and},
+    {OR_SYMBOL, 2, or},
+    {NOR_SYMBOL, 2, nor},
+    {XOR_SYMBOL, 2, xor},
+    {SHL_SYMBOL, 2, shl},
+    {SHR_SYMBOL, 2, shr},
+    {ROL_SYMBOL, 2, rol},
+    {ROR_SYMBOL, 2, ror},
+    {MOD_SYMBOL, 2, modulus},
+    {NOT_SYMBOL, 1, not},
+    {TWOSCOMPLEMENT_SYMBOL, 1, twos_complement}
 };
 
 operation* getopcode(char c)  {
@@ -92,22 +92,27 @@ static long long xor(long long a, long long b) {
 }
 static long long shl(long long a, long long b) {
 
+    // Shift longer than type length is undefined behaviour
     return b << a;
 }
 
 long long shr(long long a, long long b) {
 
+    // Shift longer than 64 bits is undefined behaviour
+    // don't include shift in tests or //TODO: define behaviour for this calculator
     return ((unsigned long long) b >> a);
 }
 
 static long long rol(long long a, long long b) {
 
-    return b << a | shr(globalmasksize-a, b);
+    // prevent shift by 64 bits because a shift longer than type length is undefined behaviour
+    return b << a | ( globalmasksize - a < 64 ? shr(globalmasksize - a, b) : 0 );
 }
 
 long long ror(long long a, long long b) {
 
-    return shr(a, b) | ( b << (globalmasksize- a) );
+    // prevent shift by 64 bits because a shift longer than type length is undefined behaviour
+    return shr(a, b) | (globalmasksize - a < 64 ? b << (globalmasksize - a) : 0);
 }
 
 static long long modulus(long long a, long long b) {

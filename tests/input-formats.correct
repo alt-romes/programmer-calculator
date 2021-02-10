@@ -1,0 +1,132 @@
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 1, Hex: 0x1, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 1, Hex: 0x1, Operation: +
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 1, Hex: 0x1, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 2, Hex: 0x2, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 1, Hex: 0x1, Operation:  
+Decimal: 2, Hex: 0x2, Operation:  
+Decimal: 1, Hex: 0x1, Operation: +
+Decimal: 2, Hex: 0x2, Operation:  
+Decimal: 1, Hex: 0x1, Operation: +
+Decimal: 2, Hex: 0x2, Operation:  
+Decimal: 3, Hex: 0x3, Operation: +
+Decimal: 4, Hex: 0x4, Operation: +
+Decimal: 5, Hex: 0x5, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 2, Hex: 0x2, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 1, Hex: 0x1, Operation: +
+Decimal: 2, Hex: 0x2, Operation: -
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: +
+Decimal: 0, Hex: 0x0, Operation: +
+Decimal: 0, Hex: 0x0, Operation: +
+Decimal: 0, Hex: 0x0, Operation: +
+Decimal: 0, Hex: 0x0, Operation: +
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: -
+Decimal: 0, Hex: 0x0, Operation: -
+Decimal: 0, Hex: 0x0, Operation: -
+Decimal: 0, Hex: 0x0, Operation: -
+Decimal: 0, Hex: 0x0, Operation: -
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: *
+Decimal: 0, Hex: 0x0, Operation: *
+Decimal: 0, Hex: 0x0, Operation: *
+Decimal: 0, Hex: 0x0, Operation: *
+Decimal: 0, Hex: 0x0, Operation: *
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: /
+Decimal: 0, Hex: 0x0, Operation: /
+Decimal: 0, Hex: 0x0, Operation: /
+Decimal: 0, Hex: 0x0, Operation: /
+Decimal: 0, Hex: 0x0, Operation: /
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: %
+Decimal: 0, Hex: 0x0, Operation: %
+Decimal: 0, Hex: 0x0, Operation: %
+Decimal: 0, Hex: 0x0, Operation: %
+Decimal: 0, Hex: 0x0, Operation: %
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: &
+Decimal: 0, Hex: 0x0, Operation: &
+Decimal: 0, Hex: 0x0, Operation: &
+Decimal: 0, Hex: 0x0, Operation: &
+Decimal: 0, Hex: 0x0, Operation: &
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: |
+Decimal: 0, Hex: 0x0, Operation: |
+Decimal: 0, Hex: 0x0, Operation: |
+Decimal: 0, Hex: 0x0, Operation: |
+Decimal: 0, Hex: 0x0, Operation: |
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: $
+Decimal: 0, Hex: 0x0, Operation: $
+Decimal: 0, Hex: 0x0, Operation: $
+Decimal: -1, Hex: 0xffffffffffffffff, Operation: $
+Decimal: 0, Hex: 0x0, Operation: $
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: ^
+Decimal: 0, Hex: 0x0, Operation: ^
+Decimal: 0, Hex: 0x0, Operation: ^
+Decimal: 0, Hex: 0x0, Operation: ^
+Decimal: 0, Hex: 0x0, Operation: ^
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: -1, Hex: 0xffffffffffffffff, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: <
+Decimal: 0, Hex: 0x0, Operation: <
+Decimal: 0, Hex: 0x0, Operation: <
+Decimal: 0, Hex: 0x0, Operation: <
+Decimal: 0, Hex: 0x0, Operation: <
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: >
+Decimal: 0, Hex: 0x0, Operation: >
+Decimal: 0, Hex: 0x0, Operation: >
+Decimal: 0, Hex: 0x0, Operation: >
+Decimal: 0, Hex: 0x0, Operation: >
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: :
+Decimal: 0, Hex: 0x0, Operation: :
+Decimal: 0, Hex: 0x0, Operation: :
+Decimal: 0, Hex: 0x0, Operation: :
+Decimal: 0, Hex: 0x0, Operation: :
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: ;
+Decimal: 0, Hex: 0x0, Operation: ;
+Decimal: 0, Hex: 0x0, Operation: ;
+Decimal: 0, Hex: 0x0, Operation: ;
+Decimal: 0, Hex: 0x0, Operation: ;
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation: +
+Decimal: 0, Hex: 0x0, Operation: -
+Decimal: 0, Hex: 0x0, Operation: *
+Decimal: 0, Hex: 0x0, Operation: /
+Decimal: 0, Hex: 0x0, Operation: %
+Decimal: 0, Hex: 0x0, Operation: &
+Decimal: 0, Hex: 0x0, Operation: |
+Decimal: 0, Hex: 0x0, Operation: $
+Decimal: 0, Hex: 0x0, Operation: ^
+Decimal: -1, Hex: 0xffffffffffffffff, Operation:  
+Decimal: -1, Hex: 0xffffffffffffffff, Operation: <
+Decimal: -1, Hex: 0xffffffffffffffff, Operation: >
+Decimal: -1, Hex: 0xffffffffffffffff, Operation: :
+Decimal: -1, Hex: 0xffffffffffffffff, Operation: ;
+Decimal: 1, Hex: 0x1, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  

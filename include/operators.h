@@ -11,6 +11,23 @@
 #   define UNUSED(x) UNUSED_##x
 #endif
 
+#define ALL_OPS "+-*/&|$^<>:;%~_"
+
+#define OR_SYMBOL '|'
+#define NOR_SYMBOL '$'
+#define XOR_SYMBOL '^'
+#define AND_SYMBOL '&'
+#define SHR_SYMBOL '>'
+#define SHL_SYMBOL '<'
+#define ROR_SYMBOL ';'
+#define ROL_SYMBOL ':'
+#define MUL_SYMBOL '*'
+#define DIV_SYMBOL '/'
+#define MOD_SYMBOL '%'
+#define ADD_SYMBOL '+'
+#define SUB_SYMBOL '-'
+#define NOT_SYMBOL '~'
+#define TWOSCOMPLEMENT_SYMBOL '_'
 
 // Operations Control
 // Example: '+' takes two operands, therefore the noperands = 2
