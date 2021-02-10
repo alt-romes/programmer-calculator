@@ -95,7 +95,7 @@ There are various ways to insert values/operators, see the example `2 + 2` below
 
 #### Inline Math
 
-Operator precedence and parenthesis for grouping is supported.
+Operator precedence and parenthesis for grouping is used.
 
 `2+2*3` evaluates to `8` and `(2+2)*3` evaluates to `12`
 
