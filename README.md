@@ -139,24 +139,24 @@ You can also use the long options to hide parts: `--history`, `--decimal`, etc.
 ```
 ADD  +    SUB  -    MUL  *    DIV  /    MOD  %
 AND  &    OR   |    NOR  $    XOR  ^    NOT  ~
-SL   <    SR   >    RL   (    RR   )    2's  '
+SL   <    SR   >    RL   :    RR   ;    2's  _
 ```
 
-* ADD: a + b arithmetic addition
-* SUB: a - b arithmetic subtraction
-* MUL: a * b arithmetic multiplication
-* DIV: a / b arithmetic integer division
-* MOD: a % b modulus from the division
-* AND: a & b bit-wise AND (&) operation
-* OR : a | b bit-wise OR (|) operation
-* NOR: a $ b bit-wise NOR ($) operation : opposite of OR
-* XOR: a ^ b bit-wise XOR (^) operation : exclusive OR
-* NOT: a~    bit-wise NOT (~) operation : change all bits of a, 0's into 1's and 1's into 0's
-* SL : a < b bit-wise SHIFT-LEFT (<) operation : shift a left b number of times
-* SR : a > b bit-wise SHIFT-RIGHT (>) operation : shift a right b number of times
-* RL : a ( b bit-wise ROTATE-LEFT (() operation : rotate a left b number of times
-* RR : a ) b bit-wise ROTATE-LEFT ()) operation : rotate a right b number of times
-* 2's: a'    2's complement (') operation : 2's complement of a
+* ADD: `a + b` arithmetic addition
+* SUB: `a - b` arithmetic subtraction
+* MUL: `a * b` arithmetic multiplication
+* DIV: `a / b` arithmetic integer division
+* MOD: `a % b` modulus from the division
+* AND: `a & b` bit-wise AND operation
+* OR : `a | b` bit-wise OR operation
+* NOR: `a $ b` bit-wise NOR operation : opposite of OR
+* XOR: `a ^ b` bit-wise XOR operation : exclusive OR
+* NOT: `~a`    bit-wise NOT operation : change all bits of a, 0's into 1's and 1's into 0's
+* SL : `a < b` bit-wise SHIFT-LEFT operation : shift a left b number of times
+* SR : `a > b` bit-wise SHIFT-RIGHT operation : shift a right b number of times
+* RL : `a : b` bit-wise ROTATE-LEFT operation : rotate a left b number of times
+* RR : `a ; b` bit-wise ROTATE-LEFT operation : rotate a right b number of times
+* 2's: `_a`    2's complement operation : 2's complement of a (usually is the symmetric of a)
 
 
 ## Contributing
