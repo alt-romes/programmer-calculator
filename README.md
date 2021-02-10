@@ -88,10 +88,10 @@ $ pcalc
 
 There are various ways to insert values/operators, see the example `2 + 2` below:
 
-* 2, followed by +, followed by 2
-* 2, followed by +2
-* 2+, followed by 2
-* 2+2 (or 2 + 2+ 2, 2 +2, 2+ 2, ...)
+* `2`, followed by `+`, followed by `2`
+* `2`, followed by `+2`
+* `2+`, followed by `2`
+* `2+2` (or i.e. `2 + 2`)
 
 #### Inline Math
 
