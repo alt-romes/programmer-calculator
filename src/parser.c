@@ -113,6 +113,10 @@ void free_exprtree(exprtree expr) {
         if (expr->right)
             free_exprtree(expr->right);
 
+        
+        if (expr->type != OP_TYPE)
+            free(expr->value);
+
         free(expr);
 
         total_trees_freed++;
@@ -402,6 +406,7 @@ static exprtree create_exprtree(int type, void* content, exprtree left, exprtree
 
     if (type == OP_TYPE)
         expr->op = getopcode(*((char*) content));
+
     else {
 
         expr->value = xmalloc(sizeof(long long));
