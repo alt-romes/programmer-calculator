@@ -103,17 +103,14 @@
 
 
         <h4>Building from Source <small>(alternative)</small></h4>
-        <p>To build from source you need <span class="inline-code">gcc</span>, <span class="inline-code">ncurses</span>, and the source files. <br><small style="color: #FF570A">If you don't have ncurses, please install it (i.e. with your system's package manager) first.</small></p>
+        <p>To build from source you need <span class="inline-code">gcc</span>, <span class="inline-code">ncurses</span>, and the source files. <br><small style="color: #FF570A">If you don't have ncurses, please install it (i.e. with your system's package manager) first.</small> <br> <em>(To install ncurses in Debian based distros run <span class="inline-code">sudo apt-get install libncurses5-dev libncursesw5-dev</span>)</em></p>
 
-        <p>First, clone the repository</p>
+        <p>First, clone the repository and change directory to it</p>
 
-        <pre><code>$ git clone https://github.com/alt-romes/programmer-calculator</code></pre>
+        <pre><code>$ git clone https://github.com/alt-romes/programmer-calculator ; cd programmer-calculator</code></pre>
 
         <p>Then, compile the code into an executable file</p>
         <pre><code>$ make</code></pre>
-
-        <small>Alternatively, if you don't have make installed, compile with</small>
-        <pre><code>$ gcc main.c -o pcalc -lncurses</code></pre>
         
         <p>Finally, move the executable to a directory reachable by $PATH</p>
         <pre><code>$ mv -i pcalc /usr/local/bin</code></pre>
@@ -139,12 +136,14 @@
             <li><span class="inline-code">2</span>, followed by <span class="inline-code">+</span>, followed by <span class="inline-code">2</span></li>
             <li><span class="inline-code">2</span>, followed by <span class="inline-code">+2</span></li>
             <li><span class="inline-code">2+</span>, followed by <span class="inline-code">2</span></li>
-            <li><span class="inline-code">2+2</span> <small class="comment">(or <span class="inline-code">2 + 2</span>, <span class="inline-code">2 +2</span>, <span class="inline-code">2+ 2</span>, ...)</small></li>
+            <li><span class="inline-code">2+2</span> <small class="comment">(or i.e. <span class="inline-code">2 + 2</span>)</small></li>
         </ul>
         
-        <p>You can also do inline math, but without priorities.</p>
-        <p>This means <span class="inline-code">2 + 3 * 2</span> is valid, but it's equal to <strong>10</strong>, not <strong>8</strong>, because expressions are evaluated from left to right</p>
-        <p>That said, any inline math is valid i.e.: <span class="inline-code">0x13 + 135 - 0b101 < 2 * 3 ~</span></p>
+        <h5>Inline Math</h5>
+
+        <p>Operator precedence and parenthesis for grouping is used.</p>
+
+        <p><span class="inline-code">2+2*3</span> evaluates to <span class="inline-code">8</span> and <span class="inline-code">(2+2)*3</span> evaluates to <span class="inline-code">12</span></p>
 
         <br>
 
@@ -171,60 +170,60 @@
             <li><span class="inline-code">operation</span> to toggle the operation display</li>
         </ul>
         <p>To set a default interface, define an alias for the program with the desired hidden options</p>
-        <pre>$ alias pcalc='pcalc -hbxdos'</pre>
-        <small class="comment">h: history, b: binary, x: hex, d: decimal, o: operation, s: symbols</small><br>
+        <pre>$ alias pcalc='pcalc -ibxdos'</pre>
+        <small class="comment">i: history, b: binary, x: hex, d: decimal, o: operation, s: symbols</small><br>
 
         <br>
 
         <h4>Operations</h4>
         <pre>ADD  +    SUB  -    MUL  *    DIV  /    MOD  %
 AND  &    OR   |    NOR  $    XOR  ^    NOT  ~
-SL   <    SR   >    RL   (    RR   )    2's  '</pre>
+SL   <    SR   >    RL   :    RR   ;    2's  _</pre>
 
         <ul>
-            <li>ADD: a + b <small class="comment">arithmetic addition</small></li>
+            <li>ADD: <span class="inline-code">a + b</span> <small class="comment">arithmetic addition</small></li>
         </ul>
         <ul>
-            <li>SUB: a - b <small class="comment">arithmetic subtraction</small></li>
+            <li>SUB: <span class="inline-code">a - b</span> <small class="comment">arithmetic subtraction</small></li>
         </ul>
         <ul>
-            <li>MUL: a * b <small class="comment">arithmetic multiplication</small></li>
+            <li>MUL: <span class="inline-code">a * b</span> <small class="comment">arithmetic multiplication</small></li>
         </ul>
         <ul>
-            <li>DIV: a / b <small class="comment">arithmetic integer division</small></li>
+            <li>DIV: <span class="inline-code">a / b</span> <small class="comment">arithmetic integer division</small></li>
         </ul>
         <ul>
-            <li>MOD: a % b <small class="comment">modulus from the division</small></li>
+            <li>MOD: <span class="inline-code">a % b</span> <small class="comment">modulus from the division</small></li>
         </ul>
         <ul>
-            <li>AND: a & b <small class="comment">bit-wise AND (&) operation </small></li>
+            <li>AND: <span class="inline-code">a & b</span> <small class="comment">bit-wise AND operation </small></li>
         </ul>
         <ul>
-            <li>OR&nbsp;: a | b <small class="comment">bit-wise OR (|) operation </small></li>
+            <li>OR&nbsp;: <span class="inline-code">a | b</span> <small class="comment">bit-wise OR operation </small></li>
         </ul>
         <ul>
-            <li>NOR: a $ b <small class="comment">bit-wise NOR ($) operation : opposite of OR</small></li>
+            <li>NOR: <span class="inline-code">a $ b</span> <small class="comment">bit-wise NOR operation : opposite of OR</small></li>
         </ul>
         <ul>
-            <li>XOR: a ^ b <small class="comment">bit-wise XOR (^) operation : exclusive OR</small></li>
+            <li>XOR: <span class="inline-code">a ^ b</span> <small class="comment">bit-wise XOR operation : exclusive OR</small></li>
         </ul>
         <ul>
-            <li>NOT: a~ &nbsp;&nbsp; <small class="comment">bit-wise NOT (~) operation : change all bits of <em>a</em>, 0's into 1's and 1's into 0's</small></li>
+            <li>NOT: <span class="inline-code">~a</span> &nbsp;&nbsp; <small class="comment">bit-wise NOT operation : change all bits of <em>a</em>, 0's into 1's and 1's into 0's</small></li>
         </ul>
         <ul>
-            <li>SL&nbsp;:  a < b <small class="comment">bit-wise SHIFT-LEFT (<) operation : shift <em>a</em> left <em>b</em> number of times</small></li>
+            <li>SL&nbsp;:  <span class="inline-code">a < b</span> <small class="comment">bit-wise SHIFT-LEFT operation : shift <em>a</em> left <em>b</em> number of times</small></li>
         </ul>
         <ul>
-            <li>SR&nbsp;:  a > b <small class="comment">bit-wise SHIFT-RIGHT (>) operation : shift <em>a</em> right <em>b</em> number of times</small></li>
+            <li>SR&nbsp;:  <span class="inline-code">a > b</span> <small class="comment">bit-wise SHIFT-RIGHT operation : shift <em>a</em> right <em>b</em> number of times</small></li>
         </ul>
         <ul>
-            <li>RL&nbsp;: a ( b <small class="comment">bit-wise ROTATE-LEFT (() operation : rotate <em>a</em> left <em>b</em> number of times</small></li>
+            <li>RL&nbsp;: <span class="inline-code">a : b</span> <small class="comment">bit-wise ROTATE-LEFT operation : rotate <em>a</em> left <em>b</em> number of times</small></li>
         </ul>
         <ul>
-            <li>RR&nbsp;: a ) b <small class="comment">bit-wise ROTATE-LEFT ()) operation : rotate <em>a</em> right <em>b</em> number of times</small></li>
+            <li>RR&nbsp;: <span class="inline-code">a ; b</span> <small class="comment">bit-wise ROTATE-LEFT operation : rotate <em>a</em> right <em>b</em> number of times</small></li>
         </ul>
         <ul>
-            <li>2's: a' &nbsp;&nbsp; <small class="comment">2's complement (') operation : 2's complement of <em>a</em></small></li>
+            <li>2's: <span class="inline-code">_a</span> &nbsp;&nbsp; <small class="comment">2's complement operation : 2's complement of <em>a</em> (usually is the symmetric of a)</small></li>
         </ul>
 
 
