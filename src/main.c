@@ -498,6 +498,9 @@ static void get_input(char* in) {
         // This saves having to increment pos everytime len is incremented when youre not browsing
         if (!browsing) { pos = len; }
 
+        // Clear input (only necessary because of the history feature)
+        sweepline(inputwin, 1, 22);
+
         // Finaly print input
         mvwprintw(inputwin, 1, 22, "%s", in);
 
