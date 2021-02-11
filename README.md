@@ -12,7 +12,7 @@ and who likes:
 * open source software
 * terminal/cli tools
 
-![Screen](https://raw.githubusercontent.com/alt-romes/programmer-calculator/master/assets/v2.0.png)
+![Screen](https://raw.githubusercontent.com/alt-romes/programmer-calculator/master/assets/v2.0-ss.png)
 
 ## Making of
 
@@ -170,4 +170,3 @@ Please reference [Contributing](https://github.com/alt-romes/programmer-calculat
 
 ![Panels](https://raw.githubusercontent.com/alt-romes/programmer-calculator/master/assets/panels.png)
 
-![Second screenshot](https://raw.githubusercontent.com/alt-romes/programmer-calculator/master/assets/v2.0-2.png)
