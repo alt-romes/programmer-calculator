@@ -5,7 +5,7 @@ class Pcalc < Formula
   sha256 "a3b8b59bd4da9a1ee39f73303e18005f2b4a45b655f7a7cca10aa9ce173610e7"
   license "GPL-3.0-or-later"
 
-  depends_on "ncurses"
+  uses_from_macos "ncurses"
 
   def install
     system "make"
