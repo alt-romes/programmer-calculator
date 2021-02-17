@@ -39,7 +39,7 @@ Before creating a pull request don't forget that:
 
 ## Testing
 
-Right now we haven't got tests, but we need to write some urgently.
+For information on testing please see [Testing](https://github.com/alt-romes/programmer-calculator/blob/master/tests/how-to-test.md)
 
 
 Thank you, ~romes
