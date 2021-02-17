@@ -24,12 +24,7 @@ With the constant need to visualize and manipulate bits, it became evident that 
 
 #### Homebrew
 
-First, create a new tap
-```
-$ brew tap alt-romes/pcalc
-```
-
-Then, install the program
+Install from the homebrew official packages
 ```
 $ brew install pcalc
 ```
