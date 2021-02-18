@@ -16,7 +16,7 @@ extern int use_interface;
 
 void init_gui();
 void draw(numberstack*, operation*);
-void updatewinborders();
+void update_win_borders();
 void sweepline(WINDOW*, int, int);
 
 #endif
