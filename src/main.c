@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
      * the operation is executed, and the result of the calculation is pushed to the stack
      */
     numbers = create_numberstack(4);
-    operation* current_op = NULL;
+    //operation* current_op = NULL;
 
     // Initalize history pointers with NULL (realloc will bahave like malloc)
     history.records = NULL;
@@ -391,6 +391,7 @@ static void get_input(char* in) {
          * -1 is a key that indicates the terminal got resized
          */
         if (inp <= 0) {
+            update_win_borders(numbers);
             continue;
         }
 

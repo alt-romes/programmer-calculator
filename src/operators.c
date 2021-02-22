@@ -5,6 +5,8 @@
 unsigned long long globalmask = DEFAULT_MASK;
 int globalmasksize = DEFAULT_MASK_SIZE;
 
+operation *current_op = NULL;
+
 static long long add(long long, long long);
 static long long subtract(long long, long long);
 static long long multiply(long long, long long);

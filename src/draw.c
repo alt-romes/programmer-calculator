@@ -145,6 +145,14 @@ void draw(numberstack* numbers, operation* current_op) {
     }
 }
 
+void update_win_borders(numberstack* numbers) {
+
+    doupdate();
+    init_gui();
+    draw(numbers, current_op);
+}
+
+
 void sweepline(WINDOW* w, int y, int x) {
     wmove(w, y, x);
     wclrtoeol(w);
