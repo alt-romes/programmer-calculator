@@ -145,10 +145,11 @@ void draw(numberstack* numbers, operation* current_op) {
     }
 }
 
-void update_win_borders() {
+void update_win_borders(numberstack* numbers, operation* current_op) {
 
     doupdate();
     init_gui();
+    draw(numbers, current_op);
 }
 
 
