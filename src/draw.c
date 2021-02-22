@@ -147,15 +147,8 @@ void draw(numberstack* numbers, operation* current_op) {
 
 void update_win_borders() {
 
-    /* Draw border around displaywin */
-    box(displaywin, ' ', 0);
-    /* Update the terminal */
-    wrefresh(displaywin);
-    /* Draw border around inputwin */
-    box(inputwin, ' ', 0);
-    /* Update the terminal */
-    wrefresh(inputwin);
-
+    doupdate();
+    init_gui();
 }
 
 
