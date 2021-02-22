@@ -391,7 +391,7 @@ static void get_input(char* in) {
          * -1 is a key that indicates the terminal got resized
          */
         if (inp <= 0) {
-            update_win_borders(numbers, current_op);
+            update_win_borders(numbers);
             continue;
         }
 
