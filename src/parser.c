@@ -303,6 +303,8 @@ static exprtree parse_atom_expr(parser_t parser) {
 }
 
 static exprtree parse_number(parser_t parser) {
+    
+    // Grammar rule: number: ( (0-9)+ | 0x(0-9a-f)+ | 0b(0-1)+ )
 
     // If we've exceeded the number of tokens we should detect an error
     assert(parser->pos < parser->ntokens);
