@@ -314,11 +314,16 @@ static exprtree parse_number(parser_t parser) {
         switch (parser->tokens[parser->pos]) {
             case '0':
                 if (parser->tokens[parser->pos+1] == 'b') {
+                    // Enter if number is binary
                     numbertype = BIN_TYPE;
                     parser->pos += 2;
                     break;
-                } else {
+                } else if (parser->tokens[parser->pos+1] == 'x'){
+                    // Enter is number is hex
                     goto hex;
+                } else {
+                    // Enter if number is decimal
+                    break;
                 }
             case 'x':
 hex:
