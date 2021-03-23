@@ -5,7 +5,7 @@
 
 1) Set a tag for the version
 ```
-git tag v(a.b)
+git tag va.b
 
 git push --tags
 ```
@@ -23,11 +23,10 @@ sha256sum va.b
     - change the URL to the new release tarball URL
     - change the sha sum to the one just calculated
 
-5) Edit the `Forumla/pcalc.rb` in the repository `alt-romes/homebrew-pcalc` and push the changes - this is the actual Formula being used (it's easy to edit it directly in GitHub)
-    - change the URL to the new release tarball URL
-    - change the sha sum to the one just calculated
+5) Update formula in the official homebrew repository:
+    `brew bump-formula-pr --version a.b pcalc`
 
-6) Test the updated brew formula by running
+6) Wait until homebrew-core accepts the pr, then test the updated brew formula by running
 ```
 brew update
 
