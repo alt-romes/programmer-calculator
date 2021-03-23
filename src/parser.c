@@ -310,15 +310,29 @@ static exprtree parse_number(parser_t parser) {
     assert(parser->pos < parser->ntokens);
     
     int numbertype = DEC_TYPE;
-    if (parser->tokens[parser->pos] == '0' && parser->pos+1 < parser->ntokens) {
-        if (parser->tokens[parser->pos+1] == 'x') {
-            numbertype = HEX_TYPE;
-            parser->pos += 2;
+    if (parser->pos+1 < parser->ntokens) {
+        switch (parser->tokens[parser->pos]) {
+            case '0':
+                if (parser->tokens[parser->pos+1] == 'b') {
+                    // Enter if number is binary
+                    numbertype = BIN_TYPE;
+                    parser->pos += 2;
+                    break;
+                } else if (parser->tokens[parser->pos+1] == 'x'){
+                    // Enter is number is hex
+                    goto hex;
+                } else {
+                    // Enter if number is decimal
+                    break;
+                }
+            case 'x':
+hex:
+                numbertype = HEX_TYPE;
+                // If x was 1st character add 1 otherwise add 2 to parser->pos
+                parser->pos += (parser->tokens[parser->pos] == 'x') ? 1 : 2;
+
         }
-        else if (parser->tokens[parser->pos+1] == 'b') {
-            numbertype = BIN_TYPE;
-            parser->pos += 2;
-        }
+
     }
 
     char numberfound[MAX_TOKENS + 1];
@@ -346,7 +360,6 @@ static exprtree parse_number(parser_t parser) {
         long long zerov = 0;
         return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
     }
-
 
     // Else, create the expression from the found number
     int numberbase = 0;
