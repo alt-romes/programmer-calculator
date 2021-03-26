@@ -387,71 +387,90 @@ static void get_input(char* in) {
     // Collect input until enter is pressed
     for (int pos = 0, len = 0; (inp = getchar()) != 13 && inp != '\n';) {
 
-        /* Check for forbidden keys
-         * -1 is a key that indicates the terminal got resized
-         */
-        if (inp <= 0) {
-            update_win_borders(numbers);
-            continue;
-        }
-
         // Get max possible input length
         int max = getmaxx(inputwin) - INPUT_START;
 
         int searched = 0;
-        
-        // Handles all arrow keys
-        if (inp == 27) {
-            getchar();
-            inp = getchar();
-            if (inp == 'A') {
-                // Up arrow
-                browsehistory(in, -1, &history_counter);
-                len = strlen(in);
-                searched = 1;
-                browsing = 0;
-            }
-            else if (inp == 'B') {
-                // Down arrow
-                browsehistory(in, 1, &history_counter);
-                len = strlen(in);
-                searched = 1;
-                browsing = 0;
-            }
-            else if (inp == 'D') {
-                // Left arrow
+
+        /* Check for forbidden keys
+         * -1 is a key that indicates the terminal got resized
+         *  5 is a key that indicates mouse wheel down 
+         *  25 is a key that indicates mouse wheel up
+         *  27 is a key that indicates an arrow key was pressed
+         *  127 is a key that indicates the brackspace key was pressed
+         */
+        switch(inp) {
+            
+            case -1:
+                update_win_borders(numbers);
+            case 5:
+            case 25:
+                continue;
+                break;
+
+            case 27:
+                getchar();
+                inp = getchar();
+                switch (inp) {
+
+                    case 'A':
+                        // Up arrow
+                        browsehistory(in, -1, &history_counter);
+                        len = strlen(in);
+                        searched = 1;
+                        browsing = 0;
+
+                        break;
+
+                    case 'B':
+                        // Down arrow
+                        browsehistory(in, 1, &history_counter);
+                        len = strlen(in);
+                        searched = 1;
+                        browsing = 0;
+
+                        break;
+
+                    case 'C':
+                        // Right arrow
+                        if (browsing) {    // The right arrow should only work while in the middle of the input
+                            pos++;
+    
+                            // Exit browsing mode if the cursor is at the end of the input
+                            if (pos == len) {
+                                browsing = 0;
+                            }
+                        }
+                        searched = 1;
+
+                        break;
+
+                    case 'D':
+                        // Left arrow
+                        if (pos != 0) {
+                            pos--;
+                            browsing = 1; // The left arrow will always be in browsing mode, so no need for a check
+                        }
+                        searched = 1;
+
+                        break;
+                }
+                break;
+
+            case 127:
+                // Backspace
+
                 if (pos != 0) {
                     pos--;
-                    browsing = 1; // The left arrow will always be in browsing mode, so no need for a check
+                    len--;
+                    inp = '\0';
                 }
-                searched = 1;
-            }
-            else if (inp == 'C') {
-                // Right arrow
-                if (browsing) {    // The right arrow should only work while in the middle of the input
-                    pos++;
-    
-                    // Exit browsing mode if the cursor is at the end of the input
-                    if (pos == len) {
-                        browsing = 0;
-                    }
+                else {
+                    // Skip printing if backspace was pressed but nothing was done, otherwise a strange undefined character is printed
+                    searched = 1;
                 }
-                searched = 1;
-            }
-        }
+                break;
 
-        if (inp == 127) {
-            // Backspace
-
-            if (pos != 0) {
-                pos--;
-                len--;
-                inp = '\0';
-            }
-            else {
-                // Skip printing if backspace was pressed but nothing was done, otherwise a strange undefined character is printed
-                searched = 1;
-            }
         }
 
         // Prevent user to input more than MAX_IN
