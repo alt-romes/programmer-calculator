@@ -19,6 +19,7 @@ int hex_enabled = 1;
 int symbols_enabled = 1;
 int binary_enabled = 1;
 int history_enabled = 1;
+int colors_enabled = 1;
 
 int use_interface = 1;
 
@@ -30,6 +31,12 @@ void init_gui() {
     if (use_interface) {
 
         initscr();
+        if (colors_enabled && has_colors() == true) {
+            start_color();
+            init_pair(COLOR1, COLOR_RED, COLOR_BLACK);
+        } else {
+            colors_enabled = 0;
+        }
         cbreak();
 
         getmaxyx(stdscr, wMaxY, wMaxX);
@@ -40,15 +47,14 @@ void init_gui() {
         box(displaywin, ' ', 0);
         if (symbols_enabled) {
 
-            mvwprintw(displaywin, wMaxY-7, 2, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n");
-            wprintw(displaywin, "  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n");
-            wprintw(displaywin, "  SL   <    SR   >    RL   :    RR   ;    2's  _");
+            mvwprintw_colors(displaywin, wMaxY-7, 2, COLOR1, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n");
+            wprintw_colors(displaywin, COLOR1, "  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n");
+            wprintw_colors(displaywin, COLOR1, "  SL   <    SR   >    RL   :    RR   ;    2's  _");
         }
         wrefresh(displaywin);
 
         inputwin = newwin(3, wMaxX, wMaxY-3, 0);
         refresh();
-
         box(inputwin, ' ', 0);
         wrefresh(inputwin);
 
@@ -143,6 +149,28 @@ void draw(numberstack* numbers, operation* current_op) {
         printf("Decimal: %lld, Hex: 0x%llx, Operation: %c\n", n, n, current_op ? current_op->character : ' ');
         /* printf("created|freed -> tokens: %d|%d, parsers: %d|%d, trees: %d|%d\n", total_tokens_created, total_tokens_freed, total_parsers_created, total_parsers_freed, total_trees_created, total_trees_freed); */
     }
+}
+
+void mvwprintw_colors(WINDOW *w, int y, int x, enum colors color_pair, const char *format, ...) {
+    
+    va_list ap;
+    va_start(ap, format);
+    wattron(w, COLOR_PAIR(color_pair));
+    wmove(w, y, x);
+    vw_printw(w, format, ap);
+    wattroff(w, COLOR_PAIR(color_pair));
+    va_end(ap);
+
+}
+
+void wprintw_colors(WINDOW *w, enum colors color_pair, const char *format, ...) {
+    
+    va_list ap;
+    va_start(ap, format);
+    wattron(w, COLOR_PAIR(color_pair));
+    vw_printw(w, format, ap);
+    wattroff(w, COLOR_PAIR(color_pair));
+    va_end(ap);
 }
 
 void update_win_borders(numberstack* numbers) {
