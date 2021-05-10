@@ -1,0 +1,6 @@
+*.o
+*.a
+output/*
+pcalc
+.DS_Store
+.gitignore
