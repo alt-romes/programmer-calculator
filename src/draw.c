@@ -31,10 +31,13 @@ void init_gui() {
     if (use_interface) {
 
         initscr();
+        /* Only use colors if set so and if available */
         if (colors_enabled && has_colors() == true) {
             start_color();
+            /* Every color pair needs to be initalized before use */
             init_pair(COLOR1, COLOR_RED, COLOR_BLACK);
         } else {
+            /* Disable colors if terminal does not support colors */
             colors_enabled = 0;
         }
         cbreak();
@@ -52,7 +55,6 @@ void init_gui() {
             wprintw_colors(displaywin, COLOR1, "  SL   <    SR   >    RL   :    RR   ;    2's  _");
         }
         wrefresh(displaywin);
-
         inputwin = newwin(3, wMaxX, wMaxY-3, 0);
         refresh();
         box(inputwin, ' ', 0);
@@ -152,11 +154,11 @@ void draw(numberstack* numbers, operation* current_op) {
 }
 
 void mvwprintw_colors(WINDOW* w, int y, int x, enum colors color_pair, const char* format, ...) {
-     
+    /* Prints colors if available otherwise not */
     va_list ap;
     va_start(ap, format);
-    wattron(w, COLOR_PAIR(color_pair));
     wmove(w, y, x);
+    wattron(w, COLOR_PAIR(color_pair));
     vw_printw(w, format, ap);
     wattroff(w, COLOR_PAIR(color_pair));
     va_end(ap);
@@ -164,7 +166,7 @@ void mvwprintw_colors(WINDOW* w, int y, int x, enum colors color_pair, const cha
 }
 
 void wprintw_colors(WINDOW* w, enum colors color_pair, const char* format, ...) {
-    
+    /* Prints colors if available otherwise not */
     va_list ap;
     va_start(ap, format);
     wattron(w, COLOR_PAIR(color_pair));
