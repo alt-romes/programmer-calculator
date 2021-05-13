@@ -35,7 +35,7 @@ void init_gui() {
         if (colors_enabled && has_colors() == true) {
             start_color();
             /* Every color pair needs to be initalized before use */
-            init_pair(COLOR1, COLOR_RED, COLOR_BLACK);
+            init_pair(COLOR_PAIR1, COLOR_RED, COLOR_BLACK);
         } else {
             /* Disable colors if terminal does not support colors */
             colors_enabled = 0;
@@ -50,9 +50,9 @@ void init_gui() {
         box(displaywin, ' ', 0);
         if (symbols_enabled) {
 
-            mvwprintw_colors(displaywin, wMaxY-7, 2, COLOR1, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n");
-            wprintw_colors(displaywin, COLOR1, "  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n");
-            wprintw_colors(displaywin, COLOR1, "  SL   <    SR   >    RL   :    RR   ;    2's  _");
+            mvwprintw_colors(displaywin, wMaxY-7, 2, COLOR_PAIR1, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n");
+            wprintw_colors(displaywin, COLOR_PAIR1, "  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n");
+            wprintw_colors(displaywin, COLOR_PAIR1, "  SL   <    SR   >    RL   :    RR   ;    2's  _");
         }
         wrefresh(displaywin);
         inputwin = newwin(3, wMaxX, wMaxY-3, 0);

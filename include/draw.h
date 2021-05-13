@@ -8,15 +8,15 @@
 
 enum colors {
 
-    COLOR0,
-    COLOR1,
-    COLOR2,
-    COLOR3,
-    COLOR4,
-    COLOR5,
-    COLOR6,
-    COLOR7,
-    COLOR8
+    COLOR_PAIR0,
+    COLOR_PAIR1,
+    COLOR_PAIR2,
+    COLOR_PAIR3,
+    COLOR_PAIR4,
+    COLOR_PAIR5,
+    COLOR_PAIR6,
+    COLOR_PAIR7,
+    COLOR_PAIR8
 
 };
 
