@@ -151,8 +151,8 @@ void draw(numberstack* numbers, operation* current_op) {
     }
 }
 
-void mvwprintw_colors(WINDOW *w, int y, int x, enum colors color_pair, const char *format, ...) {
-    
+void mvwprintw_colors(WINDOW* w, int y, int x, enum colors color_pair, const char* format, ...) {
+     
     va_list ap;
     va_start(ap, format);
     wattron(w, COLOR_PAIR(color_pair));
@@ -163,7 +163,7 @@ void mvwprintw_colors(WINDOW *w, int y, int x, enum colors color_pair, const cha
 
 }
 
-void wprintw_colors(WINDOW *w, enum colors color_pair, const char *format, ...) {
+void wprintw_colors(WINDOW* w, enum colors color_pair, const char* format, ...) {
     
     va_list ap;
     va_start(ap, format);

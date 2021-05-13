@@ -31,7 +31,7 @@ void init_gui();
 void draw(numberstack*, operation*);
 void update_win_borders(numberstack* numbers);
 void sweepline(WINDOW*, int, int);
-void mvwprintw_colors(WINDOW *w, int y, int x, enum colors color_pair, const char *format, ...);
-void wprintw_colors(WINDOW *w, enum colors color_pair, const char *format, ...);
+void mvwprintw_colors(WINDOW* w, int y, int x, enum colors color_pair, const char* format, ...);
+void wprintw_colors(WINDOW* w, enum colors color_pair, const char* format, ...);
 
 #endif
