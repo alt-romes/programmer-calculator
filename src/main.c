@@ -526,7 +526,7 @@ static void get_input(char* in) {
         sweepline(inputwin, 1, 22);
 
         // Finaly print input
-        mvwprintw(inputwin, 1, 22, "%s", in);
+        mvwprintw_colors(inputwin, 1, 22, COLOR_PAIR_DEFAULT, "%s", in);
 
         wmove(inputwin, 1, 22 + pos); // Move the cursor
         
