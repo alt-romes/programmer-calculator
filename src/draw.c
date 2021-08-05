@@ -41,7 +41,7 @@ void init_gui() {
             init_pair(COLOR_PAIR_BINARY, COLOR_CYAN, COLOR_BLACK);
             init_pair(COLOR_PAIR_SYMBOLS, COLOR_YELLOW, COLOR_BLACK);
             init_pair(COLOR_PAIR_HISTORY, COLOR_BLUE, COLOR_BLACK);
-            init_pair(COLOR_PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
+            init_pair(COLOR_PAIR_INPUT, COLOR_YELLOW, COLOR_BLACK);
         } else {
             /* Disable colors if terminal does not support colors */
             colors_enabled = 0;
