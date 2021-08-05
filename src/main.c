@@ -52,13 +52,14 @@ int main(int argc, char* argv[])
         {"decimal", no_argument, NULL, 'd'},
         {"operation", no_argument, NULL, 'o'},
         {"symbol", no_argument, NULL, 's'},
+        {"no-colors", no_argument, NULL, 'n'},
         {"no-interface", no_argument, NULL, 'c'}
 
      };
 
     // Get command line options to hide parts of the display
     int opt;
-    while ((opt = getopt_long(argc, argv, "hvibxdosc", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hvibxdoscn", long_options, NULL)) != -1) {
         switch (opt) {
 
             case 'h':
@@ -106,6 +107,9 @@ int main(int argc, char* argv[])
 
             case 'c':
                 use_interface = 0;
+                break;
+            case 'n':
+                colors_enabled = 0;
                 break;
 
             default:
@@ -522,7 +526,7 @@ static void get_input(char* in) {
         sweepline(inputwin, 1, 22);
 
         // Finaly print input
-        mvwprintw(inputwin, 1, 22, "%s", in);
+        mvwprintw_colors(inputwin, 1, 22, COLOR_PAIR_DEFAULT, "%s", in);
 
         wmove(inputwin, 1, 22 + pos); // Move the cursor
         
