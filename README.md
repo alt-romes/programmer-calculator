@@ -13,6 +13,8 @@ and who likes:
 * terminal/cli tools
 
 ![Screen](https://raw.githubusercontent.com/alt-romes/programmer-calculator/master/assets/v2.0-ss.png)
+The above picture depicts `pcalc` without colors, and below is an example of `pcalc` with colors enabled (which change depending on the terminal profile colors)
+![Screen-Colored](https://raw.githubusercontent.com/alt-romes/programmer-calculator/master/assets/v2.0-ss-colors.png)
 
 ## Making of
 
@@ -121,11 +123,13 @@ While running the calculator, you can type *what you see* for it to appear/disap
 `hex` to toggle the hexadecimal representation
 `operation` to toggle the operation display
 
+Additionally, the interface colors can be toggled on and off.
+
 To set a default interface, define an alias for the program with the desired hidden options
 ```
-$ alias pcalc='pcalc -ibxdos'
+$ alias pcalc='pcalc -ibxdosn'
 ```
-i: history, b: binary, x: hex, d: decimal, o: operation, s: symbols
+i: history, b: binary, x: hex, d: decimal, o: operation, s: symbols, n: no colors
 
 You can also use the long options to hide parts: `--history`, `--decimal`, etc.
 
