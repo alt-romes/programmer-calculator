@@ -35,13 +35,13 @@ void init_gui() {
         if (colors_enabled && has_colors() == true) {
             start_color();
             /* Every color pair needs to be initalized before use */
-            init_pair(COLOR_PAIR_OPERATION, COLOR_GREEN, COLOR_BLACK);
-            init_pair(COLOR_PAIR_DECIMAL, COLOR_BLUE, COLOR_BLACK);
+            init_pair(COLOR_PAIR_OPERATION, COLOR_YELLOW, COLOR_BLACK);
+            init_pair(COLOR_PAIR_DECIMAL, COLOR_RED, COLOR_BLACK);
             init_pair(COLOR_PAIR_HEX, COLOR_MAGENTA, COLOR_BLACK);
             init_pair(COLOR_PAIR_BINARY, COLOR_CYAN, COLOR_BLACK);
-            init_pair(COLOR_PAIR_HISTORY, COLOR_YELLOW, COLOR_BLACK);
-            init_pair(COLOR_PAIR_SYMBOLS, COLOR_RED, COLOR_BLACK);
-            init_pair(COLOR_PAIR_INPUT, COLOR_GREEN, COLOR_BLACK);
+            init_pair(COLOR_PAIR_SYMBOLS, COLOR_YELLOW, COLOR_BLACK);
+            init_pair(COLOR_PAIR_HISTORY, COLOR_BLUE, COLOR_BLACK);
+            init_pair(COLOR_PAIR_INPUT, COLOR_WHITE, COLOR_BLACK);
         } else {
             /* Disable colors if terminal does not support colors */
             colors_enabled = 0;
@@ -56,9 +56,9 @@ void init_gui() {
         box(displaywin, ' ', 0);
         if (symbols_enabled) {
 
-            mvwprintw_colors(displaywin, wMaxY-7, 2, COLOR_PAIR_HISTORY, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n");
-            wprintw_colors(displaywin, COLOR_PAIR_HISTORY, "  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n");
-            wprintw_colors(displaywin, COLOR_PAIR_HISTORY, "  SL   <    SR   >    RL   :    RR   ;    2's  _");
+            mvwprintw_colors(displaywin, wMaxY-7, 2, COLOR_PAIR_SYMBOLS, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n");
+            wprintw_colors(displaywin, COLOR_PAIR_SYMBOLS, "  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n");
+            wprintw_colors(displaywin, COLOR_PAIR_SYMBOLS, "  SL   <    SR   >    RL   :    RR   ;    2's  _");
         }
         wrefresh(displaywin);
         inputwin = newwin(3, wMaxX, wMaxY-3, 0);
@@ -98,7 +98,7 @@ static void printbinary(long long value, int priority) {
 
 static void printhistory(numberstack* numbers, int priority) {
     int currY,currX;
-    mvwprintw_colors(displaywin, 14-priority, 2, COLOR_PAIR_SYMBOLS, "History:   ");
+    mvwprintw_colors(displaywin, 14-priority, 2, COLOR_PAIR_HISTORY, "History:   ");
     for (int i=0; i<history.size; i++) {
         getyx(displaywin,currY,currX);
         if(currX >= wMaxX-3 || currY > 14) {
@@ -106,7 +106,7 @@ static void printhistory(numberstack* numbers, int priority) {
             long long aux = *top_numberstack(numbers);
             add_number_to_history(aux, 0);
         }
-        wprintw_colors(displaywin, COLOR_PAIR_SYMBOLS, "%s ", history.records[i]);
+        wprintw_colors(displaywin, COLOR_PAIR_HISTORY, "%s ", history.records[i]);
     }
 }
 
