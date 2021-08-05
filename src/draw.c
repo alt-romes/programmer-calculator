@@ -36,11 +36,11 @@ void init_gui() {
             start_color();
             /* Every color pair needs to be initalized before use */
             init_pair(COLOR_PAIR_OPERATION, COLOR_YELLOW, COLOR_BLACK);
-            init_pair(COLOR_PAIR_DECIMAL, COLOR_RED, COLOR_BLACK);
+            init_pair(COLOR_PAIR_DECIMAL, COLOR_CYAN, COLOR_BLACK);
             init_pair(COLOR_PAIR_HEX, COLOR_MAGENTA, COLOR_BLACK);
             init_pair(COLOR_PAIR_BINARY, COLOR_CYAN, COLOR_BLACK);
             init_pair(COLOR_PAIR_SYMBOLS, COLOR_YELLOW, COLOR_BLACK);
-            init_pair(COLOR_PAIR_HISTORY, COLOR_BLUE, COLOR_BLACK);
+            init_pair(COLOR_PAIR_HISTORY, COLOR_MAGENTA, COLOR_BLACK);
             init_pair(COLOR_PAIR_INPUT, COLOR_YELLOW, COLOR_BLACK);
         } else {
             /* Disable colors if terminal does not support colors */
