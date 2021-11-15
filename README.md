@@ -13,7 +13,7 @@ and who likes:
 * terminal/cli tools
 
 ![Screen](https://raw.githubusercontent.com/alt-romes/programmer-calculator/master/assets/v2.0-ss.png)
-The above picture depicts `pcalc` without colors, and below is an example of `pcalc` with colors enabled (which change depending on the terminal profile colors)
+The above picture depicts `pcalc` without colors, and below is an example of `pcalc` with colors enabled (`--colors`) (which change depending on the terminal profile colors)
 ![Screen-Colored](https://raw.githubusercontent.com/alt-romes/programmer-calculator/colors/assets/v2.0-ss-colors.png)
 
 ## Making of
