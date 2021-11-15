@@ -52,17 +52,18 @@ int main(int argc, char* argv[])
         {"decimal", no_argument, NULL, 'd'},
         {"operation", no_argument, NULL, 'o'},
         {"symbol", no_argument, NULL, 's'},
-        {"no-interface", no_argument, NULL, 'c'}
+        {"colors", no_argument, NULL, 'c'},
+        {"no-interface", no_argument, NULL, 'n'}
 
      };
 
     // Get command line options to hide parts of the display
     int opt;
-    while ((opt = getopt_long(argc, argv, "hvibxdosc", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hvibxdoscn", long_options, NULL)) != -1) {
         switch (opt) {
 
             case 'h':
-                puts("\nCurrently --help only displays the following information about the program options.");
+                puts("Currently --help only displays the following information about the program options.");
                 puts("If you think something else should be here let us know @ github.com/alt-romes/programmer-calculator");
                 puts("The following options customize the interface: -ibxdos");
                 puts("--history = -i");
@@ -70,8 +71,10 @@ int main(int argc, char* argv[])
                 puts("--hex = -x");
                 puts("--decimal = -d");
                 puts("--operation = -o");
-                puts("--symbol = -s\n");
-                puts("--no-interface = -c\n");
+                puts("--symbol = -s");
+                puts("Other options:");
+                puts("--colors = -c");
+                puts("--no-interface = -n");
                 exit(0);
                 break;
 
@@ -104,8 +107,12 @@ int main(int argc, char* argv[])
                 symbols_enabled = 0;
                 break;
 
-            case 'c':
+            case 'n':
                 use_interface = 0;
+                break;
+
+            case 'c':
+                colors_enabled = 1;
                 break;
 
             default:
@@ -522,7 +529,10 @@ static void get_input(char* in) {
         sweepline(inputwin, 1, 22);
 
         // Finaly print input
-        mvwprintw(inputwin, 1, 22, "%s", in);
+        if (use_interface)
+            mvwprintw_colors(inputwin, 1, 22, COLOR_PAIR_DEFAULT, "%s", in);
+        else
+            mvwprintw(inputwin, 1, 22, "%s", in);
 
         wmove(inputwin, 1, 22 + pos); // Move the cursor
         
