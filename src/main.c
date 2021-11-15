@@ -52,8 +52,8 @@ int main(int argc, char* argv[])
         {"decimal", no_argument, NULL, 'd'},
         {"operation", no_argument, NULL, 'o'},
         {"symbol", no_argument, NULL, 's'},
-        {"no-colors", no_argument, NULL, 'n'},
-        {"no-interface", no_argument, NULL, 'c'}
+        {"colors", no_argument, NULL, 'c'},
+        {"no-interface", no_argument, NULL, 'n'}
 
      };
 
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
         switch (opt) {
 
             case 'h':
-                puts("\nCurrently --help only displays the following information about the program options.");
+                puts("Currently --help only displays the following information about the program options.");
                 puts("If you think something else should be here let us know @ github.com/alt-romes/programmer-calculator");
                 puts("The following options customize the interface: -ibxdos");
                 puts("--history = -i");
@@ -71,8 +71,10 @@ int main(int argc, char* argv[])
                 puts("--hex = -x");
                 puts("--decimal = -d");
                 puts("--operation = -o");
-                puts("--symbol = -s\n");
-                puts("--no-interface = -c\n");
+                puts("--symbol = -s");
+                puts("Other options:");
+                puts("--colors = -c");
+                puts("--no-interface = -n");
                 exit(0);
                 break;
 
@@ -105,11 +107,12 @@ int main(int argc, char* argv[])
                 symbols_enabled = 0;
                 break;
 
-            case 'c':
+            case 'n':
                 use_interface = 0;
                 break;
-            case 'n':
-                colors_enabled = 0;
+
+            case 'c':
+                colors_enabled = 1;
                 break;
 
             default:

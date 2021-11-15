@@ -19,7 +19,7 @@ int hex_enabled = 1;
 int symbols_enabled = 1;
 int binary_enabled = 1;
 int history_enabled = 1;
-int colors_enabled = 1;
+int colors_enabled = 0;
 
 int use_interface = 1;
 
