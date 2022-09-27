@@ -174,9 +174,10 @@
         <br>
 
         <h4>Operations</h4>
-        <pre>ADD  +    SUB  -    MUL  *    DIV  /    MOD  %
-AND  &    OR   |    NOR  $    XOR  ^    NOT  ~
-SL   <    SR   >    RL   :    RR   ;    2's  _</pre>
+        <pre>ADD  +    SUB  -    MUL  *    DIV  /
+MOD  %    AND  &    OR   |    NOR  $
+XOR  ^    NOT  ~    SL   <    SR   >
+RL   :    RR   ;    2's  _    SE   @</pre>
 
         <ul>
             <li>ADD: <span class="inline-code">a + b</span> <small class="comment">arithmetic addition</small></li>
@@ -223,7 +224,9 @@ SL   <    SR   >    RL   :    RR   ;    2's  _</pre>
         <ul>
             <li>2's: <span class="inline-code">_a</span> &nbsp;&nbsp; <small class="comment">2's complement operation : 2's complement of <em>a</em> (usually is the symmetric of a)</small></li>
         </ul>
-
+		<ul>
+			<li>SE&nbsp;: <span class="inline-code">@a</span> &nbsp;&nbsp; <small class="comment">swap endianness : swap the byte order of <em>a</em> (uses the number of bits set by <em>cb</em> to determine the amount of bits swapped)</small></li>
+		</ul>
 
         <div style="text-align:center; margin-top: 5em;">
             

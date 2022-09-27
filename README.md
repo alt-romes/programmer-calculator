@@ -136,9 +136,10 @@ You can also use the long options to hide parts: `--history`, `--decimal`, etc.
 
 ### Operations
 ```
-ADD  +    SUB  -    MUL  *    DIV  /    MOD  %
-AND  &    OR   |    NOR  $    XOR  ^    NOT  ~
-SL   <    SR   >    RL   :    RR   ;    2's  _
+ADD  +    SUB  -    MUL  *    DIV  /
+MOD  %    AND  &    OR   |    NOR  $
+XOR  ^    NOT  ~    SL   <    SR   >
+RL   :    RR   ;    2's  _    SE   @
 ```
 
 * ADD: `a + b` arithmetic addition
@@ -156,6 +157,7 @@ SL   <    SR   >    RL   :    RR   ;    2's  _
 * RL : `a : b` bit-wise ROTATE-LEFT operation : rotate a left b number of times
 * RR : `a ; b` bit-wise ROTATE-LEFT operation : rotate a right b number of times
 * 2's: `_a`    2's complement operation : 2's complement of a (usually is the symmetric of a)
+* SE : `@a`    swap endianness : swap the byte order of a (uses the number of bits set by `cb` to determine the amount of bits swapped)
 
 
 ## Contributing

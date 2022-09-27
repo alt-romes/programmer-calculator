@@ -112,6 +112,12 @@ Decimal: 0, Hex: 0x0, Operation:
 Decimal: 0, Hex: 0x0, Operation:  
 Decimal: 0, Hex: 0x0, Operation:  
 Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 0, Hex: 0x0, Operation:  
 Decimal: 0, Hex: 0x0, Operation: +
 Decimal: 0, Hex: 0x0, Operation: -
 Decimal: 0, Hex: 0x0, Operation: *
@@ -127,6 +133,7 @@ Decimal: -1, Hex: 0xffffffffffffffff, Operation: >
 Decimal: -1, Hex: 0xffffffffffffffff, Operation: :
 Decimal: -1, Hex: 0xffffffffffffffff, Operation: ;
 Decimal: 1, Hex: 0x1, Operation:  
+Decimal: 72057594037927936, Hex: 0x100000000000000, Operation:  
 Decimal: 0, Hex: 0x0, Operation:  
 Decimal: 0, Hex: 0x0, Operation:  
 Decimal: 0, Hex: 0x0, Operation:  
