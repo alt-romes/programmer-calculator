@@ -20,8 +20,9 @@ static long long rol(long long, long long);
 static long long modulus(long long, long long);
 static long long not(long long, long long);
 static long long twos_complement(long long, long long);
+static long long swap_endianness(long long, long long);
 
-static operation operations[15] = {
+static operation operations[16] = {
     {ADD_SYMBOL, 2, add},
     {SUB_SYMBOL, 2, subtract},
     {MUL_SYMBOL, 2, multiply},
@@ -36,7 +37,8 @@ static operation operations[15] = {
     {ROR_SYMBOL, 2, ror},
     {MOD_SYMBOL, 2, modulus},
     {NOT_SYMBOL, 1, not},
-    {TWOSCOMPLEMENT_SYMBOL, 1, twos_complement}
+    {TWOSCOMPLEMENT_SYMBOL, 1, twos_complement},
+    {SWAPENDIANNESS_SYMBOL, 1, swap_endianness}
 };
 
 operation* getopcode(char c)  {
@@ -134,4 +136,19 @@ static long long not(long long a, long long UNUSED(b)) {
 static long long twos_complement(long long a, long long UNUSED(b)) {
 
     return -a;
+}
+
+static long long swap_endianness(long long a, long long UNUSED(b)) {
+
+    long long out = 0;
+    // shift the leftmost bits to the right
+    for (int i = 0; i < globalmasksize / 16; i++) {
+        //        create a bitmask and apply it to a        and shift the selected byte to its new position
+        out |= (a & (0xffull << (globalmasksize-8 - i*8)) ) >> (globalmasksize-8 - i*16);
+    }
+    // shift the rightmost bits left (and leave the miidle bit in place in the case of an odd number of bytes)
+    for (int i = 0; i < globalmasksize / 16 + 1; i++) {
+        out |= (a & (0xffull << (((globalmasksize/2 - 1) & -8) - i*8)) ) << (((globalmasksize/8 & 1) ? 0 : 8) + i*16);
+    }
+    return out;
 }

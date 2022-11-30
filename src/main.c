@@ -252,7 +252,7 @@ static void process_input(operation** current_op, char* in) {
         int ntokens = strlen(tokens);
 
         if (tokens[0] != '\0' && strchr(ALL_OPS, tokens[0]) && 
-                (ntokens == 1 || (tokens[0] != NOT_SYMBOL && tokens[0] != TWOSCOMPLEMENT_SYMBOL))) {
+                (ntokens == 1 || (tokens[0] != NOT_SYMBOL && tokens[0] != TWOSCOMPLEMENT_SYMBOL && tokens[0] != SWAPENDIANNESS_SYMBOL))) {
 
             // The input is either just an op, or an expression that starts with an op that isn't a prefix | case 1 or case 3
 

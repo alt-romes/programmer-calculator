@@ -56,9 +56,10 @@ void init_gui() {
         box(displaywin, ' ', 0);
         if (symbols_enabled) {
 
-            mvwprintw_colors(displaywin, wMaxY-7, 2, COLOR_PAIR_SYMBOLS, "ADD  +    SUB  -    MUL  *    DIV  /    MOD  %%\n");
-            wprintw_colors(displaywin, COLOR_PAIR_SYMBOLS, "  AND  &    OR   |    NOR  $    XOR  ^    NOT  ~\n");
-            wprintw_colors(displaywin, COLOR_PAIR_SYMBOLS, "  SL   <    SR   >    RL   :    RR   ;    2's  _");
+            mvwprintw_colors(displaywin, wMaxY-8, 2, COLOR_PAIR_SYMBOLS, "ADD  +    SUB  -    MUL  *    DIV  /\n");
+            wprintw_colors(displaywin, COLOR_PAIR_SYMBOLS, "  MOD  %%    AND  &    OR   |    NOR  $\n");
+            wprintw_colors(displaywin, COLOR_PAIR_SYMBOLS, "  XOR  ^    NOT  ~    SL   <    SR   >\n");
+            wprintw_colors(displaywin, COLOR_PAIR_SYMBOLS, "  RL   :    RR   ;    2's  _    SE   @");
         }
         wrefresh(displaywin);
         inputwin = newwin(3, wMaxX, wMaxY-3, 0);

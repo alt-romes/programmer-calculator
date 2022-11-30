@@ -194,7 +194,7 @@ static exprtree parse_mult_expr(parser_t parser) {
 
 static exprtree parse_prefix_expr(parser_t parser) {
 
-    // Grammar rule: prefix_exp := (~ | + | -)? atom_exp
+    // Grammar rule: prefix_exp := (~ | + | - | @)? atom_exp
 
     // TODO: Display input invalid instead of using a zero-val expression
     if (!(parser->pos < parser->ntokens)) {
@@ -204,7 +204,7 @@ static exprtree parse_prefix_expr(parser_t parser) {
     }
 
 
-    char prefixes[] = {ADD_SYMBOL, SUB_SYMBOL, NOT_SYMBOL, TWOSCOMPLEMENT_SYMBOL, '\0'};
+    char prefixes[] = {ADD_SYMBOL, SUB_SYMBOL, NOT_SYMBOL, TWOSCOMPLEMENT_SYMBOL, SWAPENDIANNESS_SYMBOL, '\0'};
 
     // If we've exceeded the number of tokens we should detect an error
     assert(parser->pos < parser->ntokens);
@@ -227,7 +227,7 @@ static exprtree parse_prefix_expr(parser_t parser) {
         return expr;
     else {
 
-        // Prefix is either SUB_SYMBOL, NOT_SYMBOL or TWOSCOMPLEMENT_SYMBOL
+        // Prefix is either SUB_SYMBOL, NOT_SYMBOL, TWOSCOMPLEMENT_SYMBOL or SWAPENDIANNESS_SYMBOL
 
         // We get the operation to use in the expression
         operation* op = getopcode(prefix);

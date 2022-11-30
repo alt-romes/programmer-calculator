@@ -29,7 +29,7 @@ add_exp := mult_exp ((+ | -) mult_exp)*
 
 mult_exp := not_exp ((* | / | %) not_exp)*
 
-prefix_exp: (~ | + | -)? atom_exp
+prefix_exp: (~ | + | - | @)? atom_exp
 
 atom_exp: number | left_parenthesis expression right_parenthesis
 
