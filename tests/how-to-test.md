@@ -2,11 +2,11 @@
 
 The folder `tests` has two files for each test. `file.test` and `file.correct`
 
-The `.test` file is the input passed into `pcalc -c`, and the `.correct` file is the expected output
+The `.test` file is the input passed into `pcalc -n`, and the `.correct` file is the expected output
 
 To test one of these files run:
 ```
-$ diff -b tests/number-bases.correct <(cat tests/number-bases.test | ./pcalc -c)
+$ diff -b tests/number-bases.correct <(cat tests/number-bases.test | ./pcalc -n)
 ```
 
 If something is printed out to the console then the actual output and the expected output differ, and changes should be made until all tests pass.
@@ -30,10 +30,10 @@ I've found that the best way to write a test is by testing multiple operations i
 
 First: Test input while saving it
 ```
-$ tee -a tests/name-of-test.test | ./pcalc -c
+$ tee -a tests/name-of-test.test | ./pcalc -n
 ```
 
 If all results from the input inserted are correct, save the output as the correction
 ```
-$ cat tests/name-of-test.test | ./pcalc -c > name-of-test.correct
+$ cat tests/name-of-test.test | ./pcalc -n > name-of-test.correct
 ```
