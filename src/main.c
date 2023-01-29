@@ -203,7 +203,7 @@ static void process_input(operation** current_op, char* in) {
     else if (!strcmp(in, "operation"))
         operation_enabled = !operation_enabled;
 
-    else if (strstr(in, "cb") != NULL) {
+    else if (strstr(in, "bit") != NULL) {
 
         // Command to change the number of bits
 
