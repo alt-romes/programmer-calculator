@@ -106,11 +106,11 @@ All three number representations are available at the same time, you can insert 
 
 By default, 64 bits are used for arithmetic, however, when working with bits, quite often we want to work with less. With this calculator you can change the amount of bits used. the number displayed will be unsigned
 
-To use 16 bits instead, type `16cb` (cb for "change bits")
+To use 16 bits instead, type `16bit` (bits will also work)
 
-To use 8 bits, type `8cb`
+To use 8 bits, type `8bit`
 
-To use 0 < n <= 64 bits, type `ncb`
+To use 0 < n <= 64 bits, type `nbit`
 
 
 ### Customizing Interface
@@ -157,7 +157,7 @@ RL   :    RR   ;    2's  _    SE   @
 * RL : `a : b` bit-wise ROTATE-LEFT operation : rotate a left b number of times
 * RR : `a ; b` bit-wise ROTATE-LEFT operation : rotate a right b number of times
 * 2's: `_a`    2's complement operation : 2's complement of a (usually is the symmetric of a)
-* SE : `@a`    swap endianness : swap the byte order of a (uses the number of bits set by `cb` to determine the amount of bits swapped)
+* SE : `@a`    swap endianness : swap the byte order of a (uses the number of bits set by `bit` to determine the amount of bits swapped)
 
 
 ## Contributing

@@ -152,9 +152,9 @@
 
         <h4>Operand Size</h4>
         <p>By default, 64 bits are used for arithmetic, however, when working with bits, quite often we want to work with less. With this calculator you can change the amount of bits used. <small class="comment">the number displayed will be unsigned</small></p>
-        <p>To use 16 bits instead, type <span class="inline-code">16cb</span> <small class="comment">(cb for "change bits")</small></p>
-        <p>To use 8 bits, type <span class="inline-code">8cb</span></p>
-        <p>To use 0 < <em>n </em><= 64 bits, type <span class="inline-code"><em>n</em>cb</span></p>
+        <p>To use 16 bits instead, type <span class="inline-code">16bit</span> <small class="comment">(bits will also work)</small></p>
+        <p>To use 8 bits, type <span class="inline-code">8bit</span></p>
+        <p>To use 0 < <em>n </em><= 64 bits, type <span class="inline-code"><em>n</em>bit</span></p>
 
         <br>
 
@@ -225,7 +225,7 @@ RL   :    RR   ;    2's  _    SE   @</pre>
             <li>2's: <span class="inline-code">_a</span> &nbsp;&nbsp; <small class="comment">2's complement operation : 2's complement of <em>a</em> (usually is the symmetric of a)</small></li>
         </ul>
 		<ul>
-			<li>SE&nbsp;: <span class="inline-code">@a</span> &nbsp;&nbsp; <small class="comment">swap endianness : swap the byte order of <em>a</em> (uses the number of bits set by <em>cb</em> to determine the amount of bits swapped)</small></li>
+			<li>SE&nbsp;: <span class="inline-code">@a</span> &nbsp;&nbsp; <small class="comment">swap endianness : swap the byte order of <em>a</em> (uses the number of bits set by <em>bit</em> to determine the amount of bits swapped)</small></li>
 		</ul>
 
         <div style="text-align:center; margin-top: 5em;">

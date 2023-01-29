@@ -4,3 +4,4 @@ output/*
 pcalc
 .DS_Store
 .gitignore
+.vscode/*.json
