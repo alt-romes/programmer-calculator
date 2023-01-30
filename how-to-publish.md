@@ -19,10 +19,6 @@ curl -L https://github.com/alt-romes/programmer-calculator/archive/va.b.tar.gz >
 sha256sum va.b
 ```
 
-4) Edit the `Formula/pcalc.rb` - this is just to mirror the actual Formula being used
-    - change the URL to the new release tarball URL
-    - change the sha sum to the one just calculated
-
 5) Update formula in the official homebrew repository:
     `brew bump-formula-pr --version a.b pcalc`
 
@@ -32,10 +28,6 @@ brew update
 
 brew upgrade pcalc
 ```
-
-7) Edit `Formula/PKGBUILD` - this is just a mirror of the actual package installer
-    - change the version `pkgver` to `a.b`
-    - update the sha sum to the one just calculated
 
 8) Clone the AUR repository from https://aur.archlinux.org/packages/programmer-calculator/ (you must be a colaborator)
 
