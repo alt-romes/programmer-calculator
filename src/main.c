@@ -53,7 +53,8 @@ int main(int argc, char* argv[])
         {"operation", no_argument, NULL, 'o'},
         {"symbol", no_argument, NULL, 's'},
         {"colors", no_argument, NULL, 'c'},
-        {"no-interface", no_argument, NULL, 'n'}
+	{"no-interface", no_argument, NULL, 'n'},
+	{0,0,0,0}
 
      };
 
