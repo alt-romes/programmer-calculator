@@ -28,14 +28,14 @@ With the constant need to visualize and manipulate bits, it became evident that 
 
 Install from the homebrew official packages
 ```
-$ brew install pcalc
+brew install pcalc
 ```
 
 #### Arch Based Distros
 
 Install from AUR
 ```
-$ yay -S programmer-calculator
+yay -S programmer-calculator
 ```
 
 #### Building from Source (alternative)
@@ -49,34 +49,34 @@ To build from source you need `gcc`, `ncurses`, and the source files.
 
 First, clone the repository and change directory to it
 ```
-$ git clone https://github.com/alt-romes/programmer-calculator ; cd programmer-calculator
+git clone https://github.com/alt-romes/programmer-calculator ; cd programmer-calculator
 ```
 
 Then, compile the code into an executable file
 ```
-$ make
+make
 ```
 
 Finally, move the executable to a directory reachable by $PATH
 ```
-$ mv -i pcalc /usr/local/bin
+mv -i pcalc /usr/local/bin
 ```
 
 #### Updating
 Either re-build from source, or, using brew do
 ```
-$ brew update
+brew update
 ```
 followed by
 ```
-$ brew upgrade pcalc
+brew upgrade pcalc
 ```
 
 #### Running
 
 Just run the programmer calculator program
 ```
-$ pcalc
+pcalc
 ```
 
 ## Features
@@ -127,7 +127,7 @@ Additionally, the interface colors can be toggled on and off.
 
 To set a default interface, define an alias for the program with the desired hidden options
 ```
-$ alias pcalc='pcalc -ibxdosn'
+alias pcalc='pcalc -ibxdosn'
 ```
 i: history, b: binary, x: hex, d: decimal, o: operation, s: symbols, n: no colors
 
