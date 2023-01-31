@@ -52,15 +52,11 @@ First, clone the repository and change directory to it
 git clone https://github.com/alt-romes/programmer-calculator ; cd programmer-calculator
 ```
 
-Then, compile the code into an executable file
+Then, compile the code into an executable file and install it (installs in /usr/local/bin)
 ```
-make
+sudo make install
 ```
 
-Finally, move the executable to a directory reachable by $PATH
-```
-mv -i pcalc /usr/local/bin
-```
 
 #### Updating
 Either re-build from source, or, using brew do

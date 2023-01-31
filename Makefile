@@ -49,3 +49,9 @@ clean:
 run: all
 	./$(MAIN)
 	@echo Executing "run: all" complete!
+
+.PHONY: install
+install:
+	@echo Installing!
+	make all
+	@mv -i pcalc /usr/local/bin
