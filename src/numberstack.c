@@ -13,7 +13,8 @@ numberstack * create_numberstack(int max_size) {
 
     numberstack* s;
     s = xmalloc(sizeof(numberstack));
-    s->elements = xmalloc(max_size * sizeof(long long));
+    void* allocated[] = { s };
+    s->elements = xmalloc_with_ressources(max_size * sizeof(*s->elements), allocated, 1);
     s->size = 0;
     s->max_size = max_size;
     return s;
@@ -22,7 +23,8 @@ numberstack * create_numberstack(int max_size) {
 static numberstack * resize_numberstack(numberstack* s) {
 
     s->max_size *= 2;
-    s->elements = xrealloc(s->elements, s->max_size * sizeof(long long));
+    void* allocated[] = { s };
+    s->elements = xrealloc_with_ressources(s->elements, s->max_size * sizeof(*s->elements), allocated, 1);
     return s;
 
 }

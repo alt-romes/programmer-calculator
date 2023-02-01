@@ -44,17 +44,17 @@ int main(int argc, char* argv[])
     // Set all long arguments that can be used
     struct option long_options[] = {
 
-        {"help", no_argument, NULL, 'h'},
-        {"version", no_argument, NULL, 'v'},
-        {"history", no_argument, NULL, 'i'},
-        {"binary", no_argument, NULL, 'b'},
-        {"hex", no_argument, NULL, 'x'},
-        {"decimal", no_argument, NULL, 'd'},
-        {"operation", no_argument, NULL, 'o'},
-        {"symbol", no_argument, NULL, 's'},
-        {"colors", no_argument, NULL, 'c'},
-	{"no-interface", no_argument, NULL, 'n'},
-	{0,0,0,0}
+        {"help",            no_argument, NULL, 'h'},
+        {"version",         no_argument, NULL, 'v'},
+        {"history",         no_argument, NULL, 'i'},
+        {"binary",          no_argument, NULL, 'b'},
+        {"hex",             no_argument, NULL, 'x'},
+        {"decimal",         no_argument, NULL, 'd'},
+        {"operation",       no_argument, NULL, 'o'},
+        {"symbol",          no_argument, NULL, 's'},
+        {"colors",          no_argument, NULL, 'c'},
+        {"no-interface",    no_argument, NULL, 'n'},
+        {NULL,              0,           NULL,  0}
 
      };
 

@@ -424,7 +424,8 @@ static exprtree create_exprtree(int type, void* content, exprtree left, exprtree
 
     else {
 
-        expr->value = xmalloc(sizeof(long long));
+        void* allocated[] = { expr };
+        expr->value = xmalloc_with_ressources(sizeof(*expr->value), allocated, 1);
         *(expr->value) = *((long long*) content);
     }
 

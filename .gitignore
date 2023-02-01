@@ -5,3 +5,4 @@ pcalc
 .DS_Store
 .gitignore
 .vscode/*.json
+compile_flags.txt
