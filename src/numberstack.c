@@ -13,7 +13,7 @@ numberstack * create_numberstack(int max_size) {
 
     numberstack* s;
     s = xmalloc(sizeof(numberstack));
-    void *allocated[] = { s };
+    void* allocated[] = { s };
     s->elements = xmalloc_with_ressources(max_size * sizeof(*s->elements), allocated, 1);
     s->size = 0;
     s->max_size = max_size;
