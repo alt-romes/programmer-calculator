@@ -84,10 +84,9 @@ static void printbinary(long long value, int priority) {
     for (; i<64; i++, mask>>=1) {
 
         unsigned long long bitval = value & mask;
-        if(bitval && alt_colors_enabled)
-            wprintw_colors(displaywin, COLOR_PAIR_BINARY_ALT, "%c", '1');
-        else
-            wprintw_colors(displaywin, COLOR_PAIR_BINARY, "%c", bitval ? '1' : '0');
+        wprintw_colors(displaywin,
+            (alt_colors_enabled && bitval) ? COLOR_PAIR_BINARY_ALT : COLOR_PAIR_BINARY,
+            "%c", bitval ? '1' : '0');
 
         if (i%16 == 15 && 64 - ((i/16+1)*16))
             // TODO: Explain these numbers better (and decide if to keep them)
