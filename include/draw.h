@@ -13,6 +13,7 @@ enum colors {
     COLOR_PAIR_DECIMAL,
     COLOR_PAIR_HEX,
     COLOR_PAIR_BINARY,
+    COLOR_PAIR_BINARY_ALT,
     COLOR_PAIR_HISTORY,
     COLOR_PAIR_SYMBOLS,
     COLOR_PAIR_INPUT,
@@ -22,7 +23,7 @@ enum colors {
 extern WINDOW* displaywin, *inputwin;
 
 extern int wMaxX, wMaxY;
-extern int operation_enabled, decimal_enabled, hex_enabled, symbols_enabled, binary_enabled, history_enabled, colors_enabled;
+extern int operation_enabled, decimal_enabled, hex_enabled, symbols_enabled, binary_enabled, history_enabled, colors_enabled, alt_colors_enabled;
 
 extern int use_interface;
 
