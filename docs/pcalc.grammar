@@ -33,4 +33,4 @@ prefix_exp: (~ | + | - | @)? atom_exp
 
 atom_exp: number | left_parenthesis expression right_parenthesis
 
-number: ( (0-9)+ | 0x(0-9a-f)+ | 0b(0-1)+ )
+number: ( (0-9)+ | 0?x(0-9a-f)+ | 0?b(0-1)+ )
