@@ -5,6 +5,8 @@ CFLAGS := -Wall -Wextra -g -Werror=missing-declarations -Werror=redundant-decls
 LFLAGS = -lncurses
 # OUTPUT := output
 SRC := src
+BUILDDIR := build
+BINDIR := bin
 INCLUDE := include
 #	LIB := lib
 
@@ -15,43 +17,49 @@ INCLUDEDIRS := $(INCLUDE)
 #	LIBDIRS := $(LIB)
 FIXPATH = $(subst /,\,$1)
 RM := del /q /f
-# MD := mkdir
+MD := mkdir
 else
 MAIN := pcalc
 SOURCEDIRS := $(shell find $(SRC) -type d)
 INCLUDEDIRS := $(shell find $(INCLUDE) -type d)
 #	LIBDIRS := $(shell find $(LIB) -type d)
 FIXPATH = $1
-RM = rm -f
-# MD := mkdir -p
+RM := rm -rf
+MD := mkdir -p
+CP := cp -i
 endif
 
 INCLUDES := $(patsubst %,-I%, $(INCLUDEDIRS:%/=%))
 #	LIBS := $(patsubst %,-L%, $(LIBDIRS:%/=%))
 SOURCES := $(wildcard $(patsubst %,%/*.c, $(SOURCEDIRS)))
-OBJECTS := $(SOURCES:.c=.o)
+OBJECTS := $(patsubst $(SOURCEDIRS)/%,$(BUILDDIR)/%,$(SOURCES:.c=.o))
 
-all: $(MAIN)
+all: projdir $(MAIN)
 	@echo Executing "all" complete!
 
-$(MAIN): $(OBJECTS)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(MAIN) $(OBJECTS) $(LFLAGS) # $(LIBS)
+projdir:
+	@$(MD) $(BUILDDIR)
+	@$(MD) $(BINDIR)
 
-.c.o:
+$(MAIN): $(OBJECTS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(BINDIR)/$(MAIN) $(OBJECTS) $(LFLAGS) # $(LIBS)
+
+$(BUILDDIR)/%.o: $(SOURCEDIRS)/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 .PHONY: clean
 clean:
-	$(RM) $(MAIN)
-	$(RM) $(call FIXPATH,$(OBJECTS))
+	$(RM) $(BINDIR)
+	$(RM) $(BUILDDIR)
 	@echo Cleanup complete!
 
 run: all
-	./$(MAIN)
+	$(BINDIR)/$(MAIN)
 	@echo Executing "run: all" complete!
 
 .PHONY: install
+# Won't work for Windows Platform
 install:
 	@echo Installing!
-	make all
-	@mv -i pcalc /usr/local/bin
+	$(MAKE) all
+	@$(CP) $(BINDIR)/$(MAIN) /usr/local/bin
