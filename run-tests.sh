@@ -4,7 +4,7 @@ do
     diff -b tests/$t.correct <(cat tests/$t.test | ./pcalc -n) ||
         if echo "Test failed:"; then
             echo tests/$t
-            exit
+            exit 1
         fi
 done
 echo "All tests passed"
