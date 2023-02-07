@@ -44,23 +44,24 @@ int main(int argc, char* argv[])
     // Set all long arguments that can be used
     struct option long_options[] = {
 
-        {"help",            no_argument, NULL, 'h'},
-        {"version",         no_argument, NULL, 'v'},
-        {"history",         no_argument, NULL, 'i'},
-        {"binary",          no_argument, NULL, 'b'},
-        {"hex",             no_argument, NULL, 'x'},
-        {"decimal",         no_argument, NULL, 'd'},
-        {"operation",       no_argument, NULL, 'o'},
-        {"symbol",          no_argument, NULL, 's'},
-        {"colors",          no_argument, NULL, 'c'},
-        {"no-interface",    no_argument, NULL, 'n'},
-        {NULL,              0,           NULL,  0}
+        {"help",             no_argument, NULL, 'h'},
+        {"version",          no_argument, NULL, 'v'},
+        {"history",          no_argument, NULL, 'i'},
+        {"binary",           no_argument, NULL, 'b'},
+        {"hex",              no_argument, NULL, 'x'},
+        {"decimal",          no_argument, NULL, 'd'},
+        {"operation",        no_argument, NULL, 'o'},
+        {"symbol",           no_argument, NULL, 's'},
+        {"colors",           no_argument, NULL, 'c'},
+        {"alternate-colors", no_argument, NULL, 'a'},
+        {"no-interface",     no_argument, NULL, 'n'},
+        {NULL,               0,           NULL,  0}
 
      };
 
     // Get command line options to hide parts of the display
     int opt;
-    while ((opt = getopt_long(argc, argv, "hvibxdoscn", long_options, NULL)) != -1) {
+    while ((opt = getopt_long(argc, argv, "hvibxdoscan", long_options, NULL)) != -1) {
         switch (opt) {
 
             case 'h':
@@ -75,6 +76,7 @@ int main(int argc, char* argv[])
                 puts("--symbol = -s");
                 puts("Other options:");
                 puts("--colors = -c");
+                puts("--alternate-colors = -a (alternate colors for 1s and 0s in binary)");
                 puts("--no-interface = -n");
                 exit(0);
                 break;
@@ -114,6 +116,11 @@ int main(int argc, char* argv[])
 
             case 'c':
                 colors_enabled = 1;
+                break;
+
+            case 'a':
+                colors_enabled = 1;
+                alt_colors_enabled = 1;
                 break;
 
             default:
