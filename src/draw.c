@@ -20,6 +20,7 @@ int symbols_enabled = 1;
 int binary_enabled = 1;
 int history_enabled = 1;
 int colors_enabled = 0;
+int alt_colors_enabled = 0;
 
 int use_interface = 1;
 
@@ -39,6 +40,7 @@ void init_gui() {
             init_pair(COLOR_PAIR_DECIMAL, COLOR_CYAN, COLOR_BLACK);
             init_pair(COLOR_PAIR_HEX, COLOR_MAGENTA, COLOR_BLACK);
             init_pair(COLOR_PAIR_BINARY, COLOR_CYAN, COLOR_BLACK);
+            init_pair(COLOR_PAIR_BINARY_ALT, COLOR_MAGENTA, COLOR_BLACK);
             init_pair(COLOR_PAIR_SYMBOLS, COLOR_YELLOW, COLOR_BLACK);
             init_pair(COLOR_PAIR_HISTORY, COLOR_MAGENTA, COLOR_BLACK);
             init_pair(COLOR_PAIR_INPUT, COLOR_YELLOW, COLOR_BLACK);
@@ -82,7 +84,9 @@ static void printbinary(long long value, int priority) {
     for (; i<64; i++, mask>>=1) {
 
         unsigned long long bitval = value & mask;
-        wprintw_colors(displaywin, COLOR_PAIR_BINARY, "%c", bitval ? '1' : '0');
+        wprintw_colors(displaywin,
+            (alt_colors_enabled && bitval) ? COLOR_PAIR_BINARY_ALT : COLOR_PAIR_BINARY,
+            "%c", bitval ? '1' : '0');
 
         if (i%16 == 15 && 64 - ((i/16+1)*16))
             // TODO: Explain these numbers better (and decide if to keep them)

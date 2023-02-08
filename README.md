@@ -151,7 +151,7 @@ RL   :    RR   ;    2's  _    SE   @
 * SL : `a < b` bit-wise SHIFT-LEFT operation : shift a left b number of times
 * SR : `a > b` bit-wise SHIFT-RIGHT operation : shift a right b number of times
 * RL : `a : b` bit-wise ROTATE-LEFT operation : rotate a left b number of times
-* RR : `a ; b` bit-wise ROTATE-LEFT operation : rotate a right b number of times
+* RR : `a ; b` bit-wise ROTATE-RIGHT operation : rotate a right b number of times
 * 2's: `_a`    2's complement operation : 2's complement of a (usually is the symmetric of a)
 * SE : `@a`    swap endianness : swap the byte order of a (uses the number of bits set by `bit` to determine the amount of bits swapped)
 
