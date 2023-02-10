@@ -3,7 +3,7 @@
 
 #include "operators.h"
 
-#define MAX_TOKENS 80
+#define MAX_CHARS 80
 
 #define VALID_TOKENS "+-*/%&|$^~<>():;_@0123456789abcdefABCDEFx"
 #define VALID_NUMBER_INPUT "0123456789abcdefx()"
@@ -35,7 +35,7 @@ typedef struct parser_t {
     int pos;
 } * parser_t;
 
-char* tokenize(char*);
+char* sanitize(const char*);
 exprtree parse(char*);
 long long calculate(exprtree);
 void free_exprtree(exprtree);
