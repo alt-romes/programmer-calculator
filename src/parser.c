@@ -31,26 +31,36 @@ int total_tokens_created = 0;
 int total_tokens_freed = 0;
 
 
-// For a simpler version of this parser check github.com/alt-romes/calculator-c-parser 
+// For a simpler version of this parser check github.com/alt-romes/calculator-c-parser
 
-char* tokenize(char* in) {
+/**
+ * @brief Sanitize input to only allowed characters
+ *
+ * Mallocs a new string with only allowed characters
+ */
+char* sanitize(const char* in) {
 
-    char* tokens = xmalloc(sizeof(char) * MAX_TOKENS);
+    char* output = xmalloc(sizeof(char) * MAX_CHARS);
 
     int in_len = strlen(in);
     int token_pos = 0;
     for (int i = 0; i < in_len; i++)
         if (strchr(VALID_TOKENS, in[i]))
-            tokens[token_pos++] = in[i];
+            output[token_pos++] = in[i];
 
-    tokens[token_pos] = '\0';
+    output[token_pos] = '\0';
 
     total_tokens_created++;
-    return tokens;
+    return output;
 }
 
 
-exprtree parse(char* tokens) {
+/**
+ * @brief Parse sanitized input into an expression tree
+ *
+ * Entry point to the parser. Frees input after parsing.
+ */
+exprtree parse(char* input) {
 
     // TODO: How to stop with errors?
 
@@ -58,10 +68,10 @@ exprtree parse(char* tokens) {
     parser_t parser = xmalloc(sizeof(struct parser_t));
     total_parsers_created++;
 
-    assert(tokens != NULL);
-    parser->tokens = tokens;
+    assert(input != NULL);
+    parser->tokens = input;
 
-    int ntokens = strlen(tokens);
+    int ntokens = strlen(input);
     assert(ntokens > 0);
     parser->ntokens = ntokens;
 
@@ -72,11 +82,14 @@ exprtree parse(char* tokens) {
     free(parser->tokens);
     free(parser);
     total_parsers_freed++;
-    
+
     total_tokens_freed++;
     return expression;
 }
 
+/**
+ * @brief Calculate a numeric value from an expression tree
+ */
 long long calculate(exprtree expr) {
 
     // expr shouldn't be null if being calculated.
@@ -101,9 +114,12 @@ long long calculate(exprtree expr) {
 
         return *(expr->value) & globalmask;
     }
-        
+
 }
 
+/**
+ * @brief Free an expression tree and all its children
+ */
 void free_exprtree(exprtree expr) {
 
     if (expr) {
@@ -113,7 +129,7 @@ void free_exprtree(exprtree expr) {
         if (expr->right)
             free_exprtree(expr->right);
 
-        
+
         if (expr->type != OP_TYPE)
             free(expr->value);
 
@@ -125,6 +141,13 @@ void free_exprtree(exprtree expr) {
 
 }
 
+/**
+ * @brief Parse sub-string in parser into expression tree
+ *
+ * Works by recursively calling different parse functions until all tokens gets consumed.
+ * Sarts with lowest precedence.
+ * Inner recursive calls, which get executed first, are higher precedence.
+ */
 static exprtree parse_expr(parser_t parser) {
 
     // Grammar rule: expression := or_exp
@@ -177,7 +200,7 @@ static exprtree parse_add_expr(parser_t parser) {
     // Grammar rule: add_exp := mult_exp ((+ | -) mult_exp)*
 
     char ops[] = {ADD_SYMBOL, SUB_SYMBOL, '\0'};
-    
+
     return parse_stdop_expr(parser, ops, parse_mult_expr);
 
 }
@@ -236,7 +259,7 @@ static exprtree parse_prefix_expr(parser_t parser) {
         // subtraction expression with 0 as the left tree
 
         // Bitwise NOT of a number - only one parameter is used:
-        // And because the order is changed in execute(), put a number in the right expr instead of the left one 
+        // And because the order is changed in execute(), put a number in the right expr instead of the left one
         // apply the NOT operation to the number on the right branch. The other branch doesn't matter so we set it as the same as SUB
 
         // Two's complement serves the same logic - since it only uses one parameter we can set the other as anything
@@ -249,6 +272,9 @@ static exprtree parse_prefix_expr(parser_t parser) {
 
 }
 
+/**
+ * @brief Tries to parse next expression which may consist of parentheses or a number
+ */
 static exprtree parse_atom_expr(parser_t parser) {
 
     // Grammar rule: atom_expr := number | left_parenthesis expression right_parenthesis
@@ -261,10 +287,10 @@ static exprtree parse_atom_expr(parser_t parser) {
         long long zerov = 0;
         return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
     }
-    
+
     // If we've exceeded the number of tokens we should detect an error
     assert(parser->pos < parser->ntokens);
-    
+
     exprtree expr;
 
     if (parser->tokens[parser->pos] == LPAR_SYMBOL) {
@@ -302,13 +328,16 @@ static exprtree parse_atom_expr(parser_t parser) {
 
 }
 
+/**
+ * @brief Tries to parse next token as a number
+ */
 static exprtree parse_number(parser_t parser) {
-    
+
     // Grammar rule: number: ( (0-9)+ | 0x(0-9a-f)+ | 0b(0-1)+ )
 
     // If we've exceeded the number of tokens we should detect an error
     assert(parser->pos < parser->ntokens);
-    
+
     int numbertype = DEC_TYPE;
     if (parser->pos+1 < parser->ntokens) {
         switch (parser->tokens[parser->pos]) {
@@ -335,10 +364,10 @@ hex:
 
     }
 
-    char numberfound[MAX_TOKENS + 1];
+    char numberfound[MAX_CHARS + 1];
     int numberlen = 0;
 
-    while ( parser->pos < parser->ntokens && 
+    while ( parser->pos < parser->ntokens &&
             ((numbertype == DEC_TYPE && strchr(VALID_DEC_SYMBOLS, parser->tokens[parser->pos]))
             || (numbertype == HEX_TYPE && strchr(VALID_HEX_SYMBOLS, parser->tokens[parser->pos]))
             || (numbertype == BIN_TYPE && strchr(VALID_BIN_SYMBOLS, parser->tokens[parser->pos]))) ) {
@@ -382,6 +411,14 @@ hex:
     return number_expr;
 }
 
+/**
+ * @brief Tries to parse next binary expression with any of chars in ops as operator
+ *
+ * First tries to parse left side of operation with parse_inner_expr.
+ * This means that parse_inner_expr gets a higher priority in operator precedence.
+ * Then looks for any of the chars in ops, if found, tries to parse right side of operation with parse_inner_expr.
+ * If the operator was not found, this means that parsing of the current sub-string is done.
+ */
 static exprtree parse_stdop_expr(parser_t parser, char* ops, exprtree (*parse_inner_expr) (parser_t)) {
 
     // TODO: We don't want to do this - when the input is badly formatted an error should be displayed.
@@ -392,11 +429,11 @@ static exprtree parse_stdop_expr(parser_t parser, char* ops, exprtree (*parse_in
         return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
     }
 
-    // When the position gets here it should be smaller than the ntokens, or maybe only inner_expr should worry about it? 
+    // When the position gets here it should be smaller than the ntokens, or maybe only inner_expr should worry about it?
     assert(parser->pos < parser->ntokens);
 
     exprtree expr = parse_inner_expr(parser);
-    
+
     while (parser->pos < parser->ntokens && strchr(ops, parser->tokens[parser->pos])) {
 
         operation* op = getopcode(parser->tokens[parser->pos]);
@@ -407,11 +444,14 @@ static exprtree parse_stdop_expr(parser_t parser, char* ops, exprtree (*parse_in
 
         expr = create_exprtree(OP_TYPE, op, expr, right_expr);
     }
-    
+
     return expr;
 
 }
 
+/**
+ * @brief Create a new expression tree node.
+ */
 static exprtree create_exprtree(int type, void* content, exprtree left, exprtree right) {
 
     // attention: allocate size for *struct exprtree*, because *exprtree* is type defined as a pointer to *struct exprtree*

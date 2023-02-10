@@ -27,7 +27,7 @@
 /*---- Function Prototypes ----------------------------------------*/
 
 
-static void process_input(operation**, char*);
+static void process_prompt(operation**, char*);
 static void get_input(char*);
 static void apply_operations(numberstack*, operation**);
 static void exit_pcalc_success();
@@ -177,7 +177,7 @@ int main(int argc, char* argv[])
 
         get_input(in);
 
-        process_input(&current_op, in);
+        process_prompt(&current_op, in);
 
         // Display number on top of the stack
         draw(numbers, current_op);
@@ -188,34 +188,34 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-static void process_input(operation** current_op, char* in) {
+static void process_prompt(operation** current_op, char* prompt) {
 
     // Process input
 
     // Try to find a known command and handle it
-    if (!strcmp(in, "quit") || !strcmp(in, "q") || !strcmp(in, "exit"))
+    if (!strcmp(prompt, "quit") || !strcmp(prompt, "q") || !strcmp(prompt, "exit"))
         exit_pcalc(0);
 
-    else if (!strcmp(in, "binary"))
+    else if (!strcmp(prompt, "binary"))
         binary_enabled = !binary_enabled;
 
-    else if (!strcmp(in, "hex"))
+    else if (!strcmp(prompt, "hex"))
         hex_enabled = !hex_enabled;
 
-    else if (!strcmp(in, "decimal"))
+    else if (!strcmp(prompt, "decimal"))
         decimal_enabled = !decimal_enabled;
 
-    else if (!strcmp(in, "history"))
+    else if (!strcmp(prompt, "history"))
         history_enabled = !history_enabled;
 
-    else if (!strcmp(in, "operation"))
+    else if (!strcmp(prompt, "operation"))
         operation_enabled = !operation_enabled;
 
-    else if (strstr(in, "bit") != NULL) {
+    else if (strstr(prompt, "bit") != NULL) {
 
         // Command to change the number of bits
 
-        int requestedmasksize = atoi(in);
+        int requestedmasksize = atoi(prompt);
         globalmasksize = requestedmasksize > DEFAULT_MASK_SIZE || requestedmasksize <= 0 ? DEFAULT_MASK_SIZE : requestedmasksize;
 
         //globalmask cant be 0x16f's
@@ -234,12 +234,10 @@ static void process_input(operation** current_op, char* in) {
     else {
 
         // It's not a known command - handle input as expression
-        
-        
-        // To handle the expression, first tokenize the input
 
-        // Tokenize the input
-        char* tokens = tokenize(in);
+
+        // Remove any unknown characters from prompt
+        char* input = sanitize(prompt);
 
         // We need to check if the last token is an operation before it gets freed,
         // And save it, to set it as the current op after the input is processed
@@ -257,46 +255,46 @@ static void process_input(operation** current_op, char* in) {
          * 4 - an expression i.e. "1+2*3" (this case is handled as a number)
          */
 
-        int ntokens = strlen(tokens);
+        int inputlen = strlen(input);
 
-        if (tokens[0] != '\0' && strchr(ALL_OPS, tokens[0]) && 
-                (ntokens == 1 || (tokens[0] != NOT_SYMBOL && tokens[0] != TWOSCOMPLEMENT_SYMBOL && tokens[0] != SWAPENDIANNESS_SYMBOL))) {
+        if (input[0] != '\0' && strchr(ALL_OPS, input[0]) &&
+                (inputlen == 1 || (input[0] != NOT_SYMBOL && input[0] != TWOSCOMPLEMENT_SYMBOL && input[0] != SWAPENDIANNESS_SYMBOL))) {
 
             // The input is either just an op, or an expression that starts with an op that isn't a prefix | case 1 or case 3
 
             // Set the current operation as the operation structure for that symbol
-            *current_op = getopcode(tokens[0]);
+            *current_op = getopcode(input[0]);
 
             // Add the operation to history
-            char opchar[2] = {tokens[0], '\0'};
+            char opchar[2] = {input[0], '\0'};
             add_to_history(&history, opchar);
 
             // Duplicate the *tokens* string starting from the immediate next position, and free previous tokens afterwards
-            char* tokens_wout_op = strdup(tokens+1);
+            char* tokens_wout_op = strdup(input+1);
 
-            free(tokens);
+            free(input);
 
-            tokens = tokens_wout_op;
+            input = tokens_wout_op;
 
-            // The length of the tokens is now 1 character smaller
-            ntokens--;
+            // The length of the input is now 1 character smaller
+            inputlen--;
 
         }
 
-        if (ntokens > 0 && strchr(ALL_OPS, tokens[ntokens-1])) {
-            
-            // Last token is an op | case 2
+        if (inputlen > 0 && strchr(ALL_OPS, input[inputlen-1])) {
+
+            // Last char is an op | case 2
 
             // Set a new operation from the last symbol
-            suffix_op = getopcode(tokens[ntokens-1]);
+            suffix_op = getopcode(input[inputlen-1]);
 
             // Remove the last token from the string
-            tokens[ntokens-1] = '\0';
-            ntokens--;
+            input[inputlen-1] = '\0';
+            inputlen--;
         }
 
         if (*current_op == NULL ||
-                (in[0] == '\0' && !(*current_op = NULL))) {
+                (prompt[0] == '\0' && !(*current_op = NULL))) {
 
             // There's no current operation and we're going to process a new number
             // -> clear the stack and history before processing it
@@ -307,14 +305,14 @@ static void process_input(operation** current_op, char* in) {
 
         }
 
-        if (ntokens > 0) {
+        if (inputlen > 0) {
 
             // Add the tokens to history as a whole, for now...
-            add_to_history(&history, tokens);
+            add_to_history(&history, input);
 
             // Parse the tokens into an expression
             // This function will free *tokens*
-            exprtree expression = parse(tokens);
+            exprtree expression = parse(input);
 
             // Calculate the result of the expression
             // The globalmask is applied inside calculate
@@ -327,15 +325,15 @@ static void process_input(operation** current_op, char* in) {
             push_numberstack(numbers, result);
 
             if (suffix_op != NULL) {
-                
+
                 // Last token is an op | case 2
-                
+
                 // Apply pending operation right away, to then set a new one
                 apply_operations(numbers, current_op);
 
                 // Set a new operation from the symbol
                 *current_op = suffix_op;
-                
+
                 char opchar[2] = {suffix_op->character, '\0'};
                 add_to_history(&history, opchar);
             }
@@ -344,11 +342,11 @@ static void process_input(operation** current_op, char* in) {
         else {
             // The input expression generated an empty token string.
             // Because parse() isn't called, we must free *tokens* manually
-            free(tokens);
+            free(input);
             total_tokens_freed++;
         }
 
-        if (ntokens == 0 && *current_op == NULL) {
+        if (inputlen == 0 && *current_op == NULL) {
 
             // The op is null (means we cleared the stack before reading a number)
             // But we didn't read a number - so the stack is empty
@@ -395,7 +393,7 @@ static void get_input(char* in) {
 
     char inp;
     int history_counter = searchHistory.size;
-    
+
     // Is the cursor at the end of the line or somewhere in the middle
     int browsing = 0;
 
@@ -409,13 +407,13 @@ static void get_input(char* in) {
 
         /* Check for forbidden keys
          * -1 is a key that indicates the terminal got resized
-         *  5 is a key that indicates mouse wheel down 
+         *  5 is a key that indicates mouse wheel down
          *  25 is a key that indicates mouse wheel up
          *  27 is a key that indicates an arrow key was pressed
          *  127 is a key that indicates the brackspace key was pressed
          */
         switch(inp) {
-            
+
             case -1:
                 update_win_borders(numbers);
             case 5:
@@ -450,7 +448,7 @@ static void get_input(char* in) {
                         // Right arrow
                         if (browsing) {    // The right arrow should only work while in the middle of the input
                             pos++;
-    
+
                             // Exit browsing mode if the cursor is at the end of the input
                             if (pos == len) {
                                 browsing = 0;
@@ -492,7 +490,7 @@ static void get_input(char* in) {
         if(!searched && len <= MAX_IN && (len <= max || !use_interface)) {
             if (!browsing) {
                 // If the cursor is at the end of the text
-                
+
                 // Append char to in array
                 in[pos] = inp;
                 in[++pos] = '\0';
@@ -508,7 +506,7 @@ static void get_input(char* in) {
 
                 if (inp == '\0') {
                     // Backspace
-                    
+
                     // Move all of in after pos one space back
                     for (int i = pos; i <= len; i++) {
                         in[i] = in[i + 1];
@@ -526,7 +524,7 @@ static void get_input(char* in) {
                     }
                     // Append char to in array
                     in[pos++] = inp;
-                
+
                 }
             }
         }
@@ -543,7 +541,7 @@ static void get_input(char* in) {
             mvwprintw(inputwin, 1, 22, "%s", in);
 
         wmove(inputwin, 1, 22 + pos); // Move the cursor
-        
+
         wrefresh(inputwin);
 
     }
