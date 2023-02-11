@@ -333,7 +333,7 @@ static exprtree parse_atom_expr(parser_t parser) {
  */
 static exprtree parse_number(parser_t parser) {
 
-    // Grammar rule: number: ( (0-9)+ | 0x(0-9a-f)+ | 0b(0-1)+ )
+    // Grammar rule: number: ( (0-9)+ | 0?x(0-9a-f)+ | 0?b(0-1)+ )
 
     // If we've exceeded the number of tokens we should detect an error
     assert(parser->pos < parser->ntokens);
@@ -342,24 +342,28 @@ static exprtree parse_number(parser_t parser) {
     if (parser->pos+1 < parser->ntokens) {
         switch (parser->tokens[parser->pos]) {
             case '0':
-                if (parser->tokens[parser->pos+1] == 'b') {
-                    // Enter if number is binary
-                    numbertype = BIN_TYPE;
-                    parser->pos += 2;
-                    break;
-                } else if (parser->tokens[parser->pos+1] == 'x'){
-                    // Enter is number is hex
-                    goto hex;
-                } else {
-                    // Enter if number is decimal
-                    break;
+                // check second character
+                switch(parser->tokens[parser->pos+1]) {
+                    case 'b': // 0b0101
+                        numbertype = BIN_TYPE;
+                        parser->pos += 2;
+                        break;
+                    case 'x': // 0xffff
+                        numbertype = HEX_TYPE;
+                        parser->pos += 2;
+                        break;
+                    default:  // number is decimal
+                        break;
                 }
-            case 'x':
-hex:
+                break;
+            case 'x': // xffff
                 numbertype = HEX_TYPE;
-                // If x was 1st character add 1 otherwise add 2 to parser->pos
-                parser->pos += (parser->tokens[parser->pos] == 'x') ? 1 : 2;
-
+                parser->pos += 1;
+                break;
+            case 'b': // b0101
+                numbertype = BIN_TYPE;
+                parser->pos += 1;
+                break;
         }
 
     }
