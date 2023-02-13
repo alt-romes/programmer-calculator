@@ -13,6 +13,7 @@
 #include "numberstack.h"
 #include "operators.h"
 #include "parser.h"
+#include "status.h"
 
 
 
@@ -312,7 +313,12 @@ static void process_prompt(operation** current_op, char* prompt) {
 
             // Parse the tokens into an expression
             // This function will free *tokens*
-            exprtree expression = parse(input);
+
+            exprtree expression;
+            status s = parse(input, &expression);
+            if(s != STATUS_OK) {
+                // Parsing failed
+            }
 
             // Calculate the result of the expression
             // The globalmask is applied inside calculate

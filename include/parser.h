@@ -2,6 +2,7 @@
 #define _PARSER_H
 
 #include "operators.h"
+#include "status.h"
 
 #define MAX_CHARS 80
 
@@ -36,7 +37,7 @@ typedef struct parser_t {
 } * parser_t;
 
 char* sanitize(const char*);
-exprtree parse(char*);
+status parse(char*, exprtree*);
 long long calculate(exprtree);
 void free_exprtree(exprtree);
 
