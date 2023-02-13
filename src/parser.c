@@ -5,10 +5,11 @@
 
 #include "parser.h"
 #include "xmalloc.h"
+#include "status.h"
 
 // Static functions
 
-static exprtree parse_expr(parser_t);
+static status parse_expr(parser_t, exprtree*);
 static exprtree parse_or_expr(parser_t);
 static exprtree parse_xor_expr(parser_t);
 static exprtree parse_and_expr(parser_t);
@@ -60,7 +61,7 @@ char* sanitize(const char* in) {
  *
  * Entry point to the parser. Frees input after parsing.
  */
-exprtree parse(char* input) {
+status parse(char* input, exprtree* output) {
 
     // TODO: How to stop with errors?
 
@@ -77,14 +78,15 @@ exprtree parse(char* input) {
 
     parser->pos = 0;
 
-    exprtree expression = parse_expr(parser);
+    status s = parse_expr(parser, output);
 
+    // todo if error then dont free or something
     free(parser->tokens);
     free(parser);
     total_parsers_freed++;
 
     total_tokens_freed++;
-    return expression;
+    return s;
 }
 
 /**
@@ -148,11 +150,14 @@ void free_exprtree(exprtree expr) {
  * Sarts with lowest precedence.
  * Inner recursive calls, which get executed first, are higher precedence.
  */
-static exprtree parse_expr(parser_t parser) {
+static status parse_expr(parser_t parser, exprtree* output) {
 
     // Grammar rule: expression := or_exp
 
-    return parse_or_expr(parser);
+    last_error = "simulated fail";
+    return STATUS_ERROR;
+
+    //return parse_or_expr(parser);
 }
 
 static exprtree parse_or_expr(parser_t parser) {
