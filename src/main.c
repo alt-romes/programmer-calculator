@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
 
     /*
      * The numberstack is used to store numbers used in calculations
-     * It's a normal stack data structure (LIFO) that holds long long integers
+     * It's a normal stack data structure (LIFO) that holds uint64_t integers
      * Check the stack.h file for its operations
      *
      * The operation structure holds information regarding the ASCII character the operation uses,
@@ -316,7 +316,7 @@ static void process_prompt(operation** current_op, char* prompt) {
 
             // Calculate the result of the expression
             // The globalmask is applied inside calculate
-            long long result = calculate(expression);
+            uint64_t result = calculate(expression);
 
             // The expression is no longer needed since we have its value
             free_exprtree(expression);
@@ -373,12 +373,12 @@ static void apply_operations(numberstack* numbers, operation** current_op) {
 
         if (numbers->size >= noperands) {
 
-            long long operands[2] = {0};
+            uint64_t operands[2] = {0};
 
             for (unsigned char i=0; i < noperands; i++)
                 operands[i] = *pop_numberstack(numbers);
 
-            long long result = (*current_op)->execute(operands[0], operands[1]) & globalmask;
+            uint64_t result = (*current_op)->execute(operands[0], operands[1]) & globalmask;
 
             push_numberstack(numbers, result);
 

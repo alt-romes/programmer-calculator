@@ -24,7 +24,7 @@ int alt_colors_enabled = 0;
 
 int use_interface = 1;
 
-static void printbinary(long long, int);
+static void printbinary(uint64_t, int);
 static void printhistory(numberstack*, int);
 
 void init_gui() {
@@ -73,9 +73,9 @@ void init_gui() {
 
 }
 
-static void printbinary(long long value, int priority) {
+static void printbinary(uint64_t value, int priority) {
 
-    unsigned long long mask = ((long long) 1) << (globalmasksize - 1); // Mask starts at the last bit to display, and is >> until the end
+    uint64_t mask = ((uint64_t) 1) << (globalmasksize - 1); // Mask starts at the last bit to display, and is >> until the end
 
     int i=DEFAULT_MASK_SIZE-globalmasksize;
 
@@ -83,7 +83,7 @@ static void printbinary(long long value, int priority) {
 
     for (; i<64; i++, mask>>=1) {
 
-        unsigned long long bitval = value & mask;
+        uint64_t bitval = value & mask;
         wprintw_colors(displaywin,
             (alt_colors_enabled && bitval) ? COLOR_PAIR_BINARY_ALT : COLOR_PAIR_BINARY,
             "%c", bitval ? '1' : '0');
@@ -108,7 +108,7 @@ static void printhistory(numberstack* numbers, int priority) {
         getyx(displaywin,currY,currX);
         if(currX >= wMaxX-3 || currY > 14) {
             clear_history();
-            long long aux = *top_numberstack(numbers);
+            uint64_t aux = *top_numberstack(numbers);
             add_number_to_history(aux, 0);
         }
         wprintw_colors(displaywin, COLOR_PAIR_HISTORY, "%s ", history.records[i]);
@@ -117,8 +117,8 @@ static void printhistory(numberstack* numbers, int priority) {
 
 void draw(numberstack* numbers, operation* current_op) {
     
-    long long* np = top_numberstack(numbers);
-    long long n;
+    uint64_t* np = top_numberstack(numbers);
+    uint64_t n;
 
     if (np == NULL) n = 0;
     else n = *np;
@@ -136,7 +136,7 @@ void draw(numberstack* numbers, operation* current_op) {
         else mvwprintw_colors(displaywin, 2, 2, COLOR_PAIR_OPERATION, "Operation: %c\n", current_op ? current_op->character : ' ');
 
         if(!decimal_enabled) prio += 2;
-        else mvwprintw_colors(displaywin, 4-prio, 2, COLOR_PAIR_DECIMAL, "Decimal:   %lld", n);
+        else mvwprintw_colors(displaywin, 4-prio, 2, COLOR_PAIR_DECIMAL, "Decimal:   %lld", (long long)n);
 
         if(!hex_enabled) prio += 2;
         else mvwprintw_colors(displaywin, 6-prio, 2, COLOR_PAIR_HEX, "Hex:       0x%llX", n);
@@ -159,7 +159,7 @@ void draw(numberstack* numbers, operation* current_op) {
     }
     else {
 
-        printf("Decimal: %lld, Hex: 0x%llx, Operation: %c\n", n, n, current_op ? current_op->character : ' ');
+        printf("Decimal: %lld, Hex: 0x%llx, Operation: %c\n", (long long)n, (unsigned long long)n, current_op ? current_op->character : ' ');
         /* printf("created|freed -> tokens: %d|%d, parsers: %d|%d, trees: %d|%d\n", total_tokens_created, total_tokens_freed, total_parsers_created, total_parsers_freed, total_trees_created, total_trees_freed); */
     }
 }

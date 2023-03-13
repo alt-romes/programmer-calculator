@@ -23,7 +23,7 @@ typedef struct exprtree {
     int type;
     union {
         operation* op;
-        long long* value;
+        uint64_t* value;
     };
     struct exprtree* left;
     struct exprtree* right;
@@ -37,7 +37,7 @@ typedef struct parser_t {
 
 char* sanitize(const char*);
 exprtree parse(char*);
-long long calculate(exprtree);
+uint64_t calculate(exprtree);
 void free_exprtree(exprtree);
 
 extern int total_trees_created;

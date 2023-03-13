@@ -30,7 +30,7 @@ static numberstack * resize_numberstack(numberstack* s) {
 }
 
 // Pop element from the top of the stack (return and remove element)
-long long * pop_numberstack(numberstack* s) {
+uint64_t * pop_numberstack(numberstack* s) {
 
     if (s->size == 0)
         return NULL;
@@ -39,7 +39,7 @@ long long * pop_numberstack(numberstack* s) {
 }
 
 // Return the element at the top of the stack without removing it
-long long * top_numberstack(numberstack* s) {
+uint64_t * top_numberstack(numberstack* s) {
 
     if (s->size == 0)
         return NULL;
@@ -48,7 +48,7 @@ long long * top_numberstack(numberstack* s) {
 }
 
 // Push number to the top of the stack
-void push_numberstack(numberstack* s, long long value) {
+void push_numberstack(numberstack* s, uint64_t value) {
 
     if (s->size == s->max_size)
         resize_numberstack(s);

@@ -1,26 +1,27 @@
 #include <stddef.h>
+#include <stdint.h>
 
 #include "operators.h"
 
-unsigned long long globalmask = DEFAULT_MASK;
+uint64_t globalmask = DEFAULT_MASK;
 int globalmasksize = DEFAULT_MASK_SIZE;
 
 operation *current_op = NULL;
 
-static long long add(long long, long long);
-static long long subtract(long long, long long);
-static long long multiply(long long, long long);
-static long long divide(long long, long long);
-static long long and(long long, long long);
-static long long or(long long, long long);
-static long long nor(long long, long long);
-static long long xor(long long, long long);
-static long long shl(long long, long long);
-static long long rol(long long, long long);
-static long long modulus(long long, long long);
-static long long not(long long, long long);
-static long long twos_complement(long long, long long);
-static long long swap_endianness(long long, long long);
+static uint64_t add(uint64_t, uint64_t);
+static uint64_t subtract(uint64_t, uint64_t);
+static uint64_t multiply(uint64_t, uint64_t);
+static uint64_t divide(uint64_t, uint64_t);
+static uint64_t and(uint64_t, uint64_t);
+static uint64_t or(uint64_t, uint64_t);
+static uint64_t nor(uint64_t, uint64_t);
+static uint64_t xor(uint64_t, uint64_t);
+static uint64_t shl(uint64_t, uint64_t);
+static uint64_t rol(uint64_t, uint64_t);
+static uint64_t modulus(uint64_t, uint64_t);
+static uint64_t not(uint64_t, uint64_t);
+static uint64_t twos_complement(uint64_t, uint64_t);
+static uint64_t swap_endianness(uint64_t, uint64_t);
 
 static operation operations[16] = {
     {ADD_SYMBOL, 2, add},
@@ -51,22 +52,22 @@ operation* getopcode(char c)  {
 }
 
 
-static long long add(long long a, long long b) {
+static uint64_t add(uint64_t a, uint64_t b) {
 
     return a + b;
 }
 
 // remember op1 = first popped ( right operand ), op2 = second popped ( left operand )
-static long long subtract(long long a, long long b) {
+static uint64_t subtract(uint64_t a, uint64_t b) {
 
     return b - a;
 }
-static long long multiply(long long a, long long b) {
+static uint64_t multiply(uint64_t a, uint64_t b) {
 
     return a * b;
 }
 
-static long long divide(long long a, long long b) {
+static uint64_t divide(uint64_t a, uint64_t b) {
 
     //TODO not divisible by 0
     if(!a)
@@ -75,51 +76,51 @@ static long long divide(long long a, long long b) {
     return b / a;
 }
 
-static long long and(long long a, long long b) {
+static uint64_t and(uint64_t a, uint64_t b) {
 
     return a & b;
 }
 
-static long long or(long long a, long long b) {
+static uint64_t or(uint64_t a, uint64_t b) {
 
     return a | b;
 }
 
-static long long nor(long long a, long long b) {
+static uint64_t nor(uint64_t a, uint64_t b) {
 
     return ~(a | b);
 }
 
-static long long xor(long long a, long long b) {
+static uint64_t xor(uint64_t a, uint64_t b) {
 
     return a ^ b;
 }
-static long long shl(long long a, long long b) {
+static uint64_t shl(uint64_t a, uint64_t b) {
 
     // Shift longer than type length is undefined behaviour
     return b << a;
 }
 
-long long shr(long long a, long long b) {
+uint64_t shr(uint64_t a, uint64_t b) {
 
     // Shift longer than 64 bits is undefined behaviour
     // don't include shift in tests or //TODO: define behaviour for this calculator
-    return ((unsigned long long) b >> a);
+    return ((uint64_t) b >> a);
 }
 
-static long long rol(long long a, long long b) {
+static uint64_t rol(uint64_t a, uint64_t b) {
 
     // prevent shift by 64 bits because a shift longer than type length is undefined behaviour
     return b << a | ( globalmasksize - a < 64 ? shr(globalmasksize - a, b) : 0 );
 }
 
-long long ror(long long a, long long b) {
+uint64_t ror(uint64_t a, uint64_t b) {
 
     // prevent shift by 64 bits because a shift longer than type length is undefined behaviour
     return shr(a, b) | (globalmasksize - a < 64 ? b << (globalmasksize - a) : 0);
 }
 
-static long long modulus(long long a, long long b) {
+static uint64_t modulus(uint64_t a, uint64_t b) {
 
     //TODO not divisible by 0
     if(!a)
@@ -128,19 +129,19 @@ static long long modulus(long long a, long long b) {
     return b % a;
 }
 
-static long long not(long long a, long long UNUSED(b)) {
+static uint64_t not(uint64_t a, uint64_t UNUSED(b)) {
 
     return ~a;
 }
 
-static long long twos_complement(long long a, long long UNUSED(b)) {
+static uint64_t twos_complement(uint64_t a, uint64_t UNUSED(b)) {
 
     return -a;
 }
 
-static long long swap_endianness(long long a, long long UNUSED(b)) {
+static uint64_t swap_endianness(uint64_t a, uint64_t UNUSED(b)) {
 
-    long long out = 0;
+    uint64_t out = 0;
     // shift the leftmost bits to the right
     for (int i = 0; i < globalmasksize / 16; i++) {
         //        create a bitmask and apply it to a        and shift the selected byte to its new position

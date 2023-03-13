@@ -33,7 +33,7 @@ void add_to_history(struct history* h, char* in) {
 
 }
 
-void add_number_to_history(long long n, int type) {
+void add_number_to_history(uint64_t n, int type) {
 
     char *str = str_with_base_of_number(n, type);
     add_to_history(&history, str);
@@ -81,17 +81,17 @@ void free_history(struct history *h) {
 }
 
 
-char *str_with_base_of_number(long long n, int type) {
+char *str_with_base_of_number(uint64_t n, int type) {
 
     char *str = xmalloc(67);
 
     if (type == 0)
-        sprintf(str,"%lld", n);
+        sprintf(str,"%llu", (unsigned long long)n);
     else if (type == 1)
-        sprintf(str,"0x%llX", n);
+        sprintf(str,"0x%llX", (unsigned long long)n);
     else if (type == 2) {
 
-        unsigned long long mask = ror(1, 1);
+        uint64_t mask = ror(1, 1);
 
         int i = 0;
         for (; i<64; i++, mask>>=1)

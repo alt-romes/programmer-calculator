@@ -1,0 +1,5 @@
+Decimal: 0, Hex: 0x0, Operation:  
+Decimal: 9223372036854775807, Hex: 0x7fffffffffffffff, Operation:  
+Decimal: -9223372036854775808, Hex: 0x8000000000000000, Operation:  
+Decimal: -1, Hex: 0xffffffffffffffff, Operation:  
+Decimal: -2, Hex: 0xfffffffffffffffe, Operation:  
