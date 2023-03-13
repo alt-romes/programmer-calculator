@@ -1,6 +1,8 @@
 #ifndef _OPERATORS_H
 #define _OPERATORS_H
 
+#include <stdint.h>
+
 #define DEFAULT_MASK -1
 #define DEFAULT_MASK_SIZE 64
 
@@ -35,17 +37,17 @@
 typedef struct operation {
     char character;
     unsigned char noperands;
-    long long (*execute) (long long, long long);
+    uint64_t (*execute) (uint64_t, uint64_t);
 } operation;
 
-extern unsigned long long globalmask;
+extern uint64_t globalmask;
 extern int globalmasksize;
 extern operation *current_op;
 
 operation* getopcode(char c);
 
-long long shr(long long, long long);
-long long ror(long long, long long);
+uint64_t shr(uint64_t, uint64_t);
+uint64_t ror(uint64_t, uint64_t);
 
 
 #endif

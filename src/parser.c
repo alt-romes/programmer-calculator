@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -90,7 +91,7 @@ exprtree parse(char* input) {
 /**
  * @brief Calculate a numeric value from an expression tree
  */
-long long calculate(exprtree expr) {
+uint64_t calculate(exprtree expr) {
 
     // expr shouldn't be null if being calculated.
     assert(expr != NULL);
@@ -98,12 +99,12 @@ long long calculate(exprtree expr) {
 
     if (expr->type == OP_TYPE) {
 
-        long long left_value = calculate(expr->left);
+        uint64_t left_value = calculate(expr->left);
 
-        long long right_value = calculate(expr->right);
+        uint64_t right_value = calculate(expr->right);
 
         // Execute takes the operands switched because the stack inverts the order of the numbers
-        long long value = expr->op->execute(right_value, left_value);
+        uint64_t value = expr->op->execute(right_value, left_value);
 
         return value & globalmask;
 
@@ -222,7 +223,7 @@ static exprtree parse_prefix_expr(parser_t parser) {
     // TODO: Display input invalid instead of using a zero-val expression
     if (!(parser->pos < parser->ntokens)) {
 
-        long long zerov = 0;
+        uint64_t zerov = 0;
         return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
     }
 
@@ -265,7 +266,7 @@ static exprtree parse_prefix_expr(parser_t parser) {
         // Two's complement serves the same logic - since it only uses one parameter we can set the other as anything
 
         // So we create an expression with 0 on the left, and the correct op, and it works
-        long long zero_val = 0;
+        uint64_t zero_val = 0;
         exprtree zero_val_expr = create_exprtree(DEC_TYPE, &zero_val, NULL, NULL);
         return create_exprtree(OP_TYPE, op, zero_val_expr, expr);
     }
@@ -284,7 +285,7 @@ static exprtree parse_atom_expr(parser_t parser) {
     // to be parsed. There are possibly more cases
     if (!(parser->pos < parser->ntokens)) {
 
-        long long zerov = 0;
+        uint64_t zerov = 0;
         return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
     }
 
@@ -310,7 +311,7 @@ static exprtree parse_atom_expr(parser_t parser) {
         else {
 
             // For now, everything to the right of an unclosed left parenthesis will be equivalent to 0
-            long long zerov = 0;
+            uint64_t zerov = 0;
             return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
 
             // TODO: Find a way to do error handling and displaying, possibly give one more type to exprtree type = ERR_TYPE and have in the union a char* for the error message
@@ -390,7 +391,7 @@ static exprtree parse_number(parser_t parser) {
     // and possibly in other situations
     if (numberlen == 0) {
 
-        long long zerov = 0;
+        uint64_t zerov = 0;
         return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
     }
 
@@ -408,7 +409,7 @@ static exprtree parse_number(parser_t parser) {
             break;
     }
 
-    long long value = strtoll(numberfound, NULL, numberbase);
+    uint64_t value = strtoull(numberfound, NULL, numberbase);
 
     exprtree number_expr = create_exprtree(numbertype, &value, NULL, NULL);
 
@@ -429,7 +430,7 @@ static exprtree parse_stdop_expr(parser_t parser, char* ops, exprtree (*parse_in
     // This is a temporary fix that returns the expression immediately as zero.
     if (!(parser->pos < parser->ntokens)) {
 
-        long long zerov = 0;
+        uint64_t zerov = 0;
         return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
     }
 
@@ -470,7 +471,7 @@ static exprtree create_exprtree(int type, void* content, exprtree left, exprtree
 
         void* allocated[] = { expr };
         expr->value = xmalloc_with_ressources(sizeof(*expr->value), allocated, 1);
-        *(expr->value) = *((long long*) content);
+        *(expr->value) = *((uint64_t*) content);
     }
 
     expr->left = left;

@@ -1,4 +1,4 @@
-tests=( "number-bases" "random" "expressions" "input-formats" )
+tests=( "number-bases" "random" "expressions" "input-formats" "corner-cases" )
 for t in "${tests[@]}"
 do
     diff -b tests/$t.correct <(cat tests/$t.test | bin/pcalc -n) ||
