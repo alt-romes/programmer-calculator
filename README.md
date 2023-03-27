@@ -57,6 +57,10 @@ Then, compile the code into an executable file and install it (installs in /usr/
 sudo make install
 ```
 
+Conversely, if you ever want to uninstall, you can run:
+```
+sudo make uninstall
+```
 
 #### Updating
 Either re-build from source, or, using brew do
