@@ -60,6 +60,12 @@ run: all
 .PHONY: install
 # Won't work for Windows Platform
 install:
-	@echo Installing!
+	@echo "Installing!"
 	$(MAKE) all
 	@$(CP) $(BINDIR)/$(MAIN) /usr/local/bin
+
+
+.PHONY: uninstall
+uninstall:
+	@echo "Unistalling :("
+	@$(RM) $(shell whereis $(MAIN) | cut -d " " -f 2)
