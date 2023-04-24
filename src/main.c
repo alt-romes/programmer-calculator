@@ -437,7 +437,8 @@ static void get_input(char* in) {
             case 5:
                 //CTRL-E
                 pos = len;
-                browsing = searched = 1;
+                browsing = 0;
+                searched = 1;
                 break;
 
             case 4:
@@ -457,15 +458,15 @@ static void get_input(char* in) {
                 //CTRL-Backspace
             case 23:
                 //CTRL-W
-                while(in[pos] != ' ' && pos != 0) { //Delete last typed word
-                    pos--; len--; inp = '\0'; //Delete 1 character
+                inp = '\0';
+                while(in[pos-1] == ' ' && pos > 1) { //Delete trailing spaces
+                    pos--; len--; //Delete 1 character
                 }
+                while(in[pos] != ' ' && pos > 0) { //Delete last typed word
+                    pos--; len--;
+                }
+                in[pos] = '\0';
 
-                while(in[pos-1] == ' ' && pos >= 1) { //Delete trailing spaces
-                    pos--; len--; inp = '\0'; //Delete 1 character
-                }
-                
-                //printf("len: %d", len);
                 break;
 
             case 27:
