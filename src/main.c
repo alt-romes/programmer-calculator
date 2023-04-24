@@ -68,16 +68,16 @@ int main(int argc, char* argv[])
                 puts("Currently --help only displays the following information about the program options.");
                 puts("If you think something else should be here let us know @ github.com/alt-romes/programmer-calculator");
                 puts("The following options customize the interface: -ibxdos");
-                puts("--history = -i");
-                puts("--binary = -b");
-                puts("--hex = -x");
-                puts("--decimal = -d");
-                puts("--operation = -o");
-                puts("--symbol = -s");
+                puts("--history = -i\t\t\tdisables command history");
+                puts("--binary = -b\t\t\tdisables binary representation");
+                puts("--hex = -x\t\t\tdisables hexadecimal representation");
+                puts("--decimal = -d\t\t\tdisables decimal representation");
+                puts("--operation = -o\t\tdisables the display of the current operation");
+                puts("--symbol = -s\t\t\tdisables the display of helper command symbols");
                 puts("Other options:");
-                puts("--colors = -c");
-                puts("--alternate-colors = -a (alternate colors for 1s and 0s in binary)");
-                puts("--no-interface = -n");
+                puts("--colors = -c\t\t\tenables colors");
+                puts("--alternate-colors = -a \tenables alternate colors for 1s and 0s in binary");
+                puts("--no-interface = -n\t\tdisables graphical interface");
                 exit(0);
                 break;
 
