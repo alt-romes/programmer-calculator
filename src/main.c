@@ -450,13 +450,26 @@ static void get_input(char* in) {
             case 23:
                 //CTRL-W
                 inp = '\0';
-                while(in[pos-1] == ' ' && pos > 1) { //Delete trailing spaces
+                if(pos == 0)
+                    continue;
+
+                int jump = 0; //Amount of characters removed
+                while(in[pos-1] == ' ' && pos > 0) { //Delete trailing spaces
                     pos--; len--; //Delete 1 character
+                    jump++;
                 }
-                while(in[pos] != ' ' && pos > 0) { //Delete last typed word
+                while(in[pos-1] != ' ' && pos > 0) { //Delete last typed word
                     pos--; len--;
+                    jump++;
                 }
-                in[pos] = '\0';
+
+                if(browsing) {
+                    for (int i = pos; i <= len + jump; i++) {
+                        in[i] = in[i + jump - 1];
+                    }
+                }
+
+                in[len + 1] = '\0';
 
                 break;
 
