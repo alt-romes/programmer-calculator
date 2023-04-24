@@ -432,6 +432,19 @@ static void get_input(char* in) {
                 return;
                 break;
 
+            case 23:
+                //CTRL-W
+                while(in[pos] != ' ' && pos != 0) { //Delete last typed word
+                    pos--; len--; inp = '\0'; //Delete 1 character
+                }
+
+                while(in[pos-1] == ' ' && pos >= 1) { //Delete trailing spaces
+                    pos--; len--; inp = '\0'; //Delete 1 character
+                }
+                
+                //printf("len: %d", len);
+                break;
+
             case 27:
                 getchar();
                 inp = getchar();
