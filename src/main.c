@@ -421,6 +421,11 @@ static void get_input(char* in) {
                 continue;
                 break;
 
+            case 4:
+                //CTRL-D
+                exit_pcalc(0);
+                break;
+
             case 27:
                 getchar();
                 inp = getchar();
