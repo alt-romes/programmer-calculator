@@ -416,9 +416,19 @@ static void get_input(char* in) {
 
             case -1:
                 update_win_borders(numbers);
-            case 5:
             case 25:
                 continue;
+                break;
+
+            case 1:
+                //CTRL-A
+                pos = 0;
+                browsing = searched = 1;
+                break;
+            case 5:
+                //CTRL-E
+                pos = len;
+                browsing = searched = 1;
                 break;
 
             case 4:
