@@ -444,6 +444,8 @@ static void get_input(char* in) {
                 return;
                 break;
 
+            case 8:
+                //CTRL-Backspace
             case 23:
                 //CTRL-W
                 while(in[pos] != ' ' && pos != 0) { //Delete last typed word
