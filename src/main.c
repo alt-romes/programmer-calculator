@@ -429,6 +429,8 @@ static void get_input(char* in) {
             case 12:
                 //CTRL-L
                 clear_history();
+                pos = len = 0;
+                in[0] = '\0';
                 return;
                 break;
 
