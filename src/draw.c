@@ -10,12 +10,19 @@
 
 WINDOW* displaywin, * inputwin;
 
+// ASCII control characters
+const char* ctrl_chars[] = { "NUL", "SOH", "STX", "ETX", "EOT", "ENQ", "ACK", 
+	"BEL", "BS", "HT", "LF", "VT", "FF", "CR", "SO", "SI", "DLE", "DC1", "DC2",
+	"DC3", "DC4", "NAK", "SYN", "ETB", "CAN", "EM", "SUB", "ESC", "FS", "GS", 
+	"RS", "US", "SPACE"};
+
 int wMaxX;
 int wMaxY;
 
 int operation_enabled = 1;
 int decimal_enabled = 1;
 int hex_enabled = 1;
+int ascii_enabled = 1;
 int symbols_enabled = 1;
 int binary_enabled = 1;
 int history_enabled = 1;
@@ -115,6 +122,54 @@ static void printhistory(numberstack* numbers, int priority) {
     }
 }
 
+static void display_ascii_hex(uint64_t value, int priority) {
+	// ASCII not enabled, just display HEX
+	if (hex_enabled && !ascii_enabled) {
+		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x%llX", value);
+		return;
+	}
+	
+	// HEX not enabled, just display ASCII 
+	if (!hex_enabled && ascii_enabled) {
+		// Display control characters
+		if (value < 33) {
+			mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "ASCII:      %s", ctrl_chars[value]);
+		}
+		// Display printable characters
+		else if (value > 32 && value < 127) {
+			mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "ASCII:      %c", (uint8_t)value);
+		}
+		// Display DEL (Dec: 127)
+		else if (value == 127) {
+			mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "ASCII:      DEL");
+		}
+		return;
+	}
+
+	// Outside ASCII range, display HEX only
+	if (value > 127) {
+		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x%llX", value);
+		return;
+	}
+	
+	// Display DEL (Dec: 127)
+	if (value == 127) {
+		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x%llX		ASCII:      DEL");
+		return;
+	}
+
+	// Display control characters 
+	if (value < 33) {
+		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x%llX		ASCII:      %s", value, ctrl_chars[value]);
+		return;
+	} else {
+		// Display printable characters
+		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x%llX		ASCII:      %c", value, (uint8_t)value);
+		return;
+	}
+}
+
+
 void draw(numberstack* numbers, operation* current_op) {
     
     uint64_t* np = top_numberstack(numbers);
@@ -138,8 +193,8 @@ void draw(numberstack* numbers, operation* current_op) {
         if(!decimal_enabled) prio += 2;
         else mvwprintw_colors(displaywin, 4-prio, 2, COLOR_PAIR_DECIMAL, "Decimal:   %lld", (long long)n);
 
-        if(!hex_enabled) prio += 2;
-        else mvwprintw_colors(displaywin, 6-prio, 2, COLOR_PAIR_HEX, "Hex:       0x%llX", n);
+        if(!hex_enabled && !ascii_enabled) prio += 2;
+		else display_ascii_hex(n, 6-prio);
 
         if(!binary_enabled) prio +=6;
         else printbinary(n,prio);
