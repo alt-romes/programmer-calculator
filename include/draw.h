@@ -23,7 +23,7 @@ enum colors {
 extern WINDOW* displaywin, *inputwin;
 
 extern int wMaxX, wMaxY;
-extern int operation_enabled, decimal_enabled, hex_enabled, symbols_enabled, binary_enabled, history_enabled, colors_enabled, alt_colors_enabled;
+extern int operation_enabled, decimal_enabled, hex_enabled, ascii_enabled, symbols_enabled, binary_enabled, history_enabled, colors_enabled, alt_colors_enabled;
 
 extern int use_interface;
 

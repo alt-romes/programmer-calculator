@@ -49,6 +49,7 @@ int main(int argc, char* argv[])
         {"history",          no_argument, NULL, 'i'},
         {"binary",           no_argument, NULL, 'b'},
         {"hex",              no_argument, NULL, 'x'},
+        {"ascii",            no_argument, NULL, 'A'},
         {"decimal",          no_argument, NULL, 'd'},
         {"operation",        no_argument, NULL, 'o'},
         {"symbol",           no_argument, NULL, 's'},
@@ -71,6 +72,7 @@ int main(int argc, char* argv[])
                 puts("--history = -i\t\t\tdisables command history");
                 puts("--binary = -b\t\t\tdisables binary representation");
                 puts("--hex = -x\t\t\tdisables hexadecimal representation");
+                puts("--ascii = -A\t\t\tdisables ASCII representation");
                 puts("--decimal = -d\t\t\tdisables decimal representation");
                 puts("--operation = -o\t\tdisables the display of the current operation");
                 puts("--symbol = -s\t\t\tdisables the display of helper command symbols");
@@ -96,6 +98,10 @@ int main(int argc, char* argv[])
 
             case 'x':
                 hex_enabled = 0;
+                break;
+
+            case 'A':
+                ascii_enabled = 0;
                 break;
 
             case 'd':
@@ -201,6 +207,9 @@ static void process_prompt(operation** current_op, char* prompt) {
 
     else if (!strcmp(prompt, "hex"))
         hex_enabled = !hex_enabled;
+
+    else if (!strcmp(prompt, "ascii"))
+        ascii_enabled = !ascii_enabled;
 
     else if (!strcmp(prompt, "decimal"))
         decimal_enabled = !decimal_enabled;
