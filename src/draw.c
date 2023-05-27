@@ -124,7 +124,8 @@ static void printhistory(numberstack* numbers, int priority) {
 
 static void display_ascii_hex(uint64_t value, int priority) {
 	// ASCII not enabled, just display HEX
-	if (hex_enabled && !ascii_enabled) {
+	// Or ASCII out of rante
+	if ((hex_enabled && !ascii_enabled) || value > 127) {
 		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x%llX", value);
 		return;
 	}
@@ -135,37 +136,29 @@ static void display_ascii_hex(uint64_t value, int priority) {
 		if (value < 33) {
 			mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "ASCII:      %s", ctrl_chars[value]);
 		}
-		// Display printable characters
-		else if (value > 32 && value < 127) {
-			mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "ASCII:      %c", (uint8_t)value);
-		}
 		// Display DEL (Dec: 127)
 		else if (value == 127) {
 			mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "ASCII:      DEL");
 		}
-		return;
-	}
-
-	// Outside ASCII range, display HEX only
-	if (value > 127) {
-		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x%llX", value);
+		// Display printable characters
+		else {
+			mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "ASCII:      %c", (uint8_t)value);
+		}
 		return;
 	}
 	
-	// Display DEL (Dec: 127)
-	if (value == 127) {
-		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x%llX		ASCII:      DEL");
-		return;
-	}
-
+	// Both ASCII and HEX enabled
 	// Display control characters 
 	if (value < 33) {
 		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x%llX		ASCII:      %s", value, ctrl_chars[value]);
-		return;
-	} else {
+	}
+	// Display DEL (Dec: 127)
+	else if (value == 127) {
+		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x%llX		ASCII:      DEL");
+	}
+	else {
 		// Display printable characters
 		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x%llX		ASCII:      %c", value, (uint8_t)value);
-		return;
 	}
 }
 
