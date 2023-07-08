@@ -124,7 +124,7 @@ static void printhistory(numberstack* numbers, int priority) {
 
 static void display_ascii_hex(uint64_t value, int priority) {
 	// ASCII not enabled, just display HEX
-	// Or ASCII out of rante
+	// Or ASCII out of range
 	if ((hex_enabled && !ascii_enabled) || value > 127) {
 		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x%llX", value);
 		return;
@@ -154,7 +154,7 @@ static void display_ascii_hex(uint64_t value, int priority) {
 	}
 	// Display DEL (Dec: 127)
 	else if (value == 127) {
-		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x%llX		ASCII:      DEL");
+		mvwprintw_colors(displaywin, priority, 2, COLOR_PAIR_HEX, "Hex:       0x7F		ASCII:      DEL");
 	}
 	else {
 		// Display printable characters
