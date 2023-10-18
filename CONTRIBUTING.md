@@ -12,7 +12,7 @@ All changes must be submitted through pull requests.
 Before creating a pull request don't forget that:
 
   * The entire project should be recompiled with `make clean && make`
-  * Changes must be document so that reviewers and future contributors can understand the code
+  * Changes must be documented so that reviewers and future contributors can understand the code
   * All existing tests should be run
   * The PR should have a simple and descriptive title
 
