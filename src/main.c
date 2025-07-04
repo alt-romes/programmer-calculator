@@ -30,7 +30,7 @@
 static void process_prompt(operation**, char*);
 static void get_input(char*);
 static void apply_operations(numberstack*, operation**);
-static void exit_pcalc_success();
+static void exit_pcalc_success(int);
 
 
 
@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
     }
 
 
-    init_gui(&displaywin, &inputwin);
+    init_gui();
 
     // Set handler for CTRL+C to clean exit
     signal(SIGINT, exit_pcalc_success);
@@ -633,7 +633,7 @@ void exit_pcalc(int code) {
     exit(code);
 }
 
-static void exit_pcalc_success() {
+static void exit_pcalc_success(int d __attribute__((unused))) {
 
     exit_pcalc(0);
 }
