@@ -62,6 +62,18 @@ Conversely, if you ever want to uninstall, you can run:
 sudo make uninstall
 ```
 
+#### Building for the Web (WebAssembly)
+
+pcalc can also be compiled to WebAssembly and run entirely in the browser, rendered through [xterm.js](https://xtermjs.org/) via [xterm-pty](https://github.com/mame/xterm-pty).
+
+Prerequisites: `git` and `curl`. Nothing else needed — just run:
+
+```
+make web
+```
+
+On first run this automatically vendors a known-good [Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html) into `build/wasm-deps/emsdk` (don't rely on your distro's `emscripten` package — e.g. Debian/Ubuntu's is a very old 3.1.6 that isn't compatible with xterm-pty) and cross-compiles a minimal static `ncurses` for `wasm32` (there is no official Emscripten port). Both are cached under `build/wasm-deps/` so subsequent builds are fast. This produces `web/pcalc.mjs` and `web/pcalc.wasm`. Serve the `web/` directory over HTTP (e.g. `npx http-server web`) and open `index.html`.
+
 #### Updating
 Either re-build from source, or, using brew do
 ```

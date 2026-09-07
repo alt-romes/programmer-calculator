@@ -6,3 +6,7 @@ pcalc
 .gitignore
 .vscode/*.json
 compile_flags.txt
+build/
+web/pcalc.mjs
+web/pcalc.wasm
+web/emscripten-pty.js

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Programmer Calculator</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@xterm/xterm/css/xterm.css"
+    />
+    <style>
+      html, body {
+        margin: 0;
+        height: 100%;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: monospace;
+      }
+      #terminal {
+        width: 90vw;
+        max-width: 900px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="terminal"></div>
+    <script type="module">
+      import { Terminal } from "https://unpkg.com/@xterm/xterm/lib/xterm.js";
+      import { FitAddon } from "https://unpkg.com/@xterm/addon-fit/lib/addon-fit.js";
+      import { openpty } from "https://unpkg.com/xterm-pty/index.mjs";
+      import initEmscripten from "./pcalc.mjs";
+
+      const xterm = new Terminal();
+      const fitAddon = new FitAddon();
+      xterm.loadAddon(fitAddon);
+      xterm.open(document.getElementById("terminal"));
+
+      const { master, slave } = openpty();
+      xterm.loadAddon(master);
+      fitAddon.fit();
+      window.addEventListener("resize", () => fitAddon.fit());
+
+      await initEmscripten({ pty: slave });
+    </script>
+  </body>
+</html>
