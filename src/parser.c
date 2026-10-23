@@ -306,11 +306,12 @@ static exprtree parse_atom_expr(parser_t parser) {
         // It should be handled as an error below
         /* assert(parser->pos < parser->ntokens); */
 
-        if (parser->tokens[parser->pos] == RPAR_SYMBOL)
+        if (parser->pos < parser->ntokens && parser->tokens[parser->pos] == RPAR_SYMBOL)
             parser->pos++; // Consume right parenthesis
         else {
 
             // For now, everything to the right of an unclosed left parenthesis will be equivalent to 0
+            free_exprtree(expr);
             uint64_t zerov = 0;
             return create_exprtree(DEC_TYPE, &zerov, NULL, NULL);
 
